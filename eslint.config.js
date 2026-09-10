@@ -9,17 +9,30 @@ module.exports = [
   },
   {
     rules: {
-      // The repo rules are enforced by review and by rn-code-checker, not by ESLint.
-      // ponytail: no `@typescript-eslint/no-explicit-any` rule here. The plugin is only a
-      // transitive dep of eslint-config-expo, so using it would mean declaring a direct
-      // devDependency for one rule. Ceiling: explicit `any` is not caught by CI.
-      // It is still caught by `strict` tsc for implicit any, and by rn-code-checker for
-      // explicit any. Upgrade path: add @typescript-eslint/eslint-plugin as a direct
-      // devDependency and register it in its own config object.
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       // i18next is designed around a default-instance singleton, so `i18n.use(...)` and
       // `i18n.changeLanguage(...)` are the documented API, not a mistaken named import.
       'import/no-named-as-default-member': 'off',
+    },
+  },
+  {
+    // Must be scoped to TypeScript files: eslint-config-expo registers the
+    // `@typescript-eslint` plugin only for this glob, so a rule declared outside it fails
+    // with "could not find plugin @typescript-eslint".
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      // The conventions forbid `any`; this makes CI enforce it rather than review.
+      '@typescript-eslint/no-explicit-any': 'error',
+      // Type-only imports are erased at compile time — keeps types out of the runtime graph.
+      '@typescript-eslint/consistent-type-imports': [
+        'warn',
+        { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
+      ],
+      // Expo sets this to 'warn'; unused code should fail the gate, not decorate it.
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { vars: 'all', args: 'after-used', ignoreRestSiblings: true, caughtErrors: 'all' },
+      ],
     },
   },
 ];

@@ -6,6 +6,12 @@ module.exports = {
   // 'loadUnpackers')".
   resolver: 'react-native-worklets/jest/resolver.js',
   setupFilesAfterEnv: ['<rootDir>/jest-setup.js'],
+  // Call history is cleared before every test, so a stale assertion from a previous test
+  // cannot pass by accident. Implementations survive (that is mockReset, not mockClear).
+  clearMocks: true,
+  // jest.spyOn handles are restored automatically, so a spy cannot leak into another file.
+  restoreMocks: true,
+  testPathIgnorePatterns: ['/node_modules/', '/android/', '/ios/', '/.expo/'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
