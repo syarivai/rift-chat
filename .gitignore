@@ -42,3 +42,6 @@ coverage/
 
 # Claude Code local overrides (the shared config IS committed)
 .claude/settings.local.json
+
+# Agent validation reports (generated)
+.reports/
