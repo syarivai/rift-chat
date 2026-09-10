@@ -112,8 +112,10 @@ likely late surprise, and discovering it with a day left is recoverable.
   - Verify: `npm run android`, observe
   - Why now: Reanimated 4 + worklets misconfiguration is a classic late blocker.
 
-- [ ] **T-0.10** `P0` `[HUMAN]` · R-23 — Create the public GitHub repository
-  - Do: `gh repo create rift-chat --public --source . --push`
+- [x] **T-0.10** `P0` `[HUMAN]` · R-23 — Create the public GitHub repository
+  - Do: `gh repo create rift-chat --public --source . --push`, MIT licensed.
+  - Done: `github.com/syarifabdullah/rift-chat` — done ahead of Phase 0, since the repo is
+    where everything else lands.
   - Verify: `gh repo view --json visibility,url`
 
 - [ ] **T-0.11** `P1` `[AI]` — Record the resolved versions
@@ -593,7 +595,7 @@ rather than dropped:
 
 | Phase | P0 | P1 | P2 | Done |
 | ----- | -- | -- | -- | ---- |
-| 0 · Environment | 10 | 2 | 0 | 0/12 |
+| 0 · Environment | 10 | 2 | 0 | 1/12 |
 | 1 · Core | 9 | 1 | 0 | 0/10 |
 | 2 · Chats | 6 | 0 | 0 | 0/6 |
 | 3 · Chat & outbox | 11 | 0 | 0 | 0/11 |
@@ -605,7 +607,7 @@ rather than dropped:
 | Cut line | 3 | 0 | 0 | 0/3 |
 | 9 · Performance | 0 | 4 | 0 | 0/4 |
 | 10 · Release | 9 | 0 | 0 | 0/9 |
-| **Total** | **53** | **17** | **4** | **0/74** |
+| **Total** | **53** | **17** | **4** | **1/74** |
 
 Update this table whenever a phase completes. `delivery-tracker` verifies it independently —
 a table that disagrees with the checkboxes is itself a finding.
