@@ -16,11 +16,12 @@ These cost an afternoon each if you trip them.
 - **jest stays on v29.** `jest-expo` 57 is built on the jest 29 toolchain. A jest 30 package
   leaking in breaks the module mocker with `clearMocksOnScope is not a function`. Pins live in
   the `overrides` block of `package.json`.
-- **Reanimated needs its jest setup entry** in `setupFiles`, plus `react-native-worklets` — a
-  separate package since Reanimated 4.
-- **MMKV cannot run under Jest.** Mock it with `jest.mock('react-native-mmkv')` in the setup
-  file, backed by a plain `Map`. That is one small mock in one place, and it is what Jest is
-  for.
+- **Reanimated needs two things**: the `react-native-reanimated/plugin` Babel plugin listed
+  **last** in `babel.config.js`, and `require('react-native-reanimated').setUpTests()` in a
+  setup file referenced by **`setupFilesAfterEnv`** (not `setupFiles` — that is the pre-Jest-28
+  form). It also needs `react-native-worklets`, a separate package since Reanimated 4.
+- **MMKV mocks itself.** `react-native-mmkv` ships an automatic Jest/Vitest mock — no
+  `jest.mock` call and no hand-written `Map` shim. Write none; the library already solved it.
 - **RNTL v14's `render` is async** — `await render(<C />)`.
 - **`transformIgnorePatterns`** must keep the jest-expo default; narrowing it breaks ESM
   dependencies.

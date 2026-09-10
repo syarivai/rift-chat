@@ -153,9 +153,10 @@ deletes every message the user has sent.
 
 ## Store layer
 
-One Zustand store, three slices, persisted to MMKV through `persist`. MMKV reads
-synchronously, so the store is hydrated on first render — no flash of an empty thread or the
-wrong theme.
+One Zustand store, three slices, persisted to MMKV through `persist` + `createJSONStorage`.
+MMKV reads synchronously, so the store is hydrated on first render — no flash of an empty
+thread or the wrong theme. MMKV v4's API is the `createMMKV()` factory with `remove()`, not
+v3's `new MMKV()` / `delete()`.
 
 ```ts
 outbox:  { byContact: Record<number, OutboxMessage[]>,
@@ -252,7 +253,7 @@ Validation is measured, not asserted: render counts before and after memoisation
 
 MSW mocks at the network boundary and **reproduces the quirks**: `POST` returns `id: 101` and
 does not mutate the collection. A handler that persisted the write would hide the bug the whole
-app is designed around. Time is pinned with `jest.setSystemTime()`; MMKV and NetInfo are
+app is designed around. Time is pinned with `jest.setSystemTime()`; MMKV ships its own Jest mock and NetInfo is
 `jest.mock`ed.
 
 ## Security

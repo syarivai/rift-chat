@@ -86,17 +86,33 @@ useMutation({
   onMutate: (input) => {
     // durable first: the message exists before the request leaves
     const localId = store.getState().outbox.enqueue(input.contactId, input.body);
-    return { localId };
+    return { localId };                       // becomes `onMutateResult` below
   },
-  onSuccess: (res, _input, ctx) => {
-    store.getState().outbox.markSent(ctx.localId, res.createdAt);
+  onSuccess: (res, _input, onMutateResult) => {
+    store.getState().outbox.markSent(onMutateResult.localId, res.createdAt);
   },
-  onError: (_err, _input, ctx) => {
-    store.getState().outbox.markFailed(ctx.localId);   // NOT a rollback
+  onError: (_err, _input, onMutateResult) => {
+    store.getState().outbox.markFailed(onMutateResult.localId);   // NOT a rollback
   },
   // no onSettled, and no invalidateQueries — see below
 });
 ```
+
+**Callback signatures (v5.90+).** The value returned from `onMutate` is the **third**
+positional argument, now named `onMutateResult`, and there is a **fourth** `context` argument
+carrying the QueryClient:
+
+```ts
+onMutate:  (variables, context) => onMutateResult
+onSuccess: (data, variables, onMutateResult, context) => void
+onError:   (error, variables, onMutateResult, context) => void
+onSettled: (data, error, variables, onMutateResult, context) => void
+```
+
+`context.client` is the QueryClient, so a callback that needs it does **not** need a separate
+`useQueryClient()` call. The canonical optimistic-update recipe in the docs uses
+`context.client.cancelQueries` / `setQueryData` / `invalidateQueries` — **none of which apply
+here**, because this mutation never touches the query cache. Do not copy that recipe in.
 
 **Why no invalidation.** The write is not persisted server-side. Refetching the thread returns
 the original posts and deletes every message the user has sent. See

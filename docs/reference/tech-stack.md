@@ -80,9 +80,18 @@ These are traps, not preferences. Each one costs an afternoon if you trip it.
 - **`react-native-mmkv` v4 requires the New Architecture** and uses JSI, so it cannot run under
   the legacy remote (Chrome) debugger. Use the built-in React Native DevTools instead. It also
   cannot run in Expo Go — this project needs a development build.
-- **`react-native-reanimated` v4 requires `react-native-worklets`** as a separate dependency
-  and a Babel plugin entry. Installing Reanimated alone gives cryptic worklet errors at runtime.
+- **MMKV v4's API is a factory**: `createMMKV()`, not `new MMKV()` as in v2/v3, and the delete
+  method is `remove()`. It also **ships its own Jest/Vitest mock**, so no hand-written test
+  shim is needed.
+- **`react-native-reanimated` v4 requires `react-native-worklets`** as a separate dependency,
+  plus `react-native-reanimated/plugin` listed **last** in `babel.config.js`. Installing
+  Reanimated alone gives cryptic worklet errors at runtime. For tests it needs
+  `require('react-native-reanimated').setUpTests()` in a file referenced by
+  **`setupFilesAfterEnv`**.
 - **RNTL v14's `render` is async** — `await render(<C />)` in component tests.
+- **TanStack Query v5.90 mutation callbacks take four arguments.** The `onMutate` return value
+  is the third (`onMutateResult`); the fourth is a `context` carrying `context.client`, so a
+  callback needing the QueryClient does not need `useQueryClient()`.
 - **`@types/node` tracks the runtime major** (24 for Node 24), not npm's `latest` tag.
 - **Install native and `expo-*` packages with `npx expo install`**, not `npm install` — it
   resolves the version matching the installed SDK. JS-only dev dependencies use `npm i -D`.

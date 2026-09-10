@@ -99,9 +99,10 @@ likely late surprise, and discovering it with a day left is recoverable.
   - Verify: `npm run lint && npm run format:check`
 
 - [ ] **T-0.8** `P0` `[AI]` · R-32 — Jest configuration
-  - Do: `jest-expo` preset, `setupFiles` including the Reanimated entry,
-    `jest.mock('react-native-mmkv')` backed by a `Map`, coverage scoped to
-    `src/features/*/model` and `src/core`.
+  - Do: `jest-expo` preset; `setupFilesAfterEnv` calling
+    `require('react-native-reanimated').setUpTests()`; coverage scoped to
+    `src/features/*/model` and `src/core`. **No MMKV mock** — `react-native-mmkv` ships its
+    own Jest mock, so writing one would be re-solving a solved problem.
   - Done when: one trivial passing test runs.
   - Verify: `npm test`
 
@@ -151,8 +152,9 @@ likely late surprise, and discovering it with a day left is recoverable.
   - Verify: `npm run typecheck`
 
 - [ ] **T-1.4** `P0` `[AI]` · R-03 R-27 — Zustand store with MMKV persistence
-  - Do: `core/store` — `outbox`, `blocked`, `prefs` slices behind `persist` with an MMKV
-    storage adapter.
+  - Do: `core/store` — `outbox`, `blocked`, `prefs` slices behind `persist` with
+    `createJSONStorage` over an MMKV adapter. **MMKV v4 API**: `createMMKV()` (a factory, not
+    `new MMKV()`), and `remove()` rather than `delete()` for `removeItem`.
   - Acceptance: R-18 *"The blocked state survives a restart"*.
   - Verify: `npm test -- store`
 
@@ -261,6 +263,9 @@ The core of the assignment. Test-first throughout — this is the one place with
   - Do: `onMutate` enqueues (durable before the request leaves), `onSuccess` marks sent from
     the response `createdAt`, `onError` marks failed. **No `invalidateQueries`. No rollback.
     The response `id` is discarded.**
+    Signature note (v5.90+): the `onMutate` return arrives as the **third** argument
+    (`onMutateResult`). Do not copy the docs' canonical optimistic recipe — it uses
+    `cancelQueries`/`setQueryData`/`invalidateQueries`, none of which apply here.
   - Acceptance: R-14 *"The message appears before the request resolves"*, *"A successful send
     is marked delivered"*, *"A failed send is kept, not discarded"*, *"Sending does not destroy
     earlier messages"*.
