@@ -43,7 +43,7 @@ and `expo run:ios` each run `prebuild` automatically when the folder is missing.
 Continuous Native Generation, and it is why you never have to resolve a merge conflict inside a
 Gradle file.
 
-You would only run `prebuild` by hand to *force* a regeneration after changing native config in
+You would only run `prebuild` by hand to _force_ a regeneration after changing native config in
 `app.json`:
 
 ```bash

@@ -23,40 +23,40 @@ So a conversation cannot be a projection of server state: the outgoing half has 
 
 ## Options
 
-### A. Contact posts incoming, user's sends persisted locally *(chosen)*
+### A. Contact posts incoming, user's sends persisted locally _(chosen)_
 
-| + | − |
-| - | - |
+| +                                                                                                     | −                                                                   |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | Honest 1:1 mapping — nothing is invented; every bubble corresponds to real data or a real user action | The merge layer is extra code with real ordering rules to get right |
-| Threads **grow with use**, so infinite scroll becomes genuinely demonstrable rather than decorative | A fresh install still starts with short threads |
-| Sent messages survive restart, which is what a messaging app must do | Requires the discipline of never invalidating the thread query |
-| Gives the optimistic update a real failure path (`failed` + retry) instead of happy-path-only | |
-| The Chats list updates on send, proving cross-screen state coherence | |
+| Threads **grow with use**, so infinite scroll becomes genuinely demonstrable rather than decorative   | A fresh install still starts with short threads                     |
+| Sent messages survive restart, which is what a messaging app must do                                  | Requires the discipline of never invalidating the thread query      |
+| Gives the optimistic update a real failure path (`failed` + retry) instead of happy-path-only         |                                                                     |
+| The Chats list updates on send, proving cross-screen state coherence                                  |                                                                     |
 
 ### B. Deterministic alternation for a fuller-looking thread
 
 Split each post into a title bubble and a body bubble, alternating incoming/outgoing by id parity.
 
-| + | − |
-| - | - |
-| Every thread looks like a real conversation immediately; better first screenshot | Fabricates a data model the API does not express |
-| No local persistence needed | A reviewer who reads the API will notice, and it undermines everything else in the submission |
-| Trivial to implement | The "outgoing" messages are the contact's own words attributed to the user |
+| +                                                                                | −                                                                                             |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Every thread looks like a real conversation immediately; better first screenshot | Fabricates a data model the API does not express                                              |
+| No local persistence needed                                                      | A reviewer who reads the API will notice, and it undermines everything else in the submission |
+| Trivial to implement                                                             | The "outgoing" messages are the contact's own words attributed to the user                    |
 
 ### C. Page the global post pool into every thread
 
-| + | − |
-| - | - |
+| +                                          | −                                                       |
+| ------------------------------------------ | ------------------------------------------------------- |
 | Deep infinite scroll in every conversation | Messages from unrelated people appear in a private chat |
-| No local storage required | Indefensible as a data model |
-| Best scroll demo | |
+| No local storage required                  | Indefensible as a data model                            |
+| Best scroll demo                           |                                                         |
 
 ## Decision
 
 **Option A.** Server posts render as incoming; the user's messages live in a persisted outbox
 and are merged with the thread by `createdAt` at read time.
 
-The deciding argument is that A is the only option that is *true*. B and C both demo better
+The deciding argument is that A is the only option that is _true_. B and C both demo better
 and both require claiming the data means something it does not — a bad trade in a submission
 whose purpose is to demonstrate judgement.
 

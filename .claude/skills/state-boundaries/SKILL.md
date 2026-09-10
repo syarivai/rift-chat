@@ -12,13 +12,13 @@ whole app depends on, and the one mistake that silently destroys user data.
 
 > **React Query owns what the server knows. Zustand owns what only this device knows.**
 
-| State | Owner | Persisted |
-| ----- | ----- | --------- |
-| Contacts list, contact profile | React Query | no |
-| Thread (the contact's posts) | React Query | no |
-| Outbox (messages the user sent) | Zustand | **yes** |
-| Blocked contacts | Zustand | **yes** |
-| Language, theme | Zustand | **yes** |
+| State                           | Owner       | Persisted |
+| ------------------------------- | ----------- | --------- |
+| Contacts list, contact profile  | React Query | no        |
+| Thread (the contact's posts)    | React Query | no        |
+| Outbox (messages the user sent) | Zustand     | **yes**   |
+| Blocked contacts                | Zustand     | **yes**   |
+| Language, theme                 | Zustand     | **yes**   |
 
 Never mirror server data into the store. Never keep client state in the query cache. The query
 cache may be discarded at any moment — user-authored data may not.
@@ -37,14 +37,14 @@ the message up on the next render.
 
 ### Red flags — stop and reconsider
 
-| You are about to write | Why it is wrong |
-| ---------------------- | --------------- |
-| `invalidateQueries` on a `messages.thread` key | Deletes user data. There is no exception. |
-| `setQueryData` to insert a sent message | Puts non-server data in the query cache; it will not survive a restart |
-| `onSettled: () => invalidate...` on the send mutation | The textbook pattern, wrong here |
-| Using the response `id` as a key or identity | It is always `101` |
-| Persisting the query cache to disk | Persists a cache as if it were data; the outbox is the right home |
-| Rolling back the optimistic message on error | Deletes something the user wrote. Mark it `failed` with retry instead. |
+| You are about to write                                | Why it is wrong                                                        |
+| ----------------------------------------------------- | ---------------------------------------------------------------------- |
+| `invalidateQueries` on a `messages.thread` key        | Deletes user data. There is no exception.                              |
+| `setQueryData` to insert a sent message               | Puts non-server data in the query cache; it will not survive a restart |
+| `onSettled: () => invalidate...` on the send mutation | The textbook pattern, wrong here                                       |
+| Using the response `id` as a key or identity          | It is always `101`                                                     |
+| Persisting the query cache to disk                    | Persists a cache as if it were data; the outbox is the right home      |
+| Rolling back the optimistic message on error          | Deletes something the user wrote. Mark it `failed` with retry instead. |
 
 ## Query keys
 
@@ -59,7 +59,7 @@ Offset-based, with `total` in the envelope, so the stop condition is arithmetic:
 getNextPageParam: (lastPage) => {
   const next = lastPage.offset + lastPage.limit;
   return next >= lastPage.total ? undefined : next;
-}
+};
 ```
 
 Returning `undefined` is what sets `hasNextPage` to false. Getting it wrong gives either an

@@ -22,21 +22,21 @@ a fixed-height row with an avatar, a name, a preview line, and a timestamp.
 
 ### FlatList, tuned
 
-| + | − |
-| - | - |
-| Built in — no dependency, no native module, nothing to justify | Requires deliberate work to be fast: memoised rows, `getItemLayout`, tuned window props |
-| Windowing is entirely adequate at 60 homogeneous rows | Would not scale gracefully to thousands of heterogeneous rows |
-| `getItemLayout` is exact here, since row height is fixed — removing all measurement cost | Scroll performance degrades if a row's props change identity every render |
-| Every RN reviewer knows its failure modes and can verify the tuning | |
+| +                                                                                        | −                                                                                       |
+| ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Built in — no dependency, no native module, nothing to justify                           | Requires deliberate work to be fast: memoised rows, `getItemLayout`, tuned window props |
+| Windowing is entirely adequate at 60 homogeneous rows                                    | Would not scale gracefully to thousands of heterogeneous rows                           |
+| `getItemLayout` is exact here, since row height is fixed — removing all measurement cost | Scroll performance degrades if a row's props change identity every render               |
+| Every RN reviewer knows its failure modes and can verify the tuning                      |                                                                                         |
 
 ### FlashList v2
 
-| + | − |
-| - | - |
-| Recycles views rather than mounting and unmounting — a real win at scale | The win is at hundreds-to-thousands of rows; at 60 there is little to recover |
-| v2 needs no `estimatedItemSize` and handles inverted lists well | Another native dependency requiring the New Architecture |
-| Handles heterogeneous row heights better than `getItemLayout` can | Choosing it here would be **unmeasured** — the honest reason would be that it signals performance work, not that it was needed |
-| Good inverted-list ergonomics for chat threads | Its own recycling pitfalls (stale state in recycled cells) to learn and avoid |
+| +                                                                        | −                                                                                                                              |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| Recycles views rather than mounting and unmounting — a real win at scale | The win is at hundreds-to-thousands of rows; at 60 there is little to recover                                                  |
+| v2 needs no `estimatedItemSize` and handles inverted lists well          | Another native dependency requiring the New Architecture                                                                       |
+| Handles heterogeneous row heights better than `getItemLayout` can        | Choosing it here would be **unmeasured** — the honest reason would be that it signals performance work, not that it was needed |
+| Good inverted-list ergonomics for chat threads                           | Its own recycling pitfalls (stale state in recycled cells) to learn and avoid                                                  |
 
 ## Decision
 

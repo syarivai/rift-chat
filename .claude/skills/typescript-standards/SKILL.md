@@ -25,7 +25,7 @@ rejected as an abstraction nobody asked for (see the ponytail ladder in
 - **Reads**: let the fetcher throw. React Query catches it and gives you `error`, `isError`,
   and retry for free. Re-implementing that in the type system buys nothing the UI uses.
 - **Writes**: the send path's outcome is already modelled where the UI reads it — the outbox
-  message's `status` is `'sending' | 'sent' | 'failed'`. That union *is* the error handling,
+  message's `status` is `'sending' | 'sent' | 'failed'`. That union _is_ the error handling,
   and it is the one the screen renders.
 - **Validation at the API boundary**: if a payload is malformed, throw. It is not an expected
   outcome, and pretending otherwise spreads handling across every caller.
@@ -66,15 +66,15 @@ data it needs. This is the outbox message model.
 
 ## Antipatterns
 
-| Antipattern | Instead |
-| ----------- | ------- |
-| `any` in a catch | `catch (e: unknown)` then narrow |
-| A `Result` wrapper around a throw | Let it throw; React Query already models the failure |
-| Optional properties everywhere | A discriminated union with exact members |
-| `as SomeType` to force a shape | Validate at the boundary and return a `Result` |
-| Enums | `as const` object plus a derived union type |
-| Deep generic gymnastics | A simpler runtime shape |
-| `Promise<void>` that swallows errors | Let it throw; React Query surfaces it |
+| Antipattern                          | Instead                                              |
+| ------------------------------------ | ---------------------------------------------------- |
+| `any` in a catch                     | `catch (e: unknown)` then narrow                     |
+| A `Result` wrapper around a throw    | Let it throw; React Query already models the failure |
+| Optional properties everywhere       | A discriminated union with exact members             |
+| `as SomeType` to force a shape       | Validate at the boundary and return a `Result`       |
+| Enums                                | `as const` object plus a derived union type          |
+| Deep generic gymnastics              | A simpler runtime shape                              |
+| `Promise<void>` that swallows errors | Let it throw; React Query surfaces it                |
 
 ## At the API boundary
 

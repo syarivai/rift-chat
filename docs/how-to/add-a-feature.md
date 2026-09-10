@@ -27,8 +27,8 @@ still be true if we swapped React Query, the UI, or the API?**
 - **No** (the common case) — the logic is fetching, mapping, or rendering. Put it in `api/`
   or `ui/` and move on.
 - **Yes** — it belongs in `src/features/<name>/model/` as **pure functions**, unit-tested
-   without React. The outbox is the current example: its merge order and status lifecycle are
-   real rules, so they live in pure functions. Tests control time with `jest.setSystemTime()`.
+  without React. The outbox is the current example: its merge order and status lifecycle are
+  real rules, so they live in pure functions. Tests control time with `jest.setSystemTime()`.
 
 Resisting the urge to add layers is part of the job here. See
 [Architecture](../explanation/architecture.md) for why the ceiling is set where it is.
@@ -87,7 +87,7 @@ Select narrowly — `useStore((s) => s.thing)`, not the whole store — or every
 
 ## 8. Route it
 
-Add the screen under `src/app/`. The file path *is* the route; the tab group lives in
+Add the screen under `src/app/`. The file path _is_ the route; the tab group lives in
 `src/app/(tabs)/`.
 
 ## 9. Green before you push

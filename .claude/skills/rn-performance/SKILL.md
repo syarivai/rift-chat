@@ -28,7 +28,7 @@ defensible if the tuning is real and the result is measured.
 <FlatList
   data={items}
   keyExtractor={(item) => String(item.id)}
-  renderItem={renderContactRow}          // stable module-level reference
+  renderItem={renderContactRow} // stable module-level reference
   getItemLayout={(_, index) => ({ length: ROW_H, offset: ROW_H * index, index })}
   initialNumToRender={12}
   maxToRenderPerBatch={10}
@@ -67,7 +67,7 @@ A performance claim without a number is an assertion. Two measurements, both in
 ### 1. Render counts — attribution
 
 A dev-only counter on the contact row. Scroll one page and read it. Target: fetching page two
-re-renders **zero** already-mounted rows. This tells you *what* changed.
+re-renders **zero** already-mounted rows. This tells you _what_ changed.
 
 ### 2. Frame jank — outcome
 

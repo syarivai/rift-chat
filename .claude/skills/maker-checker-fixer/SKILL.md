@@ -11,11 +11,11 @@ worst judge of it, and the agent that judges it should not be free to rewrite it
 
 ## The three roles
 
-| Role | Authority | Tools | Output |
-| ---- | --------- | ----- | ------ |
-| **Maker** | Creates and changes code or docs | Read, Write, Edit, Bash | The change, plus green gates |
-| **Checker** | Reports findings. **Never edits.** | Read, Grep, Glob, Bash, Write (report only) | A rated validation report |
-| **Fixer** | Applies findings | Read, Edit, Bash | Fixes, plus a fix report |
+| Role        | Authority                          | Tools                                       | Output                       |
+| ----------- | ---------------------------------- | ------------------------------------------- | ---------------------------- |
+| **Maker**   | Creates and changes code or docs   | Read, Write, Edit, Bash                     | The change, plus green gates |
+| **Checker** | Reports findings. **Never edits.** | Read, Grep, Glob, Bash, Write (report only) | A rated validation report    |
+| **Fixer**   | Applies findings                   | Read, Edit, Bash                            | Fixes, plus a fix report     |
 
 A checker that edits a file has broken the pattern. Its value is an independent opinion; the
 moment it starts fixing, it is reviewing its own work again.
@@ -39,17 +39,17 @@ why acting on MEDIUM destroys trust in the pipeline.
 
 ## Agents in this repo
 
-| Domain | Maker | Checker |
-| ------ | ----- | ------- |
-| Features | `rn-feature-dev` | `rn-code-checker` |
-| UI | `rn-feature-dev` | `rn-ui-checker` |
-| Docs | `docs-maintainer` | `docs-maintainer` (check mode) |
-| Delivery plan | — | `delivery-tracker` |
-| Performance | `perf-auditor` | `perf-auditor` (measures, does not tune) |
-| API contract | — | `api-contract-verifier` |
-| Requirements | `requirement-extractor` | — |
-| README | `readme-maker` | — |
-| Pre-submission | — | `qa-tester` |
+| Domain         | Maker                   | Checker                                  |
+| -------------- | ----------------------- | ---------------------------------------- |
+| Features       | `rn-feature-dev`        | `rn-code-checker`                        |
+| UI             | `rn-feature-dev`        | `rn-ui-checker`                          |
+| Docs           | `docs-maintainer`       | `docs-maintainer` (check mode)           |
+| Delivery plan  | —                       | `delivery-tracker`                       |
+| Performance    | `perf-auditor`          | `perf-auditor` (measures, does not tune) |
+| API contract   | —                       | `api-contract-verifier`                  |
+| Requirements   | `requirement-extractor` | —                                        |
+| README         | `readme-maker`          | —                                        |
+| Pre-submission | —                       | `qa-tester`                              |
 
 This repo is small enough that fixes are applied by the maker rather than a dedicated fixer
 agent — but the **authority boundary still holds**: a checker reports, and someone else acts.

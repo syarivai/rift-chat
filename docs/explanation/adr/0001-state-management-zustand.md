@@ -27,29 +27,29 @@ synchronous storage adapter.
 
 ### Zustand
 
-| + | − |
-| - | - |
-| Selector-based subscriptions: a component re-renders only when its selected slice changes — exactly what a long list needs | Selectors returning new objects cause `getSnapshot` warnings; needs `useShallow` discipline |
-| No provider, no boilerplate — a slice is a function returning state and actions | Less structure imposed, so conventions must be enforced by review rather than by the framework |
-| `persist` middleware accepts any storage adapter, including a synchronous one | Devtools are thinner than Redux's |
-| Small API surface; the whole store fits in one readable file | |
+| +                                                                                                                          | −                                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Selector-based subscriptions: a component re-renders only when its selected slice changes — exactly what a long list needs | Selectors returning new objects cause `getSnapshot` warnings; needs `useShallow` discipline    |
+| No provider, no boilerplate — a slice is a function returning state and actions                                            | Less structure imposed, so conventions must be enforced by review rather than by the framework |
+| `persist` middleware accepts any storage adapter, including a synchronous one                                              | Devtools are thinner than Redux's                                                              |
+| Small API surface; the whole store fits in one readable file                                                               |                                                                                                |
 
 ### Redux Toolkit
 
-| + | − |
-| - | - |
+| +                                                                            | −                                                                                                  |
+| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | Time-travel devtools are genuinely excellent for debugging state transitions | Slices + reducers + `redux-persist` config is substantial ceremony for three small pieces of state |
-| Strong conventions; large teams stay consistent without discussion | Duplicates concepts React Query already provides, inviting the question of why both exist |
-| Universally recognised by reviewers | `useSelector` re-render behaviour needs care to match Zustand's default granularity |
-| Middleware ecosystem is mature | Largest bundle and largest learning surface of the three |
+| Strong conventions; large teams stay consistent without discussion           | Duplicates concepts React Query already provides, inviting the question of why both exist          |
+| Universally recognised by reviewers                                          | `useSelector` re-render behaviour needs care to match Zustand's default granularity                |
+| Middleware ecosystem is mature                                               | Largest bundle and largest learning surface of the three                                           |
 
 ### Jotai
 
-| + | − |
-| - | - |
-| Atomic model fits per-contact state naturally — a blocked flag per contact is literally an atom family | Least conventional of the three for a reviewer skimming the repo |
-| Minimal re-renders by construction, no selector discipline required | Persistence across many atoms is more assembly than one `persist` wrapper |
-| Very small API | Not named in the brief |
+| +                                                                                                      | −                                                                         |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| Atomic model fits per-contact state naturally — a blocked flag per contact is literally an atom family | Least conventional of the three for a reviewer skimming the repo          |
+| Minimal re-renders by construction, no selector discipline required                                    | Persistence across many atoms is more assembly than one `persist` wrapper |
+| Very small API                                                                                         | Not named in the brief                                                    |
 
 ## Decision
 

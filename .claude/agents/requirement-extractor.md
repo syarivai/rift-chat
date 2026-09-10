@@ -48,6 +48,7 @@ hoping for it.
 **Class**: MUST · **Graded axis**: React Query (mutations, optimistic updates)
 
 **Done when**
+
 - The message appears in the thread before the request resolves
 - Success marks it delivered; failure marks it failed with retry
 - No refetch of the thread is triggered by a send

@@ -69,13 +69,13 @@ Scenario: The contact list stops at the end of the data
 
 ## Anti-patterns
 
-| Wrong | Why | Right |
-| ----- | --- | ----- |
-| `Then the mutation succeeds` | Not observable to a user | `Then the message shows a delivered tick` |
-| `When I call useSendMessage` | Implementation, not behaviour | `When the user sends a message` |
-| `Then it works correctly` | Untestable | Name the specific outcome |
-| Three `When` steps | Three scenarios wearing a trenchcoat | Split them |
-| Only happy paths | The failure path is where the design is | Add the offline and error scenarios |
+| Wrong                        | Why                                     | Right                                     |
+| ---------------------------- | --------------------------------------- | ----------------------------------------- |
+| `Then the mutation succeeds` | Not observable to a user                | `Then the message shows a delivered tick` |
+| `When I call useSendMessage` | Implementation, not behaviour           | `When the user sends a message`           |
+| `Then it works correctly`    | Untestable                              | Name the specific outcome                 |
+| Three `When` steps           | Three scenarios wearing a trenchcoat    | Split them                                |
+| Only happy paths             | The failure path is where the design is | Add the offline and error scenarios       |
 
 ## In delivery.md
 

@@ -12,19 +12,19 @@ verified defect.
 
 ## Criticality — how much it matters
 
-| Level | Meaning | Examples in this repo |
-| ----- | ------- | --------------------- |
-| **CRITICAL** | Data loss, a security hole, or a broken build | `invalidateQueries` on a thread key; a secret in source; `npm run check` fails |
-| **HIGH** | A real defect users would hit | Infinite query never terminates; failed send silently disappears; a string missing from `ms`/`id` |
-| **MEDIUM** | Correct but wrong by convention; will cause defects later | Inline arrow prop on a list row; raw hex instead of a token; inline query-key literal |
-| **LOW** | Style, naming, polish | Wording, file placement, a redundant comment |
+| Level        | Meaning                                                   | Examples in this repo                                                                             |
+| ------------ | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **CRITICAL** | Data loss, a security hole, or a broken build             | `invalidateQueries` on a thread key; a secret in source; `npm run check` fails                    |
+| **HIGH**     | A real defect users would hit                             | Infinite query never terminates; failed send silently disappears; a string missing from `ms`/`id` |
+| **MEDIUM**   | Correct but wrong by convention; will cause defects later | Inline arrow prop on a list row; raw hex instead of a token; inline query-key literal             |
+| **LOW**      | Style, naming, polish                                     | Wording, file placement, a redundant comment                                                      |
 
 ## Confidence — how sure you are
 
-| Level | Meaning |
-| ----- | ------- |
-| **HIGH** | Verified. You read the code, or ran the command and read its output. You can name the exact failure. |
-| **MEDIUM** | Consistent with the evidence, not confirmed. Needs a human or another run to settle. |
+| Level              | Meaning                                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------------------------ |
+| **HIGH**           | Verified. You read the code, or ran the command and read its output. You can name the exact failure.   |
+| **MEDIUM**         | Consistent with the evidence, not confirmed. Needs a human or another run to settle.                   |
 | **FALSE_POSITIVE** | Investigated and found not to be a problem. Report it as such — it stops the next agent re-raising it. |
 
 **Confidence is earned by verification, not by conviction.** "This looks wrong" is MEDIUM. "I
@@ -40,11 +40,11 @@ review automation fails.
 
 ## Priority
 
-| | CRITICAL | HIGH | MEDIUM | LOW |
-| - | - | - | - | - |
-| **HIGH conf.** | P0 — fix now | P1 — fix | P2 — fix | P3 — fix if trivial |
-| **MEDIUM conf.** | P1 — escalate to a human | P2 — report | P3 — report | P4 — note |
-| **FALSE_POSITIVE** | — | — | — | record and move on |
+|                    | CRITICAL                 | HIGH        | MEDIUM      | LOW                 |
+| ------------------ | ------------------------ | ----------- | ----------- | ------------------- |
+| **HIGH conf.**     | P0 — fix now             | P1 — fix    | P2 — fix    | P3 — fix if trivial |
+| **MEDIUM conf.**   | P1 — escalate to a human | P2 — report | P3 — report | P4 — note           |
+| **FALSE_POSITIVE** | —                        | —           | —           | record and move on  |
 
 ## Report format
 

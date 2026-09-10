@@ -25,36 +25,46 @@ A README missing any of these is incomplete regardless of quality.
 
 ```markdown
 # Rift Chat
+
 One sentence: what it is and what it is built with.
 
 [CI badge] [platform] [APK download]
 
 ## Demo
+
 Screenshot table (4–6) + one GIF of the send → optimistic → persist → list-updates flow.
 
 ## Quick start
+
 Four commands, maximum. Link to the tutorial for detail.
 
 ## The interesting part
+
 The API stores nothing. What that forced, and why the outbox is the right answer.
 
 ## Architecture
+
 The slice diagram, the dependency direction, and where the one domain layer is — and why
 there is only one.
 
 ## Technical decisions
+
 A table linking to the four ADRs, each with a one-line summary of the outcome.
 
 ## Performance
+
 Measured numbers, before and after. Never an adjective.
 
 ## Testing
+
 What is covered, what is deliberately not, and why.
 
 ## How AI aided development
+
 See below — this is a required section.
 
 ## What I would do next
+
 Honest scope notes: what was cut, and why.
 ```
 

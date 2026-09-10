@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Rift Chat",
+    "slug": "rift-chat",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "riftchat",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "plugins": ["expo-router", "expo-image", "expo-localization"],
+    "ios": {
+      "bundleIdentifier": "dev.riftchat.app",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "dev.riftchat.app",
+      "usesCleartextTraffic": false,
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    }
+  }
+}

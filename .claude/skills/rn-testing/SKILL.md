@@ -20,8 +20,10 @@ These cost an afternoon each if you trip them.
   **last** in `babel.config.js`, and `require('react-native-reanimated').setUpTests()` in a
   setup file referenced by **`setupFilesAfterEnv`** (not `setupFiles` — that is the pre-Jest-28
   form). It also needs `react-native-worklets`, a separate package since Reanimated 4.
-- **MMKV mocks itself.** `react-native-mmkv` ships an automatic Jest/Vitest mock — no
-  `jest.mock` call and no hand-written `Map` shim. Write none; the library already solved it.
+- **MMKV needs the manual mock at `__mocks__/react-native-mmkv.js`.** v4 is a Nitro module, so
+  a real import under Jest dies with `Failed to get NitroModules`. The mock is Map-backed and
+  Jest applies it automatically to every test file — no `jest.mock('react-native-mmkv')` call
+  needed. If you see the NitroModules error, that file is missing or misnamed.
 - **RNTL v14's `render` is async** — `await render(<C />)`.
 - **`transformIgnorePatterns`** must keep the jest-expo default; narrowing it breaks ESM
   dependencies.
@@ -62,16 +64,16 @@ produces order-dependent failures.
 
 ### What to cover
 
-| Behaviour | Why it matters |
-| --------- | -------------- |
-| `getNextPageParam` stops at `offset + limit >= total` | Wrong → infinite empty fetches, or a list that stops early |
-| A send appends to the outbox and **invalidates nothing** | Wrong → every sent message is deleted |
-| `201` moves the message to `sent` | The optimistic lifecycle's happy path |
-| A network error moves it to `failed`, not removed | Rollback would delete user content |
-| Retry returns `failed` → `sending` | The recovery path |
-| Merge order is stable across renders | Wrong → bubbles jump around |
-| Outbox and blocked set survive a store rehydrate | The persistence promise |
-| A malformed API payload throws at the boundary | Otherwise it surfaces as `undefined` three components later |
+| Behaviour                                                | Why it matters                                              |
+| -------------------------------------------------------- | ----------------------------------------------------------- |
+| `getNextPageParam` stops at `offset + limit >= total`    | Wrong → infinite empty fetches, or a list that stops early  |
+| A send appends to the outbox and **invalidates nothing** | Wrong → every sent message is deleted                       |
+| `201` moves the message to `sent`                        | The optimistic lifecycle's happy path                       |
+| A network error moves it to `failed`, not removed        | Rollback would delete user content                          |
+| Retry returns `failed` → `sending`                       | The recovery path                                           |
+| Merge order is stable across renders                     | Wrong → bubbles jump around                                 |
+| Outbox and blocked set survive a store rehydrate         | The persistence promise                                     |
+| A malformed API payload throws at the boundary           | Otherwise it surfaces as `undefined` three components later |
 
 ## Component tests — RNTL
 
@@ -98,7 +100,10 @@ jest.mock('@/core/api');
 const mockedApi = jest.mocked(api);
 
 mockedApi.getContacts.mockResolvedValue({
-  total: 60, limit: 20, offset: 0, results: [contactFixture()],
+  total: 60,
+  limit: 20,
+  offset: 0,
+  results: [contactFixture()],
 });
 ```
 

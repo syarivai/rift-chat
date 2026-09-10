@@ -57,13 +57,16 @@ Write to `.reports/delivery-tracker/<YYYY-MM-DD--HH-MM>.md`:
 
 ```markdown
 ## Status
+
 P0: 12/14 · P1: 5/9 · P2: 1/6
 
 ## Discrepancies
+
 [RULE] HIGH | delivery.md:47 | "Optimistic send" ticked, but no test covers the failure path
-       and the criterion "marked failed with retry" is unmet | confidence: HIGH
+and the criterion "marked failed with retry" is unmet | confidence: HIGH
 
 ## Cut-line assessment
+
 At the current rate, N P2 tasks will not land. Recommended cuts, in order: ...
 ```
 

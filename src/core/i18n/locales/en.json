@@ -1,0 +1,41 @@
+{
+  "common": {
+    "retry": "Try again",
+    "error": "Something went wrong",
+    "offline": "No internet connection"
+  },
+  "chats": {
+    "title": "Chats",
+    "empty": "No conversations yet",
+    "noMessages": "Tap to start chatting",
+    "loadError": "Could not load contacts"
+  },
+  "chat": {
+    "composerPlaceholder": "Message",
+    "send": "Send",
+    "empty": "No messages yet. Say hello.",
+    "sending": "Sending",
+    "sent": "Delivered",
+    "failed": "Not delivered. Tap to retry.",
+    "blocked": "You blocked this contact",
+    "loadError": "Could not load messages"
+  },
+  "profile": {
+    "title": "Profile",
+    "phone": "Phone",
+    "block": "Block contact",
+    "unblock": "Unblock contact",
+    "loadError": "Could not load profile"
+  },
+  "settings": {
+    "title": "Settings",
+    "developer": "Developer",
+    "version": "App version",
+    "language": "Language",
+    "theme": "Appearance",
+    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "languageSystem": "System"
+  }
+}

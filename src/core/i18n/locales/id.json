@@ -1,0 +1,41 @@
+{
+  "common": {
+    "retry": "Coba lagi",
+    "error": "Terjadi kesalahan",
+    "offline": "Tidak ada koneksi internet"
+  },
+  "chats": {
+    "title": "Obrolan",
+    "empty": "Belum ada obrolan",
+    "noMessages": "Ketuk untuk mulai mengobrol",
+    "loadError": "Tidak dapat memuat kontak"
+  },
+  "chat": {
+    "composerPlaceholder": "Pesan",
+    "send": "Kirim",
+    "empty": "Belum ada pesan. Sapa dia.",
+    "sending": "Mengirim",
+    "sent": "Terkirim",
+    "failed": "Gagal terkirim. Ketuk untuk coba lagi.",
+    "blocked": "Anda memblokir kontak ini",
+    "loadError": "Tidak dapat memuat pesan"
+  },
+  "profile": {
+    "title": "Profil",
+    "phone": "Telepon",
+    "block": "Blokir kontak",
+    "unblock": "Buka blokir kontak",
+    "loadError": "Tidak dapat memuat profil"
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "developer": "Pengembang",
+    "version": "Versi aplikasi",
+    "language": "Bahasa",
+    "theme": "Tampilan",
+    "themeSystem": "Sistem",
+    "themeLight": "Terang",
+    "themeDark": "Gelap",
+    "languageSystem": "Sistem"
+  }
+}

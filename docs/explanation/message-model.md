@@ -16,7 +16,7 @@ and a subsequent `GET /api/posts?userId=5` returns exactly the same three posts 
 server accepts the write and forgets it.
 
 **2. Every server post belongs to the contact.** `GET /api/posts?userId=5` returns posts
-authored *by* user 5. There is no sender field, no "from me" flag, and nothing that could
+authored _by_ user 5. There is no sender field, no "from me" flag, and nothing that could
 represent a message the app's user wrote.
 
 ## What follows
@@ -71,7 +71,7 @@ enqueue ──► sending ──► sent
 
 1. **Enqueue.** The user hits send. A message with a fresh `localId`, status `sending`, and a
    timestamp is appended to the outbox and persisted. The bubble appears
-   immediately — this is the optimistic update, and it is optimistic about *delivery*, not
+   immediately — this is the optimistic update, and it is optimistic about _delivery_, not
    about existence: the message is already durable before the request leaves.
 2. **`201`.** Status becomes `sent`, `createdAt` is refined from the response, and a tick
    renders. No query is touched.
@@ -81,7 +81,7 @@ enqueue ──► sending ──► sent
 4. **Retry.** Status returns to `sending` and the request is re-issued.
 
 "Optimistic update with rollback" is the textbook pattern, and it is the wrong pattern for user
-content. What gets rolled back here is the *delivery claim*, never the message.
+content. What gets rolled back here is the _delivery claim_, never the message.
 
 ## Consequences the UI has to own
 

@@ -10,12 +10,12 @@ The docs tree follows [Diátaxis](https://diataxis.fr/). Index:
 
 ## Pick the quadrant by the reader's need
 
-| Quadrant | Reader's need | The question it answers | Voice |
-| -------- | ------------- | ----------------------- | ----- |
-| **Tutorial** | Learning | "Teach me, step by step." | Second person, guided, one path, guaranteed to work |
-| **How-to** | A task done | "How do I do X?" | Imperative steps, assumes competence, may branch |
-| **Reference** | A fact | "What exactly is X?" | Declarative, structured, complete, no teaching |
-| **Explanation** | Understanding | "Why is it like this?" | Discursive, gives context, alternatives, trade-offs |
+| Quadrant        | Reader's need | The question it answers   | Voice                                               |
+| --------------- | ------------- | ------------------------- | --------------------------------------------------- |
+| **Tutorial**    | Learning      | "Teach me, step by step." | Second person, guided, one path, guaranteed to work |
+| **How-to**      | A task done   | "How do I do X?"          | Imperative steps, assumes competence, may branch    |
+| **Reference**   | A fact        | "What exactly is X?"      | Declarative, structured, complete, no teaching      |
+| **Explanation** | Understanding | "Why is it like this?"    | Discursive, gives context, alternatives, trade-offs |
 
 **The most common error is mixing them.** A tutorial that stops to explain trade-offs loses the
 learner; a reference page that teaches becomes unscannable. If a page is doing two jobs, split

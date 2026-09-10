@@ -10,12 +10,12 @@ Each ADR states the context, lays the realistic options side by side with their 
 minuses, records what was chosen and why, and notes what the choice costs. They exist so a
 reviewer can see that the alternatives were considered rather than defaulted past.
 
-| # | Decision | Outcome |
-| - | -------- | ------- |
-| [0001](./0001-state-management-zustand.md) | Client state management | **Zustand** over Redux Toolkit and Jotai |
-| [0002](./0002-storage-mmkv.md) | Persistence layer | **react-native-mmkv** over AsyncStorage and expo-sqlite |
-| [0003](./0003-list-rendering-flatlist.md) | List rendering | **FlatList, tuned** over FlashList |
-| [0004](./0004-message-model-and-outbox.md) | Conversation model | **Persisted outbox merged at read time** |
+| #                                          | Decision                | Outcome                                                 |
+| ------------------------------------------ | ----------------------- | ------------------------------------------------------- |
+| [0001](./0001-state-management-zustand.md) | Client state management | **Zustand** over Redux Toolkit and Jotai                |
+| [0002](./0002-storage-mmkv.md)             | Persistence layer       | **react-native-mmkv** over AsyncStorage and expo-sqlite |
+| [0003](./0003-list-rendering-flatlist.md)  | List rendering          | **FlatList, tuned** over FlashList                      |
+| [0004](./0004-message-model-and-outbox.md) | Conversation model      | **Persisted outbox merged at read time**                |
 
 ## Format
 

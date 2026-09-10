@@ -1,0 +1,41 @@
+{
+  "common": {
+    "retry": "Cuba lagi",
+    "error": "Sesuatu tidak kena",
+    "offline": "Tiada sambungan internet"
+  },
+  "chats": {
+    "title": "Perbualan",
+    "empty": "Belum ada perbualan",
+    "noMessages": "Ketik untuk mula berbual",
+    "loadError": "Tidak dapat memuatkan kenalan"
+  },
+  "chat": {
+    "composerPlaceholder": "Mesej",
+    "send": "Hantar",
+    "empty": "Belum ada mesej. Sapa dia.",
+    "sending": "Menghantar",
+    "sent": "Dihantar",
+    "failed": "Gagal dihantar. Ketik untuk cuba lagi.",
+    "blocked": "Anda telah menyekat kenalan ini",
+    "loadError": "Tidak dapat memuatkan mesej"
+  },
+  "profile": {
+    "title": "Profil",
+    "phone": "Telefon",
+    "block": "Sekat kenalan",
+    "unblock": "Nyahsekat kenalan",
+    "loadError": "Tidak dapat memuatkan profil"
+  },
+  "settings": {
+    "title": "Tetapan",
+    "developer": "Pembangun",
+    "version": "Versi aplikasi",
+    "language": "Bahasa",
+    "theme": "Penampilan",
+    "themeSystem": "Sistem",
+    "themeLight": "Cerah",
+    "themeDark": "Gelap",
+    "languageSystem": "Sistem"
+  }
+}

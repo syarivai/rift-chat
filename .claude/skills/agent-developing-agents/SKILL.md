@@ -12,18 +12,18 @@ because they are read by both humans and models scanning for the right one.
 
 ```yaml
 ---
-name: rn-code-checker            # kebab-case, matches the filename
+name: rn-code-checker # kebab-case, matches the filename
 description: <what it does, and when to use it — this is how it gets selected>
 tools: Read, Grep, Glob, Bash, Write
-model: sonnet                    # or opus / haiku; omit to inherit
-color: green                     # maker=blue · checker=green · fixer=orange · reporter=purple
+model: sonnet # or opus / haiku; omit to inherit
+color: green # maker=blue · checker=green · fixer=orange · reporter=purple
 skills:
   - state-boundaries
   - criticality-confidence
 ---
 ```
 
-- **`description` is the selection surface.** It must say what the agent does *and* when to
+- **`description` is the selection surface.** It must say what the agent does _and_ when to
   reach for it. "Validates code" is useless; "Validates feature code against the eight rules in
   CLAUDE.md; use before committing" is selectable.
 - **`tools` are scoped to the role.** A checker gets no `Edit`. Giving a checker write access to
@@ -41,17 +41,21 @@ skills:
 **Model selection**: one line on why this tier.
 
 ## Core responsibility
+
 One paragraph. What it owns, and what it explicitly does not.
 
 ## When to use / when not to use
 
 ## Process
+
 Numbered, concrete, with the actual commands.
 
 ## Output format
+
 Exact shape. For checkers, the rated finding format.
 
 ## Reference documentation
+
 Links into docs/ — the source of truth.
 ```
 

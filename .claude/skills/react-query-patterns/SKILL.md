@@ -14,10 +14,10 @@ what belongs in a query at all.
 new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60_000,        // the API sets cache-control: max-age=300
+      staleTime: 60_000, // the API sets cache-control: max-age=300
       gcTime: 5 * 60_000,
-      retry: 2,                 // exponential backoff is the default
-      refetchOnWindowFocus: false,   // meaningless on mobile; noisy
+      retry: 2, // exponential backoff is the default
+      refetchOnWindowFocus: false, // meaningless on mobile; noisy
     },
   },
 });
@@ -34,12 +34,15 @@ Every endpoint is declared **once**, on the `RiftApi` class in `@/core/api/rift-
 
 ```ts
 export const useContactsInfinite = () =>
-  api.getContacts.infiniteQuery({ limit: PAGE_SIZE }, {
-    queryKey: queryKeys.contacts.list(),
-    initialPageParam: 0,
-    getNextPageParam: (last) =>
-      last.offset + last.limit >= last.total ? undefined : last.offset + last.limit,
-  });
+  api.getContacts.infiniteQuery(
+    { limit: PAGE_SIZE },
+    {
+      queryKey: queryKeys.contacts.list(),
+      initialPageParam: 0,
+      getNextPageParam: (last) =>
+        last.offset + last.limit >= last.total ? undefined : last.offset + last.limit,
+    },
+  );
 ```
 
 Never call `axios` from a feature file, and never build a URL outside `RiftApi`.
@@ -53,9 +56,9 @@ still have their callbacks.
 From the factory in `@/core/query-keys`, never inline:
 
 ```ts
-queryKeys.contacts.list()          // ['contacts','list']
-queryKeys.contacts.detail(id)      // ['contacts','detail',id]
-queryKeys.messages.thread(id)      // ['messages','thread',id]
+queryKeys.contacts.list(); // ['contacts','list']
+queryKeys.contacts.detail(id); // ['contacts','detail',id]
+queryKeys.messages.thread(id); // ['messages','thread',id]
 ```
 
 The hierarchy is deliberate: `queryKeys.contacts.all` invalidates every contact query while
@@ -108,13 +111,13 @@ useMutation({
   onMutate: (input) => {
     // durable first: the message exists before the request leaves
     const localId = store.getState().outbox.enqueue(input.contactId, input.body);
-    return { localId };                       // becomes `onMutateResult` below
+    return { localId }; // becomes `onMutateResult` below
   },
   onSuccess: (res, _input, onMutateResult) => {
     store.getState().outbox.markSent(onMutateResult.localId, res.createdAt);
   },
   onError: (_err, _input, onMutateResult) => {
-    store.getState().outbox.markFailed(onMutateResult.localId);   // NOT a rollback
+    store.getState().outbox.markFailed(onMutateResult.localId); // NOT a rollback
   },
   // no onSettled, and no invalidateQueries — see below
 });
@@ -140,7 +143,7 @@ here**, because this mutation never touches the query cache. Do not copy that re
 the original posts and deletes every message the user has sent. See
 [Message model](../../../docs/explanation/message-model.md).
 
-**Why no rollback.** The optimistic claim being made is *delivery*, not existence. A failed
+**Why no rollback.** The optimistic claim being made is _delivery_, not existence. A failed
 send stays visible with a retry affordance; deleting content the user typed is the wrong
 response to a network error.
 
@@ -154,14 +157,14 @@ A skeleton shows the shape of the content that is coming, so the layout does not
 arrives. A spinner says only "something is happening" and is the wrong choice for a screen whose
 shape is already known.
 
-| State | Treatment |
-| ----- | --------- |
-| `isPending` — a read with no data yet | **Skeleton** matching the real layout. Never a spinner. |
-| `isFetching && !isPending` — background refresh | Nothing. Leave the content; do not flash a spinner over data the user is reading. |
-| `isFetchingNextPage` | Small footer spinner on the list — the shape below is unknown, so a skeleton would be a guess. |
-| `isError` | Error state with a retry that calls `refetch()`. |
-| Loaded but empty | Empty state. Never a spinner. |
-| **A mutation in flight** | Usually nothing — the optimistic bubble is the feedback. Show a spinner only where a write blocks the UI and there is no optimistic result to show. |
+| State                                           | Treatment                                                                                                                                           |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isPending` — a read with no data yet           | **Skeleton** matching the real layout. Never a spinner.                                                                                             |
+| `isFetching && !isPending` — background refresh | Nothing. Leave the content; do not flash a spinner over data the user is reading.                                                                   |
+| `isFetchingNextPage`                            | Small footer spinner on the list — the shape below is unknown, so a skeleton would be a guess.                                                      |
+| `isError`                                       | Error state with a retry that calls `refetch()`.                                                                                                    |
+| Loaded but empty                                | Empty state. Never a spinner.                                                                                                                       |
+| **A mutation in flight**                        | Usually nothing — the optimistic bubble is the feedback. Show a spinner only where a write blocks the UI and there is no optimistic result to show. |
 
 Sending a message needs **no spinner**: the bubble appears immediately with a pending indicator,
 which communicates more than a spinner would. Adding one on top would be feedback for something

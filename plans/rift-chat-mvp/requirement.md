@@ -14,13 +14,13 @@ proven at submission rather than hoped for.
 
 ## How to read this
 
-| Class | Meaning |
-| ----- | ------- |
-| **MUST** | Stated explicitly in the brief. Missing one is a failed submission. |
-| **SHOULD** | Listed by the brief under "Optional (Nice to Have)". |
-| **IMPLIED** | Not stated, but unavoidable for the submission to function. |
-| **GRADED** | Named as an evaluation axis rather than a feature. Describes no screen, but decides the score. |
-| **OURS** | Not in the brief. We chose to add it. First to be cut under time pressure. |
+| Class       | Meaning                                                                                        |
+| ----------- | ---------------------------------------------------------------------------------------------- |
+| **MUST**    | Stated explicitly in the brief. Missing one is a failed submission.                            |
+| **SHOULD**  | Listed by the brief under "Optional (Nice to Have)".                                           |
+| **IMPLIED** | Not stated, but unavoidable for the submission to function.                                    |
+| **GRADED**  | Named as an evaluation axis rather than a feature. Describes no screen, but decides the score. |
+| **OURS**    | Not in the brief. We chose to add it. First to be cut under time pressure.                     |
 
 Gherkin blocks are **prose specifications**, not executable step files — this project does not
 use jest-cucumber. Their job is to make "done" a fact rather than an opinion. `Then` steps are
@@ -30,48 +30,48 @@ observable: something on screen, in persisted storage, or in a network log.
 
 ## Index
 
-| Id | Requirement | Class |
-| -- | ----------- | ----- |
-| R-01 | React Native application | MUST |
-| R-02 | React Query for API caching | MUST |
-| R-03 | A state management library | MUST |
-| R-04 | UI library (optional) | SHOULD |
-| R-05 | Use the responserift.dev API | MUST |
-| R-06 | Bottom tabs — Chats and Settings | MUST |
-| R-07 | Chats: fetch contacts from `GET api/users` | MUST |
-| R-08 | Chats: each row shows avatar, name, last message, timestamp | MUST |
-| R-09 | Chats: pagination by infinite scroll | MUST |
-| R-10 | Chats: tapping a row opens the Chat screen | MUST |
-| R-11 | Chat: list messages from `GET api/posts` | MUST |
-| R-12 | Chat: message input at the bottom | MUST |
-| R-13 | Chat: send a message with `POST api/posts` | MUST |
-| R-14 | Chat: optimistic mutation update | MUST |
-| R-15 | Chat: tapping the header opens the Profile screen | MUST |
-| R-16 | Profile: name, avatar, phone number | MUST |
-| R-17 | Profile: fetched with React Query | MUST |
-| R-18 | Profile: block/unblock toggle in global state | MUST |
-| R-19 | Settings: static info — name and app version | MUST |
-| R-20 | README: project structure and architecture overview | MUST |
-| R-21 | README: how AI tools aided development | MUST |
-| R-22 | README: screenshots and/or recordings | MUST |
-| R-23 | Public GitHub repository | MUST |
-| R-24 | APK committed to the repository | MUST |
-| R-25 | Delivered within four days | MUST |
-| R-26 | Performance | GRADED |
-| R-27 | State management quality | GRADED |
-| R-28 | React Query depth | GRADED |
-| R-29 | App architecture | GRADED |
-| R-30 | UI/UX | GRADED |
-| R-31 | Smooth transitions | SHOULD |
-| R-32 | Automation tests | SHOULD |
-| R-33 | Performance optimisation | SHOULD |
-| R-34 | Empty view placeholders | SHOULD |
-| R-35 | The app runs on a physical Android device from the APK | IMPLIED |
-| O-01 | Sent messages persist locally across restarts | OURS |
-| O-02 | Internationalisation — en, ms, id | OURS |
-| O-03 | Dark mode | OURS |
-| O-04 | Offline handling and send retry | OURS |
-| O-05 | Documentation tree and decision records | OURS |
+| Id   | Requirement                                                 | Class   |
+| ---- | ----------------------------------------------------------- | ------- |
+| R-01 | React Native application                                    | MUST    |
+| R-02 | React Query for API caching                                 | MUST    |
+| R-03 | A state management library                                  | MUST    |
+| R-04 | UI library (optional)                                       | SHOULD  |
+| R-05 | Use the responserift.dev API                                | MUST    |
+| R-06 | Bottom tabs — Chats and Settings                            | MUST    |
+| R-07 | Chats: fetch contacts from `GET api/users`                  | MUST    |
+| R-08 | Chats: each row shows avatar, name, last message, timestamp | MUST    |
+| R-09 | Chats: pagination by infinite scroll                        | MUST    |
+| R-10 | Chats: tapping a row opens the Chat screen                  | MUST    |
+| R-11 | Chat: list messages from `GET api/posts`                    | MUST    |
+| R-12 | Chat: message input at the bottom                           | MUST    |
+| R-13 | Chat: send a message with `POST api/posts`                  | MUST    |
+| R-14 | Chat: optimistic mutation update                            | MUST    |
+| R-15 | Chat: tapping the header opens the Profile screen           | MUST    |
+| R-16 | Profile: name, avatar, phone number                         | MUST    |
+| R-17 | Profile: fetched with React Query                           | MUST    |
+| R-18 | Profile: block/unblock toggle in global state               | MUST    |
+| R-19 | Settings: static info — name and app version                | MUST    |
+| R-20 | README: project structure and architecture overview         | MUST    |
+| R-21 | README: how AI tools aided development                      | MUST    |
+| R-22 | README: screenshots and/or recordings                       | MUST    |
+| R-23 | Public GitHub repository                                    | MUST    |
+| R-24 | APK committed to the repository                             | MUST    |
+| R-25 | Delivered within four days                                  | MUST    |
+| R-26 | Performance                                                 | GRADED  |
+| R-27 | State management quality                                    | GRADED  |
+| R-28 | React Query depth                                           | GRADED  |
+| R-29 | App architecture                                            | GRADED  |
+| R-30 | UI/UX                                                       | GRADED  |
+| R-31 | Smooth transitions                                          | SHOULD  |
+| R-32 | Automation tests                                            | SHOULD  |
+| R-33 | Performance optimisation                                    | SHOULD  |
+| R-34 | Empty view placeholders                                     | SHOULD  |
+| R-35 | The app runs on a physical Android device from the APK      | IMPLIED |
+| O-01 | Sent messages persist locally across restarts               | OURS    |
+| O-02 | Internationalisation — en, ms, id                           | OURS    |
+| O-03 | Dark mode                                                   | OURS    |
+| O-04 | Offline handling and send retry                             | OURS    |
+| O-05 | Documentation tree and decision records                     | OURS    |
 
 ---
 
@@ -186,7 +186,7 @@ Scenario: A failed load offers a retry
 **Source**: "Each Item shows: Avatar, Name, Last message (placeholder), Timestamp (placeholder)"
 **Class**: MUST
 
-The brief marks last message and timestamp as *placeholders*. Our resolution: a row shows the
+The brief marks last message and timestamp as _placeholders_. Our resolution: a row shows the
 **real** last message once the user has sent one, and an honest empty state otherwise. We do
 not invent preview text — see
 [ADR 0004](../../docs/explanation/adr/0004-message-model-and-outbox.md).
@@ -611,7 +611,7 @@ queries (R-09), mutations (R-13), optimistic updates (R-14).
 **Class**: GRADED
 
 **Evidence required**: a stated structure with a one-way dependency direction, and a defensible
-answer for where complexity was *not* added. See
+answer for where complexity was _not_ added. See
 [Architecture](../../docs/explanation/architecture.md).
 
 ### R-30 · UI/UX

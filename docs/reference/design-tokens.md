@@ -23,20 +23,20 @@ tradeoff, honestly stated, is that everything must be built by hand.
 Tokens are named for their **role**, not their appearance, which is what lets one component
 serve both themes without a conditional:
 
-| Token | Role |
-| ----- | ---- |
-| `bg` | Screen background |
-| `surface` | Cards, rows, the composer bar |
-| `surfaceMuted` | Skeletons, pressed states, dividers' backdrop |
-| `border` | Hairlines and separators |
-| `text` | Primary text |
-| `textMuted` | Timestamps, secondary labels, empty-state copy |
-| `accent` | Brand colour: active tab, send button, focus rings |
-| `onAccent` | Text and icons on top of `accent` |
-| `bubbleIn` / `onBubbleIn` | Incoming message bubble and its text |
-| `bubbleOut` / `onBubbleOut` | Outgoing message bubble and its text |
-| `danger` | Failed sends, destructive actions, block state |
-| `success` | Delivered ticks |
+| Token                       | Role                                               |
+| --------------------------- | -------------------------------------------------- |
+| `bg`                        | Screen background                                  |
+| `surface`                   | Cards, rows, the composer bar                      |
+| `surfaceMuted`              | Skeletons, pressed states, dividers' backdrop      |
+| `border`                    | Hairlines and separators                           |
+| `text`                      | Primary text                                       |
+| `textMuted`                 | Timestamps, secondary labels, empty-state copy     |
+| `accent`                    | Brand colour: active tab, send button, focus rings |
+| `onAccent`                  | Text and icons on top of `accent`                  |
+| `bubbleIn` / `onBubbleIn`   | Incoming message bubble and its text               |
+| `bubbleOut` / `onBubbleOut` | Outgoing message bubble and its text               |
+| `danger`                    | Failed sends, destructive actions, block state     |
+| `success`                   | Delivered ticks                                    |
 
 Light and dark are two maps over the same keys. A component reads `theme.colors.text` and is
 correct in both.
@@ -53,13 +53,13 @@ A 4-point scale. Nothing between the steps:
 
 ## Typography
 
-| Token | Size / weight | Used for |
-| ----- | ------------- | -------- |
-| `title` | 20 / 600 | Screen and header titles |
-| `body` | 16 / 400 | Message text, primary content |
-| `label` | 15 / 600 | Contact names, buttons |
-| `caption` | 13 / 400 | Timestamps, last-message preview |
-| `micro` | 11 / 500 | Status text under a bubble |
+| Token     | Size / weight | Used for                         |
+| --------- | ------------- | -------------------------------- |
+| `title`   | 20 / 600      | Screen and header titles         |
+| `body`    | 16 / 400      | Message text, primary content    |
+| `label`   | 15 / 600      | Contact names, buttons           |
+| `caption` | 13 / 400      | Timestamps, last-message preview |
+| `micro`   | 11 / 500      | Status text under a bubble       |
 
 Sizes respect the OS font-scale setting; nothing is locked to a fixed pixel height that would
 clip at large text sizes.

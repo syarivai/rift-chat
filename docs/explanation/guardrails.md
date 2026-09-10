@@ -11,12 +11,12 @@ stricter and slower than the last, so problems are caught as early and as cheapl
 
 ## The four gates
 
-| Gate | Command | Enforces |
-| ---- | ------- | -------- |
-| **Type-check** | `npm run typecheck` | `tsc --noEmit` in strict mode — no `any`, exhaustive discriminated-union handling |
-| **Lint** | `npm run lint` | `eslint .` with `eslint-config-expo` — hook rules, import hygiene, RN pitfalls |
-| **Format** | `npm run format:check` | Prettier consistency |
-| **Test** | `npm run test:ci` | Unit, integration, and component tests, with coverage thresholds |
+| Gate           | Command                | Enforces                                                                          |
+| -------------- | ---------------------- | --------------------------------------------------------------------------------- |
+| **Type-check** | `npm run typecheck`    | `tsc --noEmit` in strict mode — no `any`, exhaustive discriminated-union handling |
+| **Lint**       | `npm run lint`         | `eslint .` with `eslint-config-expo` — hook rules, import hygiene, RN pitfalls    |
+| **Format**     | `npm run format:check` | Prettier consistency                                                              |
+| **Test**       | `npm run test:ci`      | Unit, integration, and component tests, with coverage thresholds                  |
 
 `npm run check` runs all four in sequence — the same set, in the same order, that CI runs.
 
@@ -42,7 +42,7 @@ suite, so CI rarely fails for something that could have been caught locally.
 `npm ci` install. This is the authoritative run: it catches "works on my machine" drift and
 anything a hook was bypassed for.
 
-## Why hooks *and* CI
+## Why hooks _and_ CI
 
 Hooks give fast local feedback but can be skipped with `--no-verify`. CI is authoritative but
 slower. Running the same commands in both means the fast path usually suffices and the

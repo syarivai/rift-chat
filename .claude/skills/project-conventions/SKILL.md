@@ -34,12 +34,12 @@ This skill is the working subset plus the process rules that live outside the co
 
 ## Non-negotiables in UI code
 
-| Rule | Why |
-| ---- | --- |
-| No raw hex, rgb, or magic numbers — tokens from `@/core/theme` | Dark mode breaks silently otherwise |
-| No string literals in JSX — `t()` keys in **all three** catalogs | A key missing from `ms`/`id` falls back to English and looks like a bug |
-| `accessibilityLabel` + `accessibilityRole` on interactive elements | Tests and the Maestro flow depend on them |
-| Every screen handles loading, empty, error, and content | Three of the four are where apps feel unfinished |
+| Rule                                                               | Why                                                                     |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| No raw hex, rgb, or magic numbers — tokens from `@/core/theme`     | Dark mode breaks silently otherwise                                     |
+| No string literals in JSX — `t()` keys in **all three** catalogs   | A key missing from `ms`/`id` falls back to English and looks like a bug |
+| `accessibilityLabel` + `accessibilityRole` on interactive elements | Tests and the Maestro flow depend on them                               |
+| Every screen handles loading, empty, error, and content            | Three of the four are where apps feel unfinished                        |
 
 ## The ponytail ladder
 

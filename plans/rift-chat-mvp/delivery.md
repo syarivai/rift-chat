@@ -12,7 +12,7 @@ The **plan of record**. Implements [`requirement.md`](./requirement.md) per
 ## How to use this
 
 1. Take the next unchecked task **in tier order**. Never start a P2 while a P0 or P1 is open.
-2. Read its acceptance criteria *before* writing code.
+2. Read its acceptance criteria _before_ writing code.
 3. Run its verification command and read the output.
 4. Tick the box **in the same commit as the work**. Never tick on intent.
 
@@ -21,11 +21,11 @@ summary written afterwards.
 
 ## Tiers
 
-| Tier | Meaning | Cut policy |
-| ---- | ------- | ---------- |
-| **P0** | Required by the brief. | Never cut. A missing P0 is a failed submission. |
-| **P1** | High-value polish, or our additions that are already half-built. | Cut only if a P0 is at risk. |
-| **P2** | Stretch. | **Cut at the end of day 3**, recorded in the README as a decision. |
+| Tier   | Meaning                                                          | Cut policy                                                         |
+| ------ | ---------------------------------------------------------------- | ------------------------------------------------------------------ |
+| **P0** | Required by the brief.                                           | Never cut. A missing P0 is a failed submission.                    |
+| **P1** | High-value polish, or our additions that are already half-built. | Cut only if a P0 is at risk.                                       |
+| **P2** | Stretch.                                                         | **Cut at the end of day 3**, recorded in the README as a decision. |
 
 ## Executors
 
@@ -34,12 +34,12 @@ account, or a judgement call.
 
 ## Schedule
 
-| Day | Phases | Gate |
-| --- | ------ | ---- |
-| 1 | 0 · 1 · 2 | Contacts list scrolls with real data |
-| 2 | 3 · 4 · 5 | Send works, persists, and survives a restart |
-| 3 | 6 · 7 · 8 → **CUT LINE** | APK built and smoke-tested on a device |
-| 4 | 9 · 10 | README complete, submitted |
+| Day | Phases                   | Gate                                         |
+| --- | ------------------------ | -------------------------------------------- |
+| 1   | 0 · 1 · 2                | Contacts list scrolls with real data         |
+| 2   | 3 · 4 · 5                | Send works, persists, and survives a restart |
+| 3   | 6 · 7 · 8 → **CUT LINE** | APK built and smoke-tested on a device       |
+| 4   | 9 · 10                   | README complete, submitted                   |
 
 Building the APK on **day 3, not day 4**, is deliberate. A release build that fails is the most
 likely late surprise, and discovering it with a day left is recoverable.
@@ -48,36 +48,36 @@ likely late surprise, and discovering it with a day left is recoverable.
 
 ## Phase 0 — Environment and baseline
 
-- [ ] **T-0.1** `P0` `[AI]` · R-01 — Scaffold the Expo app
+- [x] **T-0.1** `P0` `[AI]` · R-01 — Scaffold the Expo app
   - Do: `npx create-expo-app@latest . --template blank-typescript` into the existing repo,
     keeping `docs/`, `.claude/`, `plans/`, `CLAUDE.md`, and `take-home-assessment.md`.
   - Done when: `npm start` boots Metro without error.
   - Verify: `npx expo-doctor`
 
-- [ ] **T-0.2** `P0` `[AI]` · R-01 — Configure `app.json`
+- [x] **T-0.2** `P0` `[AI]` · R-01 — Configure `app.json`
   - Do: name "Rift Chat", slug `rift-chat`, Android package `dev.riftchat.app`, version
     `1.0.0`, `usesCleartextTraffic: false`, portrait orientation.
   - Verify: `npx expo config --type public | grep -E "package|version"`
 
-- [ ] **T-0.3** `P0` `[AI]` · R-29 — TypeScript strict + `@/` path alias
+- [x] **T-0.3** `P0` `[AI]` · R-29 — TypeScript strict + `@/` path alias
   - Do: `strict: true`, `paths: { "@/*": ["src/*"] }` in `tsconfig.json`, matching Metro and
     Jest `moduleNameMapper`.
   - Verify: `npm run typecheck`
 
-- [ ] **T-0.4** `P0` `[AI]` — Install the runtime dependencies
+- [x] **T-0.4** `P0` `[AI]` — Install the runtime dependencies
   - Do: `npx expo install expo-router expo-image expo-constants expo-localization
-    react-native-reanimated react-native-worklets react-native-safe-area-context
-    react-native-screens react-native-gesture-handler @react-native-community/netinfo
-    react-native-mmkv` then `npm i @tanstack/react-query zustand i18next react-i18next`.
+react-native-reanimated react-native-worklets react-native-safe-area-context
+react-native-screens react-native-gesture-handler @react-native-community/netinfo
+react-native-mmkv` then `npm i @tanstack/react-query zustand i18next react-i18next`.
   - Done when: `npx expo-doctor` reports no version mismatches.
   - Verify: `npx expo install --check && npx expo-doctor && npm run typecheck`
   - **Never `npm install` a native or `expo-*` package.** Expo SDK 57 pins compatible versions;
     npm's `latest` is ahead of several, and `react-native-gesture-handler` is a whole major
     ahead (npm 3.2.x vs the SDK's 2.32.x). `expo install` resolves the right one.
 
-- [ ] **T-0.5** `P0` `[AI]` — Install and pin the tooling
+- [x] **T-0.5** `P0` `[AI]` — Install and pin the tooling
   - Do: `npm i -D jest jest-expo @testing-library/react-native eslint eslint-config-expo
-    prettier eslint-config-prettier husky lint-staged @types/jest @types/node`.
+prettier eslint-config-prettier husky lint-staged @types/jest @types/node`.
     **Three pins are mandatory**, each verified against the actual dependency graph — see
     [Tech stack](../../docs/reference/tech-stack.md#version-pins-that-matter):
     **jest 29** (`jest-expo@57` depends on the 29 family), **ESLint 9.x**
@@ -86,27 +86,27 @@ likely late surprise, and discovering it with a day left is recoverable.
   - Done when: jest reports 29.x, ESLint 9.x, TypeScript 6.x.
   - Verify: `npx jest --version && npx eslint --version && npx tsc --version`
 
-- [ ] **T-0.6** `P0` `[AI]` — npm scripts
+- [x] **T-0.6** `P0` `[AI]` — npm scripts
   - Do: add every script in [Commands](../../docs/reference/commands.md), including
     `check` and `apk`.
   - Verify: `npm run check` (may fail on no tests — that is fine here)
 
-- [ ] **T-0.7** `P0` `[AI]` — Guardrails
+- [x] **T-0.7** `P0` `[AI]` — Guardrails
   - Do: ESLint flat config extending `eslint-config-expo` + `eslint-config-prettier`;
     Prettier config; `husky` pre-commit running lint-staged and pre-push running
     `npm run check`.
   - Done when: a deliberately misformatted staged file is auto-fixed on commit.
   - Verify: `npm run lint && npm run format:check`
 
-- [ ] **T-0.8** `P0` `[AI]` · R-32 — Jest configuration
+- [x] **T-0.8** `P0` `[AI]` · R-32 — Jest configuration
   - Do: `jest-expo` preset; `setupFilesAfterEnv` calling
     `require('react-native-reanimated').setUpTests()`; coverage scoped to
-    `src/features/*/model` and `src/core`. **No MMKV mock** — `react-native-mmkv` ships its
-    own Jest mock, so writing one would be re-solving a solved problem.
+    `src/features/*/model` and `src/core`; and `__mocks__/react-native-mmkv.js`, a Map-backed
+    mock. MMKV v4 is a Nitro module and cannot be imported under Jest without it.
   - Done when: one trivial passing test runs.
   - Verify: `npm test`
 
-- [ ] **T-0.9** `P0` `[AI]` · R-31 — Prove Reanimated works before it is needed
+- [x] **T-0.9** `P0` `[AI]` · R-31 — Prove Reanimated works before it is needed
   - Do: render one trivial animated view.
   - Done when: it animates on device without a worklets error.
   - Verify: `npm run android`, observe
@@ -118,7 +118,7 @@ likely late surprise, and discovering it with a day left is recoverable.
     where everything else lands.
   - Verify: `gh repo view --json visibility,url`
 
-- [ ] **T-0.11** `P1` `[AI]` — Record the resolved versions
+- [x] **T-0.11** `P1` `[AI]` — Record the resolved versions
   - Do: after install, reconcile [Tech stack](../../docs/reference/tech-stack.md) against what
     actually landed in `package.json`. The doc is written from Expo's SDK 57 manifest; if a
     resolved version differs, the doc is what gets corrected.
@@ -137,9 +137,9 @@ likely late surprise, and discovering it with a day left is recoverable.
 
 ## Phase 1 — Core infrastructure
 
-- [ ] **T-1.1** `P0` `[AI]` · R-05 R-29 — `BaseHttpClient` (axios)
+- [x] **T-1.1** `P0` `[AI]` · R-05 R-29 — `BaseHttpClient` (axios)
   - Do: `core/api/base-http-client.ts` — an abstract class holding one `axios.create({ baseURL,
-    timeout: 15_000 })`, a response interceptor that unwraps to `data` and normalises errors on
+timeout: 15_000 })`, a response interceptor that unwraps to `data` and normalises errors on
     reject, protected `get<T>` / `post<T>`, and the `withQuery(key, fetcher)` helper that
     returns the fetcher augmented with `.query()`, `.infiniteQuery()` and `.mutation()`.
   - **Three departures from the `BaseHttpClient` reference** — see
@@ -152,7 +152,7 @@ likely late surprise, and discovering it with a day left is recoverable.
        dead code.
   - Verify: `npm run typecheck`
 
-- [ ] **T-1.2** `P0` `[AI]` · R-05 — `RiftApi` and wire types
+- [x] **T-1.2** `P0` `[AI]` · R-05 — `RiftApi` and wire types
   - Do: `core/api/types.ts` — `Envelope<T>`, `Contact`, `Post` mirroring
     [api-contract.md](../../docs/reference/api-contract.md) exactly.
     `core/api/rift-api.ts` — `class RiftApi extends BaseHttpClient` declaring the four
@@ -163,46 +163,46 @@ likely late surprise, and discovering it with a day left is recoverable.
   - Done when: no feature file needs to import `axios` or build a URL.
   - Verify: `npm run typecheck`
 
-- [ ] **T-1.3** `P0` `[AI]` · R-02 R-28 — Query key factory
+- [x] **T-1.3** `P0` `[AI]` · R-02 R-28 — Query key factory
   - Do: `core/query-keys` with `contacts.list/detail` and `messages.thread`, `as const`.
   - Verify: `npm run typecheck`
 
-- [ ] **T-1.4** `P0` `[AI]` · R-02 — QueryClient and provider
+- [x] **T-1.4** `P0` `[AI]` · R-02 — QueryClient and provider
   - Do: `staleTime: 60_000`, `retry: 2`, `refetchOnWindowFocus: false`; mounted in
     `app/_layout.tsx`.
   - Verify: `npm run typecheck`
 
-- [ ] **T-1.5** `P0` `[AI]` · R-03 R-27 — Zustand store with MMKV persistence
+- [x] **T-1.5** `P0` `[AI]` · R-03 R-27 — Zustand store with MMKV persistence
   - Do: `core/store` — `outbox`, `blocked`, `prefs` slices behind `persist` with
     `createJSONStorage` over an MMKV adapter. **MMKV v4 API**: `createMMKV()` (a factory, not
     `new MMKV()`), and `remove()` rather than `delete()` for `removeItem`.
-  - Acceptance: R-18 *"The blocked state survives a restart"*.
+  - Acceptance: R-18 _"The blocked state survives a restart"_.
   - Verify: `npm test -- store`
 
-- [ ] **T-1.6** `P0` `[AI]` · R-30 — Design tokens and theming
+- [x] **T-1.6** `P0` `[AI]` · R-30 — Design tokens and theming
   - Do: `core/theme` — semantic colour tokens with light and dark maps, spacing, radius, and
     type scales; `useTheme()`; resolution order explicit → OS → light.
   - Done when: every token key exists in both palettes.
   - Verify: `npm run typecheck`
 
-- [ ] **T-1.7** `P1` `[AI]` · O-02 — i18n bootstrap
+- [x] **T-1.7** `P1` `[AI]` · O-02 — i18n bootstrap
   - Do: `core/i18n` — i18next + react-i18next, device locale via `expo-localization`,
     `en`/`ms`/`id` catalogs, `en` fallback.
-  - Acceptance: O-02 *"The app opens in the device language"*, *"...falls back to English"*.
+  - Acceptance: O-02 _"The app opens in the device language"_, _"...falls back to English"_.
   - Verify: `npm test -- i18n`
 
-- [ ] **T-1.8** `P0` `[AI]` · R-34 — Shared UI primitives
+- [x] **T-1.8** `P0` `[AI]` · R-34 — Shared UI primitives
   - Do: `core/ui` — `Screen`, `Avatar` (expo-image, `recyclingKey`, placeholder on error),
     `Skeleton`, `EmptyState`, `ErrorState` (with retry).
   - Verify: `npm test -- core/ui`
 
-- [ ] **T-1.9** `P0` `[AI]` · R-06 — Navigation shell
+- [x] **T-1.9** `P0` `[AI]` · R-06 — Navigation shell
   - Do: `app/(tabs)/_layout.tsx` with Chats and Settings; `chat/[id]` and `profile/[id]` routes
     pushing over the group; route params validated.
-  - Acceptance: R-06 *"Both tabs are reachable"*.
+  - Acceptance: R-06 _"Both tabs are reachable"_.
   - Verify: `npm run android`, tap both tabs
 
-- [ ] **T-1.10** `P0` `[AI]` · R-32 — Test fixtures
+- [x] **T-1.10** `P0` `[AI]` · R-32 — Test fixtures
   - Do: `src/test/fixtures.ts` mirroring the real shapes **including the quirks** — the `POST`
     fixture returns `id: 101` and the collection fixture is unchanged afterwards.
   - Done when: a test using `jest.mock('@/core/api/rift-api')` can assert the collection is unchanged
@@ -220,8 +220,8 @@ likely late surprise, and discovering it with a day left is recoverable.
 - [ ] **T-2.1** `P0` `[AI]` · R-07 R-09 R-28 — `useContactsInfinite`
   - Do: `useInfiniteQuery` over `GET /api/users`, 20 per page, `getNextPageParam` returning
     `undefined` when `offset + limit >= total`.
-  - Acceptance: R-09 *"Scrolling loads the next page"*, *"The list stops at the end of the
-    data"*, *"Pagination does not duplicate rows"*.
+  - Acceptance: R-09 _"Scrolling loads the next page"_, _"The list stops at the end of the
+    data"_, _"Pagination does not duplicate rows"_.
   - Verify: `npm test -- contacts`
 
 - [ ] **T-2.2** `P0` `[AI]` · R-08 — `ContactRow`
@@ -232,8 +232,8 @@ likely late surprise, and discovering it with a day left is recoverable.
 - [ ] **T-2.3** `P0` `[AI]` · R-08 O-01 — Last-message selector
   - Do: read the contact's outbox tail; real message + relative timestamp if present,
     otherwise the empty-state string and no timestamp.
-  - Acceptance: R-08 *"A contact with no history shows an honest empty state"*, *"A contact
-    with history shows the real last message"*.
+  - Acceptance: R-08 _"A contact with no history shows an honest empty state"_, _"A contact
+    with history shows the real last message"_.
   - Verify: `npm test -- last-message`
 
 - [ ] **T-2.4** `P0` `[AI]` · R-07 R-09 R-33 — Chats screen
@@ -244,12 +244,12 @@ likely late surprise, and discovering it with a day left is recoverable.
 
 - [ ] **T-2.5** `P0` `[AI]` · R-34 R-30 — Chats screen states
   - Do: skeleton on first load, empty state, error state with a working retry.
-  - Acceptance: R-07 *"The list shows a skeleton before data arrives"*, *"A failed load offers
-    a retry"*.
+  - Acceptance: R-07 _"The list shows a skeleton before data arrives"_, _"A failed load offers
+    a retry"_.
   - Verify: `npm test -- chats-screen`
 
 - [ ] **T-2.6** `P0` `[AI]` · R-10 — Navigate to the chat
-  - Acceptance: R-10 *"Opening a conversation"*.
+  - Acceptance: R-10 _"Opening a conversation"_.
   - Verify: `npm run android`, tap a row
 
 ### Phase 2 gate
@@ -277,8 +277,8 @@ The core of the assignment. Test-first throughout — this is the one place with
 
 - [ ] **T-3.3** `P0` `[AI]` · R-11 R-28 — `useThread`
   - Do: `useInfiniteQuery` over `GET /api/posts?userId=N`, merged with the contact's outbox.
-  - Acceptance: R-11 *"A contact's messages are shown"*, *"Only this contact's messages
-    appear"*.
+  - Acceptance: R-11 _"A contact's messages are shown"_, _"Only this contact's messages
+    appear"_.
   - Verify: `npm test -- use-thread`
 
 - [ ] **T-3.4** `P0` `[AI]` · R-13 R-14 — `useSendMessage`
@@ -288,45 +288,45 @@ The core of the assignment. Test-first throughout — this is the one place with
     Signature note (v5.90+): the `onMutate` return arrives as the **third** argument
     (`onMutateResult`). Do not copy the docs' canonical optimistic recipe — it uses
     `cancelQueries`/`setQueryData`/`invalidateQueries`, none of which apply here.
-  - Acceptance: R-14 *"The message appears before the request resolves"*, *"A successful send
-    is marked delivered"*, *"A failed send is kept, not discarded"*, *"Sending does not destroy
-    earlier messages"*.
+  - Acceptance: R-14 _"The message appears before the request resolves"_, _"A successful send
+    is marked delivered"_, _"A failed send is kept, not discarded"_, _"Sending does not destroy
+    earlier messages"_.
   - Verify: `npm test -- send-message`
   - **This is the highest-risk task in the plan.** Re-read
     [state-boundaries](../../.claude/skills/state-boundaries/SKILL.md) before starting.
 
 - [ ] **T-3.5** `P0` `[AI]` · R-14 — Retry a failed message
-  - Acceptance: R-14 *"Retrying a failed message"*.
+  - Acceptance: R-14 _"Retrying a failed message"_.
   - Verify: `npm test -- send-message`
 
 - [ ] **T-3.6** `P0` `[AI]` · R-30 — `MessageBubble`
   - Do: incoming and outgoing variants; status affordance — pending, delivered, failed with a
-    tappable retry. Failure indicated by icon *and* colour, never colour alone.
+    tappable retry. Failure indicated by icon _and_ colour, never colour alone.
   - Verify: `npm test -- message-bubble`
 
 - [ ] **T-3.7** `P0` `[AI]` · R-12 — `Composer`
   - Do: input pinned to the bottom, send disabled on whitespace-only, clears on send, keyboard
     stays open, trimmed and length-capped before enqueue.
-  - Acceptance: R-12 *"The input clears after sending"*, *"An empty message cannot be sent"*.
+  - Acceptance: R-12 _"The input clears after sending"_, _"An empty message cannot be sent"_.
   - Verify: `npm test -- composer`
 
 - [ ] **T-3.8** `P0` `[AI]` · R-12 R-30 — Keyboard handling
-  - Acceptance: R-12 *"The keyboard does not cover the input"*.
+  - Acceptance: R-12 _"The keyboard does not cover the input"_.
   - Verify: `npm run android`, focus the input on a full thread
 
 - [ ] **T-3.9** `P0` `[AI]` · R-11 R-34 — Chat screen states
   - Do: skeleton, empty conversation placeholder, error with retry; auto-scroll to newest on
     send.
-  - Acceptance: R-11 *"A conversation with no history shows an empty state"*.
+  - Acceptance: R-11 _"A conversation with no history shows an empty state"_.
   - Verify: `npm test -- chat-screen`
 
 - [ ] **T-3.10** `P0` `[AI]` · R-15 — Header navigates to the profile
-  - Acceptance: R-15 *"Opening a contact profile from the chat header"*.
+  - Acceptance: R-15 _"Opening a contact profile from the chat header"_.
   - Verify: `npm run android`, tap the header
 
 - [ ] **T-3.11** `P0` `[HUMAN]` · O-01 — Verify persistence on a device
   - Do: send messages, force-quit, reopen.
-  - Acceptance: O-01 *"A sent message survives an app restart"*.
+  - Acceptance: O-01 _"A sent message survives an app restart"_.
   - Verify: manual, on device — an emulator restart is not the same test
 
 ### Phase 3 gate
@@ -342,26 +342,26 @@ retry · sending repeatedly never removes an earlier message · `npm run check` 
   - Do: `useQuery` with `initialData` from the contacts list cache **and**
     `initialDataUpdatedAt` — without the timestamp the seed counts as fresh and the background
     refetch never runs.
-  - Acceptance: R-17 *"The profile opens without a spinner"*, *"The profile is refreshed in the
-    background"*.
+  - Acceptance: R-17 _"The profile opens without a spinner"_, _"The profile is refreshed in the
+    background"_.
   - Verify: `npm test -- use-contact`
 
 - [ ] **T-4.2** `P0` `[AI]` · R-16 — Profile screen
   - Do: name, avatar, phone; avatar failure degrades to a placeholder.
-  - Acceptance: R-16 *"The profile shows the contact's details"*, *"A missing avatar degrades
-    gracefully"*.
+  - Acceptance: R-16 _"The profile shows the contact's details"_, _"A missing avatar degrades
+    gracefully"_.
   - Verify: `npm test -- profile-screen`
 
 - [ ] **T-4.3** `P0` `[AI]` · R-18 R-27 — Block/unblock toggle
   - Do: toggle the `blocked` slice; the control reflects state immediately.
-  - Acceptance: R-18 *"Blocking a contact"*, *"The blocked state survives a restart"*.
+  - Acceptance: R-18 _"Blocking a contact"_, _"The blocked state survives a restart"_.
   - Verify: `npm test -- blocked`
 
 - [ ] **T-4.4** `P0` `[AI]` · R-18 R-27 — Blocked state across screens
   - Do: chat composer replaced by an unblock bar with history still visible; a blocked
     indicator on the Chats row.
-  - Acceptance: R-18 *"Blocked history remains readable"*, *"Unblocking restores sending"*;
-    R-27 *"One state change is reflected on every screen that shows it"*.
+  - Acceptance: R-18 _"Blocked history remains readable"_, _"Unblocking restores sending"_;
+    R-27 _"One state change is reflected on every screen that shows it"_.
   - Verify: `npm test -- blocked`
 
 ### Phase 4 gate
@@ -375,19 +375,19 @@ restart.
 
 - [ ] **T-5.1** `P0` `[AI]` · R-19 — Settings screen
   - Do: developer name and app version read from `expo-constants`.
-  - Acceptance: R-19 *"Settings shows the developer name and app version"*, *"The version is
-    not hardcoded"*.
+  - Acceptance: R-19 _"Settings shows the developer name and app version"_, _"The version is
+    not hardcoded"_.
   - Verify: `npm test -- settings`
 
 - [ ] **T-5.2** `P1` `[AI]` · O-02 — Language picker
   - Do: System / English / Malay / Indonesian, persisted.
-  - Acceptance: O-02 *"Changing language takes effect immediately"*, *"The language choice
-    persists"*.
+  - Acceptance: O-02 _"Changing language takes effect immediately"_, _"The language choice
+    persists"_.
   - Verify: `npm test -- settings`
 
 - [ ] **T-5.3** `P1` `[AI]` · O-03 — Theme picker
   - Do: System / Light / Dark, persisted.
-  - Acceptance: O-03 *"An explicit theme choice overrides the system"*.
+  - Acceptance: O-03 _"An explicit theme choice overrides the system"_.
   - Verify: `npm test -- settings`
 
 ### Phase 5 gate
@@ -407,7 +407,7 @@ plan is quality, evidence, and submission.
 - [ ] **T-6.2** `P1` `[AI]` · O-03 R-30 — Dark mode sweep
   - Do: no raw hex outside `core/theme`; hairlines, dividers and disabled states verified in
     dark.
-  - Acceptance: O-03 *"The theme is applied before the first paint"*.
+  - Acceptance: O-03 _"The theme is applied before the first paint"_.
   - Verify: `grep -rnE "#[0-9a-fA-F]{3,8}" src/ --include=*.tsx | grep -v core/theme` (empty)
 
 - [ ] **T-6.3** `P1` `[AI]` · R-30 — Accessibility pass
@@ -417,7 +417,7 @@ plan is quality, evidence, and submission.
 
 - [ ] **T-6.4** `P2` `[AI]` · R-31 — Screen transitions
   - Do: Reanimated transitions for list → chat → profile.
-  - Acceptance: R-31 *"Navigating into a chat is animated"*.
+  - Acceptance: R-31 _"Navigating into a chat is animated"_.
   - Verify: `npm run android`, observe
 
 - [ ] **T-6.5** `P2` `[AI]` · R-31 — Message send animation
@@ -433,16 +433,16 @@ All three locales and both themes render correctly on a device.
 ## Phase 7 — Offline
 
 - [ ] **T-7.1** `P1` `[AI]` · O-04 — NetInfo → `onlineManager`
-  - Acceptance: O-04 *"Queries pause rather than fail while offline"*.
+  - Acceptance: O-04 _"Queries pause rather than fail while offline"_.
   - Verify: `npm test -- network`
 
 - [ ] **T-7.2** `P1` `[AI]` · O-04 — Offline banner
-  - Acceptance: O-04 *"Going offline is surfaced"*.
+  - Acceptance: O-04 _"Going offline is surfaced"_.
   - Verify: `npm run android` with airplane mode
 
 - [ ] **T-7.3** `P2` `[AI]` · O-04 — Flush the outbox on reconnect
   - Do: retry failed messages in order when connectivity returns.
-  - Acceptance: O-04 *"Queued messages send on reconnect"*.
+  - Acceptance: O-04 _"Queued messages send on reconnect"_.
   - Verify: `npm test -- reconnect`
 
 ### Phase 7 gate
@@ -465,7 +465,7 @@ Airplane mode produces a banner, a failed send with retry, and no crash.
 - [ ] **T-8.3** `P1` `[AI]` · R-32 R-14 — The regression test that matters most
   - Do: assert that sending a message issues **no** refetch of the thread key, and that ten
     consecutive sends leave ten distinct messages.
-  - Acceptance: R-14 *"Sending does not destroy earlier messages"*.
+  - Acceptance: R-14 _"Sending does not destroy earlier messages"_.
   - Verify: `npm test -- no-invalidate`
   - Why it exists: this is the one bug that would silently destroy user data and still look
     fine in a demo.
@@ -499,19 +499,19 @@ Stop and reassess. `[HUMAN]` decision.
 
 - [ ] **T-9.1** `P1` `[AI]` · R-26 R-33 — Render-count instrumentation
   - Do: a `__DEV__`-guarded counter on `ContactRow`.
-  - Acceptance: R-26 *"Fetching a page does not re-render existing rows"*.
+  - Acceptance: R-26 _"Fetching a page does not re-render existing rows"_.
   - Verify: `npm run android`, scroll one page, read the counter
 
 - [ ] **T-9.2** `P1` `[AI]` · R-33 — Apply and measure the tuning
   - Do: memoisation, `getItemLayout`, window props, `recyclingKey`. Record render counts before
     and after.
-  - Acceptance: R-26 *"Recycled rows never show the wrong avatar"*.
+  - Acceptance: R-26 _"Recycled rows never show the wrong avatar"_.
   - Verify: render counter reads zero re-renders on page fetch
 
 - [ ] **T-9.3** `P1` `[HUMAN]` · R-26 — `gfxinfo` capture on the release build
   - Do: the scripted `adb input swipe` protocol from
     [Run and test](../../docs/how-to/run-and-test.md#measure-list-performance).
-  - Acceptance: R-26 *"Scrolling stays smooth on a release build"* — **under 5% janky frames**.
+  - Acceptance: R-26 _"Scrolling stays smooth on a release build"_ — **under 5% janky frames**.
   - Verify: `adb shell dumpsys gfxinfo dev.riftchat.app | head -20`
   - If the bar is missed after genuine tuning, that is
     [ADR 0003](../../docs/explanation/adr/0003-list-rendering-flatlist.md)'s named trigger to
@@ -545,7 +545,7 @@ Measured numbers exist. No performance adjective appears anywhere without a numb
 
 - [ ] **T-10.4** `P0` `[HUMAN]` · R-24 R-35 — Smoke-test the committed APK
   - Do: install **that exact file** on a device; launch, scroll, send, block, restart.
-  - Acceptance: R-24 *"A reviewer can install the app from the repository"*.
+  - Acceptance: R-24 _"A reviewer can install the app from the repository"_.
   - Verify: manual, on device
 
 - [ ] **T-10.5** `P0` `[AI]` · R-20 R-21 R-22 — Write the README
@@ -586,28 +586,28 @@ requirement covered.
 Two requirements carry no task. Recorded here so the coverage check reports them as handled
 rather than dropped:
 
-| Id | Status |
-| -- | ------ |
-| **R-04** · UI library (optional) | **Declined deliberately.** A hand-built token layer is used instead — see [Design tokens](../../docs/reference/design-tokens.md) and [requirement.md](./requirement.md#r-04--ui-library). Declining an optional item is a decision, not an omission. |
-| **O-05** · Documentation and decision records | **Already delivered** in commits `31cae3c` and `3f60a7d`, before implementation began. Maintained thereafter by `docs-maintainer`. |
+| Id                                            | Status                                                                                                                                                                                                                                               |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **R-04** · UI library (optional)              | **Declined deliberately.** A hand-built token layer is used instead — see [Design tokens](../../docs/reference/design-tokens.md) and [requirement.md](./requirement.md#r-04--ui-library). Declining an optional item is a decision, not an omission. |
+| **O-05** · Documentation and decision records | **Already delivered** in commits `31cae3c` and `3f60a7d`, before implementation began. Maintained thereafter by `docs-maintainer`.                                                                                                                   |
 
 ## Progress
 
-| Phase | P0 | P1 | P2 | Done |
-| ----- | -- | -- | -- | ---- |
-| 0 · Environment | 10 | 2 | 0 | 1/12 |
-| 1 · Core | 9 | 1 | 0 | 0/10 |
-| 2 · Chats | 6 | 0 | 0 | 0/6 |
-| 3 · Chat & outbox | 11 | 0 | 0 | 0/11 |
-| 4 · Profile | 4 | 0 | 0 | 0/4 |
-| 5 · Settings | 1 | 2 | 0 | 0/3 |
-| 6 · Polish | 0 | 3 | 2 | 0/5 |
-| 7 · Offline | 0 | 2 | 1 | 0/3 |
-| 8 · Testing | 0 | 3 | 1 | 0/4 |
-| Cut line | 3 | 0 | 0 | 0/3 |
-| 9 · Performance | 0 | 4 | 0 | 0/4 |
-| 10 · Release | 9 | 0 | 0 | 0/9 |
-| **Total** | **53** | **17** | **4** | **1/74** |
+| Phase             | P0     | P1     | P2    | Done     |
+| ----------------- | ------ | ------ | ----- | -------- |
+| 0 · Environment   | 10     | 2      | 0     | 1/12     |
+| 1 · Core          | 9      | 1      | 0     | 0/10     |
+| 2 · Chats         | 6      | 0      | 0     | 0/6      |
+| 3 · Chat & outbox | 11     | 0      | 0     | 0/11     |
+| 4 · Profile       | 4      | 0      | 0     | 0/4      |
+| 5 · Settings      | 1      | 2      | 0     | 0/3      |
+| 6 · Polish        | 0      | 3      | 2     | 0/5      |
+| 7 · Offline       | 0      | 2      | 1     | 0/3      |
+| 8 · Testing       | 0      | 3      | 1     | 0/4      |
+| Cut line          | 3      | 0      | 0     | 0/3      |
+| 9 · Performance   | 0      | 4      | 0     | 0/4      |
+| 10 · Release      | 9      | 0      | 0     | 0/9      |
+| **Total**         | **53** | **17** | **4** | **1/74** |
 
 Update this table whenever a phase completes. `delivery-tracker` verifies it independently —
 a table that disagrees with the checkboxes is itself a finding.

@@ -27,12 +27,12 @@ a unit test.
 Run the full app in each combination. Three locales × two themes is six passes; most defects
 appear in the first three.
 
-| Dimension | Values |
-| --------- | ------ |
-| Locale | `en`, `ms`, `id` |
-| Theme | light, dark |
-| Network | online, offline, flaky (airplane mode mid-request) |
-| Data | fresh install (empty outbox), after sending, after blocking |
+| Dimension | Values                                                      |
+| --------- | ----------------------------------------------------------- |
+| Locale    | `en`, `ms`, `id`                                            |
+| Theme     | light, dark                                                 |
+| Network   | online, offline, flaky (airplane mode mid-request)          |
+| Data      | fresh install (empty outbox), after sending, after blocking |
 
 ## Per-screen checklist
 

@@ -11,13 +11,13 @@ thoroughly and cheaply it is tested.
 
 ## The pyramid
 
-| Level | Tooling | What it covers | Where |
-| ----- | ------- | -------------- | ----- |
-| **Static** | `tsc --noEmit`, ESLint | Exhaustive union handling, no `any`, hook rules, import hygiene | every file |
-| **Unit** | Jest | Pure logic: outbox merge and ordering, the status lifecycle, relative-time formatting, the query-key factory | `*.test.ts` beside the unit |
-| **Integration** | RNTL `renderHook` + real `QueryClient` + a mocked API class | Offset paging and its stop condition, the optimistic send lifecycle, failure and retry, store persistence | `*.test.tsx` |
-| **Component** | RNTL, queried by a11y role | Composer clears on send, blocked bar replaces the composer, empty state renders | `*.test.tsx` |
-| **End-to-end** | Maestro | One real flow on a device: open, scroll, open a chat, send, see it persist, block | `.maestro/` |
+| Level           | Tooling                                                     | What it covers                                                                                               | Where                       |
+| --------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------- |
+| **Static**      | `tsc --noEmit`, ESLint                                      | Exhaustive union handling, no `any`, hook rules, import hygiene                                              | every file                  |
+| **Unit**        | Jest                                                        | Pure logic: outbox merge and ordering, the status lifecycle, relative-time formatting, the query-key factory | `*.test.ts` beside the unit |
+| **Integration** | RNTL `renderHook` + real `QueryClient` + a mocked API class | Offset paging and its stop condition, the optimistic send lifecycle, failure and retry, store persistence    | `*.test.tsx`                |
+| **Component**   | RNTL, queried by a11y role                                  | Composer clears on send, blocked bar replaces the composer, empty state renders                              | `*.test.tsx`                |
+| **End-to-end**  | Maestro                                                     | One real flow on a device: open, scroll, open a chat, send, see it persist, block                            | `.maestro/`                 |
 
 Static analysis is listed as a test layer on purpose. It catches more real defects per unit of
 effort than any of the rows below it, and it costs nothing per feature.
@@ -38,7 +38,7 @@ method per endpoint, so replacing it with `jest.mock` leaves everything above it
 real — the actual cache, the actual retry behaviour, the actual mutation lifecycle. Stubbing
 `useQuery` would test the mock.
 
-The axios interceptors and URL building sit *below* that seam and are not exercised here. For
+The axios interceptors and URL building sit _below_ that seam and are not exercised here. For
 four endpoints that is an accepted trade, and it is why the Maestro flow runs against the real
 API.
 

@@ -45,14 +45,14 @@ Full versions and rationale: [Reference: Tech stack](./docs/reference/tech-stack
 
 ## Where things live
 
-| Path | Contents |
-| ---- | -------- |
-| `src/app/` | expo-router routes — tab group + pushed screens |
+| Path                    | Contents                                                                                  |
+| ----------------------- | ----------------------------------------------------------------------------------------- |
+| `src/app/`              | expo-router routes — tab group + pushed screens                                           |
 | `src/features/<slice>/` | `api/` (query & mutation hooks) · `model/` (store, selectors, types) · `ui/` (components) |
-| `src/core/` | axios client + API class, store, theme, i18n — cross-cutting only |
-| `docs/` | Diátaxis documentation (this repo's source of truth) |
-| `plans/rift-chat-mvp/` | requirement.md · tech-docs.md · delivery.md |
-| `release/` | the submitted APK |
+| `src/core/`             | axios client + API class, store, theme, i18n — cross-cutting only                         |
+| `docs/`                 | Diátaxis documentation (this repo's source of truth)                                      |
+| `plans/rift-chat-mvp/`  | requirement.md · tech-docs.md · delivery.md                                               |
+| `release/`              | the submitted APK                                                                         |
 
 Architecture is **feature-sliced with a domain layer only where logic is real** — the outbox
 is the one place with genuine business rules, and gets pure functions and thorough tests.
@@ -86,18 +86,18 @@ Ten agents in [`.claude/agents/`](./.claude/agents/), following the **maker · c
 pattern: makers build, checkers report findings rated by criticality × confidence, and only
 **HIGH-confidence** findings are applied.
 
-| Agent | Role |
-| ----- | ---- |
-| `rn-feature-dev` | maker — implements the next delivery.md task, test-first |
-| `rn-code-checker` | checker — TypeScript, layering, the eight rules |
-| `rn-ui-checker` | checker — tokens, a11y, i18n coverage, dark mode |
-| `docs-maintainer` | maker/checker — Diátaxis placement, accuracy, links |
-| `delivery-tracker` | checker — is delivery.md honest about what is done |
-| `perf-auditor` | maker — runs the measurement protocol, writes the numbers |
-| `qa-tester` | checker — pre-submission sweep across locales, themes, error states |
-| `api-contract-verifier` | checker — re-probes the API, detects contract drift |
-| `requirement-extractor` | maker — brief → requirement.md with traceable IDs |
-| `readme-maker` | maker — the graded README, incl. the AI-usage section |
+| Agent                   | Role                                                                |
+| ----------------------- | ------------------------------------------------------------------- |
+| `rn-feature-dev`        | maker — implements the next delivery.md task, test-first            |
+| `rn-code-checker`       | checker — TypeScript, layering, the eight rules                     |
+| `rn-ui-checker`         | checker — tokens, a11y, i18n coverage, dark mode                    |
+| `docs-maintainer`       | maker/checker — Diátaxis placement, accuracy, links                 |
+| `delivery-tracker`      | checker — is delivery.md honest about what is done                  |
+| `perf-auditor`          | maker — runs the measurement protocol, writes the numbers           |
+| `qa-tester`             | checker — pre-submission sweep across locales, themes, error states |
+| `api-contract-verifier` | checker — re-probes the API, detects contract drift                 |
+| `requirement-extractor` | maker — brief → requirement.md with traceable IDs                   |
+| `readme-maker`          | maker — the graded README, incl. the AI-usage section               |
 
 ## Skills
 

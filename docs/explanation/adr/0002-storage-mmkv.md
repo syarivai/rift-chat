@@ -24,28 +24,28 @@ Volume is small: tens of messages, a handful of ids, two preference values.
 
 ### react-native-mmkv
 
-| + | − |
-| - | - |
-| **Synchronous** reads via JSI — the store is hydrated on first render, so no flash and no rehydration gate | Native module: requires a development build, cannot run in Expo Go |
-| Roughly an order of magnitude faster than AsyncStorage on both reads and writes | v3+ needs the New Architecture and cannot run under the legacy Chrome remote debugger (use React Native DevTools) |
-| Simple key-value API that maps directly onto Zustand's `persist` | Tests need `jest.mock('react-native-mmkv')` — one small mock in the setup file |
-| Optional encryption available if the data ever warrants it | One more native dependency to justify |
+| +                                                                                                          | −                                                                                                                 |
+| ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Synchronous** reads via JSI — the store is hydrated on first render, so no flash and no rehydration gate | Native module: requires a development build, cannot run in Expo Go                                                |
+| Roughly an order of magnitude faster than AsyncStorage on both reads and writes                            | v3+ needs the New Architecture and cannot run under the legacy Chrome remote debugger (use React Native DevTools) |
+| Simple key-value API that maps directly onto Zustand's `persist`                                           | Tests need `jest.mock('react-native-mmkv')` — one small mock in the setup file                                    |
+| Optional encryption available if the data ever warrants it                                                 | One more native dependency to justify                                                                             |
 
 ### AsyncStorage
 
-| + | − |
-| - | - |
+| +                                                   | −                                                                                  |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | The default everyone recognises; zero configuration | **Asynchronous** — the flash problem above, or a rehydration gate to paper over it |
-| Works in Expo Go | Noticeably slower; every read crosses the bridge |
-| No New Architecture requirement | Serialises the whole persisted blob per write by default |
+| Works in Expo Go                                    | Noticeably slower; every read crosses the bridge                                   |
+| No New Architecture requirement                     | Serialises the whole persisted blob per write by default                           |
 
 ### expo-sqlite
 
-| + | − |
-| - | - |
-| Real queries — the outbox could be paged and filtered in SQL | Schema and migrations to own, for data that is a handful of keys |
-| Scales to thousands of messages without loading everything into memory | Async API, so the same first-render problem as AsyncStorage |
-| Already an Expo package | Substantially more code for no benefit at this size |
+| +                                                                      | −                                                                |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Real queries — the outbox could be paged and filtered in SQL           | Schema and migrations to own, for data that is a handful of keys |
+| Scales to thousands of messages without loading everything into memory | Async API, so the same first-render problem as AsyncStorage      |
+| Already an Expo package                                                | Substantially more code for no benefit at this size              |
 
 ## Decision
 

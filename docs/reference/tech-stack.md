@@ -7,7 +7,7 @@ category: reference
 # Tech stack & versions
 
 Pinned as of scaffold on **2026-09-10** (Expo SDK 57). Exact versions live in
-[`package.json`](../../package.json); this is the annotated map, and it records *why* each
+[`package.json`](../../package.json); this is the annotated map, and it records _why_ each
 dependency is here.
 
 **"Latest" is the wrong target for an Expo project.** Expo SDK 57 pins compatible versions of
@@ -20,26 +20,26 @@ with `npx expo install`, which resolves the SDK-compatible version. The table be
 
 ## Runtime
 
-| Package | Version | Role |
-| ------- | ------- | ---- |
-| `expo` | ~57.0 | SDK and framework |
-| `react-native` | 0.86.3 | Native runtime (New Architecture) — SDK 57 pin, *not* npm latest 0.87.x |
-| `react` | 19.2.3 | React — SDK 57 pin, *not* npm latest 19.3.x |
-| `expo-router` | ~57.0 | File-based navigation, typed routes |
-| `axios` | ^1.x | HTTP client — interceptors, timeouts, typed request/response |
-| `@tanstack/react-query` | ^5.102 | Server state: caching, infinite queries, mutations |
-| `zustand` | ^5.0 | Client state: outbox, blocked contacts, preferences |
-| `react-native-mmkv` | ^4.3 | Synchronous persistent storage behind the store — not in Expo's manifest, so npm latest is correct here |
-| `expo-image` | ~57.0 | Avatar rendering with disk + memory caching and `recyclingKey` |
-| `expo-constants` | ~57.0 | App version for the Settings screen — never hardcoded |
-| `expo-localization` | ~57.0 | Reads the device locale to pick the default language |
-| `i18next` / `react-i18next` | ^26 / ^17 | Translation engine and its React bindings |
-| `react-native-reanimated` | 4.5.1 | Screen and shared-element transitions — SDK 57 pin, *not* npm latest 4.6.x |
-| `react-native-worklets` | 0.10.1 | Required peer of Reanimated 4 — a separate package since v4 |
-| `@react-native-community/netinfo` | ^12 | Connectivity, wired to React Query's `onlineManager` |
-| `react-native-safe-area-context` | ~5.7.0 | Safe-area insets |
-| `react-native-screens` | ~4.26.0 | Native screen primitives under expo-router |
-| `react-native-gesture-handler` | ~2.32.0 | Gesture primitives — **npm latest is 3.2.x, a major ahead; do not install it** |
+| Package                           | Version   | Role                                                                                                    |
+| --------------------------------- | --------- | ------------------------------------------------------------------------------------------------------- |
+| `expo`                            | ~57.0     | SDK and framework                                                                                       |
+| `react-native`                    | 0.86.3    | Native runtime (New Architecture) — SDK 57 pin, _not_ npm latest 0.87.x                                 |
+| `react`                           | 19.2.3    | React — SDK 57 pin, _not_ npm latest 19.3.x                                                             |
+| `expo-router`                     | ~57.0     | File-based navigation, typed routes                                                                     |
+| `axios`                           | ^1.20     | HTTP client — interceptors, timeouts, typed request/response                                            |
+| `@tanstack/react-query`           | ^5.102    | Server state: caching, infinite queries, mutations                                                      |
+| `zustand`                         | ^5.0      | Client state: outbox, blocked contacts, preferences                                                     |
+| `react-native-mmkv`               | ^4.3      | Synchronous persistent storage behind the store — not in Expo's manifest, so npm latest is correct here |
+| `expo-image`                      | ~57.0     | Avatar rendering with disk + memory caching and `recyclingKey`                                          |
+| `expo-constants`                  | ~57.0     | App version for the Settings screen — never hardcoded                                                   |
+| `expo-localization`               | ~57.0     | Reads the device locale to pick the default language                                                    |
+| `i18next` / `react-i18next`       | ^26 / ^17 | Translation engine and its React bindings                                                               |
+| `react-native-reanimated`         | 4.5.1     | Screen and shared-element transitions — SDK 57 pin, _not_ npm latest 4.6.x                              |
+| `react-native-worklets`           | 0.10.1    | Required peer of Reanimated 4 — a separate package since v4                                             |
+| `@react-native-community/netinfo` | ^12       | Connectivity, wired to React Query's `onlineManager`                                                    |
+| `react-native-safe-area-context`  | ~5.7.0    | Safe-area insets                                                                                        |
+| `react-native-screens`            | ~4.26.0   | Native screen primitives under expo-router                                                              |
+| `react-native-gesture-handler`    | ~2.32.0   | Gesture primitives — **npm latest is 3.2.x, a major ahead; do not install it**                          |
 
 ### Why these three for i18n
 
@@ -52,15 +52,15 @@ touches native code, reading the device's locale to choose the initial language.
 
 ## Tooling
 
-| Package | Version | Role |
-| ------- | ------- | ---- |
-| `typescript` | ~6.0 | Strict typing |
-| `jest` + `jest-expo` | 29 / ~57 | Test runner and RN preset |
-| `@testing-library/react-native` | ^14 | Component and hook tests |
-| `eslint` + `eslint-config-expo` | ^9 / ^57 | Linting (flat config) |
-| `prettier` + `eslint-config-prettier` | ^3 / ^10 | Formatting |
-| `husky` + `lint-staged` | ^9 / ^17 | Git hooks |
-| Maestro | external CLI | End-to-end UI flow |
+| Package                               | Version      | Role                      |
+| ------------------------------------- | ------------ | ------------------------- |
+| `typescript`                          | ~6.0         | Strict typing             |
+| `jest` + `jest-expo`                  | 29 / ~57     | Test runner and RN preset |
+| `@testing-library/react-native`       | ^14          | Component and hook tests  |
+| `eslint` + `eslint-config-expo`       | ^9 / ^57     | Linting (flat config)     |
+| `prettier` + `eslint-config-prettier` | ^3 / ^10     | Formatting                |
+| `husky` + `lint-staged`               | ^9 / ^17     | Git hooks                 |
+| Maestro                               | external CLI | End-to-end UI flow        |
 
 ## Version pins that matter
 
@@ -68,8 +68,19 @@ These are traps, not preferences. Each one costs an afternoon if you trip it.
 
 - **`jest` stays on v29, not v30 — verified.** `jest-expo@57.0.5` depends on `babel-jest`,
   `@jest/globals`, `jest-snapshot` and `jest-environment-jsdom` all at `^29.2.1`. Mixing in
-  jest 30 breaks the module mocker with `clearMocksOnScope is not a function`. The whole jest
-  family is pinned through the `overrides` block in `package.json`.
+  jest 30 breaks the module mocker with `clearMocksOnScope is not a function`. Install
+  `jest@^29` explicitly — and `@types/jest@^29` with it. `npm i -D @types/jest` resolves to
+  **v30** by default, which is a silent mismatch against a jest-29 runtime.
+- **`react-dom` needs an override pinning it to `19.2.3`.** It is an optional peer of `expo`
+  and `@expo/router-server` for web. Left alone, npm resolves `react-dom@19.3.0`, whose own
+  peer demands `react@^19.3.0` — but SDK 57 pins `react@19.2.3`, so `npm install` fails with
+  `ERESOLVE`. The fix is the `overrides` block, **not** `--legacy-peer-deps`, which would hide
+  a real version mismatch rather than resolve it.
+- **Reanimated 4 needs `react-native-worklets`' Jest resolver.** Add
+  `resolver: 'react-native-worklets/jest/resolver.js'` to `jest.config.js`. It strips the
+  `.native` extension so worklets resolves to its JS implementation under Jest. Without it,
+  `setUpTests()` reaches native code and every suite dies with
+  `Cannot read properties of undefined (reading 'loadUnpackers')`.
 - **`eslint` stays on the latest 9.x, not v10 — verified.** `eslint-config-expo` 57 itself
   permits `eslint >=8.10`, but the plugins it depends on do not: `eslint-plugin-react` (7.37.5,
   the newest) peers `^3 || … || ^9.7`, and `eslint-plugin-react-hooks@7` caps at `^9.0.0`.
@@ -81,8 +92,12 @@ These are traps, not preferences. Each one costs an afternoon if you trip it.
   the legacy remote (Chrome) debugger. Use the built-in React Native DevTools instead. It also
   cannot run in Expo Go — this project needs a development build.
 - **MMKV v4's API is a factory**: `createMMKV()`, not `new MMKV()` as in v2/v3, and the delete
-  method is `remove()`. It also **ships its own Jest/Vitest mock**, so no hand-written test
-  shim is needed.
+  method is `remove()`.
+- **MMKV v4 needs a hand-written Jest mock.** It is a Nitro module, so importing it under Jest
+  fails with `Failed to get NitroModules: The native NitroModules Turbo/Native-Module could not
+be found`. The docs describe an automatic mock; it does not apply at this version. A
+  Map-backed mock lives at `__mocks__/react-native-mmkv.js`, which Jest picks up automatically
+  for node_modules packages with no `jest.mock()` call in test files.
 - **`react-native-reanimated` v4 requires `react-native-worklets`** as a separate dependency,
   plus `react-native-reanimated/plugin` listed **last** in `babel.config.js`. Installing
   Reanimated alone gives cryptic worklet errors at runtime. For tests it needs

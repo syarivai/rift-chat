@@ -98,7 +98,7 @@ both described in [ADR 0003](../explanation/adr/0003-list-rendering-flatlist.md)
 
 The contact row logs a render count in development. Open the Chats tab, scroll one full page,
 and read the counter. Before memoisation, fetching page two re-renders every already-mounted
-row; after, it re-renders none. This tells you *what* changed.
+row; after, it re-renders none. This tells you _what_ changed.
 
 ### Frame jank (the outcome)
 

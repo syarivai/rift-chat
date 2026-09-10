@@ -22,6 +22,15 @@ expo-env.d.ts
 # Metro / bundler
 .metro-health-check*
 .bundle/
+*.tsbuildinfo
+
+# Debug logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Kotlin
+.kotlin/
 
 # Testing
 coverage/
@@ -32,7 +41,9 @@ coverage/
 # Env & secrets
 .env
 .env.*
+.env*.local
 !.env.example
+*.pem
 
 # Editor
 *.log

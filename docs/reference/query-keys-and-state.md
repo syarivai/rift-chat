@@ -12,14 +12,14 @@ One rule decides where every piece of state lives:
 
 > **React Query owns what the server knows. Zustand owns what only this device knows.**
 
-| State | Owner | Persisted | Why |
-| ----- | ----- | --------- | --- |
-| Contacts list | React Query | no | Server data; refetchable |
-| Contact profile | React Query | no | Server data; seeded from the list cache |
-| Thread (contact's posts) | React Query | no | Server data; **never invalidated by a send** |
-| Outbox (messages the user sent) | Zustand | **yes** (MMKV) | The server does not persist writes |
-| Blocked contacts | Zustand | **yes** (MMKV) | Client-only preference |
-| Language, theme | Zustand | **yes** (MMKV) | Client-only preference |
+| State                           | Owner       | Persisted      | Why                                          |
+| ------------------------------- | ----------- | -------------- | -------------------------------------------- |
+| Contacts list                   | React Query | no             | Server data; refetchable                     |
+| Contact profile                 | React Query | no             | Server data; seeded from the list cache      |
+| Thread (contact's posts)        | React Query | no             | Server data; **never invalidated by a send** |
+| Outbox (messages the user sent) | Zustand     | **yes** (MMKV) | The server does not persist writes           |
+| Blocked contacts                | Zustand     | **yes** (MMKV) | Client-only preference                       |
+| Language, theme                 | Zustand     | **yes** (MMKV) | Client-only preference                       |
 
 Never mirror server data into the store, and never keep client state in the query cache. The
 query cache is a cache — it is allowed to be thrown away at any moment. User-authored data is
@@ -69,12 +69,12 @@ wrong produces either an infinite loop of empty fetches or a list that stops ear
 
 ## Invalidation rules
 
-| Action | Invalidate | Never invalidate |
-| ------ | ---------- | ---------------- |
-| Pull-to-refresh on Chats | `contacts.list()` | — |
-| Opening a profile | — (background refetch is automatic) | — |
-| **Sending a message** | **nothing** | `messages.thread(id)` — this deletes user data |
-| Blocking a contact | nothing — it is client state | any server query |
+| Action                   | Invalidate                          | Never invalidate                               |
+| ------------------------ | ----------------------------------- | ---------------------------------------------- |
+| Pull-to-refresh on Chats | `contacts.list()`                   | —                                              |
+| Opening a profile        | — (background refetch is automatic) | —                                              |
+| **Sending a message**    | **nothing**                         | `messages.thread(id)` — this deletes user data |
+| Blocking a contact       | nothing — it is client state        | any server query                               |
 
 The send mutation touches no query at all. It appends to the outbox, and the thread selector
 merges the outbox with whatever the thread query holds. See
@@ -90,7 +90,7 @@ type AppState = {
   outbox: {
     // keyed by contactId; append-only from the UI's perspective
     byContact: Record<number, OutboxMessage[]>;
-    enqueue: (contactId: number, body: string) => string;   // returns a local id
+    enqueue: (contactId: number, body: string) => string; // returns a local id
     markSent: (localId: string, serverCreatedAt: string) => void;
     markFailed: (localId: string) => void;
     retry: (localId: string) => void;
@@ -116,8 +116,8 @@ type AppState = {
 Select the narrowest slice a component needs:
 
 ```ts
-const blocked = useAppStore((s) => s.blocked.ids.includes(contactId));   // good
-const store   = useAppStore();                                           // re-renders on everything
+const blocked = useAppStore((s) => s.blocked.ids.includes(contactId)); // good
+const store = useAppStore(); // re-renders on everything
 ```
 
 A selector returning a new object or array every render causes

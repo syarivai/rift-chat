@@ -9,12 +9,12 @@ category: explanation
 This documentation follows the [**Diátaxis**](https://diataxis.fr/) framework, which splits
 docs into four kinds based on what the reader needs _right now_:
 
-| Quadrant | Need | Question it answers | Folder |
-| -------- | ---- | ------------------- | ------ |
-| **Tutorials** | Learning | "Teach me, step by step." | [`tutorials/`](./tutorials) |
-| **How-to guides** | A task done | "How do I _do_ X?" | [`how-to/`](./how-to) |
-| **Reference** | Facts to look up | "What exactly is X?" | [`reference/`](./reference) |
-| **Explanation** | Understanding | "Why is it like this?" | [`explanation/`](./explanation) |
+| Quadrant          | Need             | Question it answers       | Folder                          |
+| ----------------- | ---------------- | ------------------------- | ------------------------------- |
+| **Tutorials**     | Learning         | "Teach me, step by step." | [`tutorials/`](./tutorials)     |
+| **How-to guides** | A task done      | "How do I _do_ X?"        | [`how-to/`](./how-to)           |
+| **Reference**     | Facts to look up | "What exactly is X?"      | [`reference/`](./reference)     |
+| **Explanation**   | Understanding    | "Why is it like this?"    | [`explanation/`](./explanation) |
 
 The split matters: a tutorial that stops to explain theory, or a reference page that tries to
 teach, serves neither reader well. Pick the quadrant by the reader's need, not the topic.
