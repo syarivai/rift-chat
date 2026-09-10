@@ -70,15 +70,21 @@ likely late surprise, and discovering it with a day left is recoverable.
     react-native-screens react-native-gesture-handler @react-native-community/netinfo
     react-native-mmkv` then `npm i @tanstack/react-query zustand i18next react-i18next`.
   - Done when: `npx expo-doctor` reports no version mismatches.
-  - Verify: `npx expo-doctor && npm run typecheck`
+  - Verify: `npx expo install --check && npx expo-doctor && npm run typecheck`
+  - **Never `npm install` a native or `expo-*` package.** Expo SDK 57 pins compatible versions;
+    npm's `latest` is ahead of several, and `react-native-gesture-handler` is a whole major
+    ahead (npm 3.2.x vs the SDK's 2.32.x). `expo install` resolves the right one.
 
 - [ ] **T-0.5** `P0` `[AI]` — Install and pin the tooling
   - Do: `npm i -D jest jest-expo @testing-library/react-native msw eslint eslint-config-expo
     prettier eslint-config-prettier husky lint-staged @types/jest @types/node`.
-    **Pin the whole jest family to 29 via `overrides`** and ESLint to the latest 9.x — see
-    [Tech stack](../../docs/reference/tech-stack.md#version-pins-that-matter).
-  - Done when: `npx jest --version` reports 29.x.
-  - Verify: `npx jest --version && npx eslint --version`
+    **Three pins are mandatory**, each verified against the actual dependency graph — see
+    [Tech stack](../../docs/reference/tech-stack.md#version-pins-that-matter):
+    **jest 29** (`jest-expo@57` depends on the 29 family), **ESLint 9.x**
+    (`eslint-plugin-react` peers cap at `^9.7`), and **TypeScript 6.x**
+    (`@typescript-eslint/parser@8` requires `<6.1.0`, so TS 7 breaks linting outright).
+  - Done when: jest reports 29.x, ESLint 9.x, TypeScript 6.x.
+  - Verify: `npx jest --version && npx eslint --version && npx tsc --version`
 
 - [ ] **T-0.6** `P0` `[AI]` — npm scripts
   - Do: add every script in [Commands](../../docs/reference/commands.md), including
@@ -109,7 +115,13 @@ likely late surprise, and discovering it with a day left is recoverable.
   - Do: `gh repo create rift-chat --public --source . --push`
   - Verify: `gh repo view --json visibility,url`
 
-- [ ] **T-0.11** `P1` `[AI]` · R-25 — CI workflow
+- [ ] **T-0.11** `P1` `[AI]` — Record the resolved versions
+  - Do: after install, reconcile [Tech stack](../../docs/reference/tech-stack.md) against what
+    actually landed in `package.json`. The doc is written from Expo's SDK 57 manifest; if a
+    resolved version differs, the doc is what gets corrected.
+  - Verify: `npx expo install --check` reports no drift
+
+- [ ] **T-0.12** `P1` `[AI]` · R-25 — CI workflow
   - Do: `.github/workflows/ci.yml` — Node 24, `npm ci`, then `npm run check`.
   - Verify: `gh run list --limit 1` shows a green run
 
@@ -556,7 +568,7 @@ rather than dropped:
 
 | Phase | P0 | P1 | P2 | Done |
 | ----- | -- | -- | -- | ---- |
-| 0 · Environment | 10 | 1 | 0 | 0/11 |
+| 0 · Environment | 10 | 2 | 0 | 0/12 |
 | 1 · Core | 8 | 1 | 0 | 0/9 |
 | 2 · Chats | 6 | 0 | 0 | 0/6 |
 | 3 · Chat & outbox | 11 | 0 | 0 | 0/11 |
@@ -568,7 +580,7 @@ rather than dropped:
 | Cut line | 3 | 0 | 0 | 0/3 |
 | 9 · Performance | 0 | 4 | 0 | 0/4 |
 | 10 · Release | 9 | 0 | 0 | 0/9 |
-| **Total** | **52** | **16** | **4** | **0/72** |
+| **Total** | **52** | **17** | **4** | **0/73** |
 
 Update this table whenever a phase completes. `delivery-tracker` verifies it independently —
 a table that disagrees with the checkboxes is itself a finding.
