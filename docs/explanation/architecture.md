@@ -61,27 +61,6 @@ This is the position worth defending: **architecture proportional to complexity*
 layering across four slices would have looked more rigorous and taught a reader less about
 where the difficulty actually is.
 
-## No ports, no Result type
-
-An earlier draft of this design had interfaces for storage, the clock, and connectivity, plus a
-`Result<T, Failure>` sealed union at every fallible boundary. Both were cut, for the same
-reason: **an interface with one implementation is not an abstraction, it is a redirect.**
-
-- **Storage** — the store persists through MMKV directly. Tests use `jest.mock`, which is what
-  Jest is for.
-- **Time** — logic reads the clock directly. Tests use `jest.setSystemTime()`. A `Clock` port
-  would have been re-implementing the test framework.
-- **Connectivity** — NetInfo is wired to React Query's `onlineManager` in one small module and
-  mocked in tests.
-- **Errors** — reads throw and React Query surfaces `error`, `isError`, and retry. The send
-  path's outcome is already modelled where the UI reads it: the outbox message's `status` is
-  `'sending' | 'sent' | 'failed'`. A parallel `Result` type would have described the same
-  states twice.
-
-Native modules are still wrapped **once**, in `core/`, so a feature file never imports
-`react-native-mmkv` directly — but as one thin module, not as an interface plus an adapter plus
-a fake. The wrapping earns its place; the indirection did not.
-
 ## State ownership
 
 The single most consequential rule in the codebase:

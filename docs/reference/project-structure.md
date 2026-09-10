@@ -28,7 +28,7 @@ rift-chat/
     │   ├── chat/[id].tsx     #   Chat thread (pushed over the tabs)
     │   └── profile/[id].tsx  #   Contact profile
     ├── core/                 # cross-cutting infrastructure
-    │   ├── api/              #   fetch client, envelope types
+    │   ├── api/              #   base-http-client.ts (axios) · rift-api.ts · types.ts
     │   ├── store/            #   the Zustand store + MMKV persistence
     │   ├── query-keys/       #   the single query-key factory
     │   ├── theme/            #   design tokens, light/dark palettes, useTheme

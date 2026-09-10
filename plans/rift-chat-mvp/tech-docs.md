@@ -52,7 +52,7 @@ src/
 │   ├── chat/[id].tsx
 │   └── profile/[id].tsx
 ├── core/
-│   ├── api/                  # fetch client, envelope + entity types
+│   ├── api/                  # base-http-client.ts (axios) · rift-api.ts · types.ts
 │   ├── store/                # the Zustand store: outbox, blocked, prefs (+ MMKV persist)
 │   ├── query-keys/           # the single key factory
 │   ├── theme/                # tokens, light/dark palettes, useTheme
@@ -104,16 +104,88 @@ describe the same three states twice.
 
 ## API layer
 
-One small `fetchJson` wrapper: builds the URL, sets the JSON header, throws on a non-2xx or a
-shape that fails a narrow runtime check. Throwing is deliberate — React Query converts it into
-`error` / `isError` / retry, which is what the screens render.
+Modelled on the `BaseHttpClient` / `TransactionAPI` pattern: an abstract axios wrapper, and one
+concrete API class that declares every endpoint alongside the React Query hooks that call it.
+
+```text
+core/api/
+├── base-http-client.ts   # abstract: axios instance, interceptors, get/post, withQuery
+├── rift-api.ts           # class RiftApi extends BaseHttpClient — the four endpoints
+└── types.ts              # Envelope<T>, Contact, Post
+```
+
+### `BaseHttpClient`
 
 ```ts
-GET  /api/users?limit=20&offset=N     → Envelope<Contact>
-GET  /api/users/:id                   → Contact          (bare, not enveloped)
-GET  /api/posts?userId=N&limit&offset → Envelope<Post>
-POST /api/posts                       → Post             (id always 101; not persisted)
+export abstract class BaseHttpClient {
+  protected client: AxiosInstance;
+
+  constructor(baseURL: string) {
+    this.client = axios.create({ baseURL, timeout: 15_000 });
+    // response: unwrap to `data`; request errors are normalised and rethrown
+    this.client.interceptors.response.use(
+      (res) => res.data,
+      (err: AxiosError) => Promise.reject(toApiError(err)),
+    );
+  }
+
+  protected get<T>(path: string, config?: AxiosRequestConfig): Promise<T> { … }
+  protected post<T>(path: string, body?: unknown, config?: AxiosRequestConfig): Promise<T> { … }
+
+  /** Binds an endpoint to its React Query hooks. */
+  protected withQuery<Req, Res>(key: string, fetcher: (req: Req) => Promise<Res>) {
+    return Object.assign(fetcher, {
+      query: (req: Req, options?) => useQuery({ queryKey: [key, req], queryFn: () => fetcher(req), ...options }),
+      infiniteQuery: (req: Req, options) => useInfiniteQuery({ queryKey: [key, req], ...options }),
+      mutation: (options?) => useMutation({ mutationKey: [key], mutationFn: fetcher, ...options }),
+    });
+  }
+}
 ```
+
+`withQuery` returns the fetcher itself, augmented with hooks — so `api.getContacts(params)` is a
+plain promise and `api.getContacts.query(params)` is the hook. The endpoint is declared once.
+
+**Three deliberate departures from the reference implementation:**
+
+1. **No `onSuccess` / `onError` / `onSettled` options on `useQuery`.** TanStack Query **v5
+   removed them**; the reference's shim re-implements a v4 API. Use the returned `data` and
+   `error`, or `useEffect` if a side effect is genuinely needed.
+2. **`infiniteQuery` takes its pagination options from the caller.** The reference hardcodes
+   page-based paging (`initialPageParam: 1`, `getNextPageParam: allPages.length + 1`) which
+   never returns `undefined` and therefore never stops. This API is **offset**-based and
+   reports `total`, so the stop condition is supplied per call.
+3. **No auth, device headers, language headers, or Sentry.** The API is public and
+   unauthenticated. Interceptors that exist to attach a token we do not have are dead code.
+
+### `RiftApi`
+
+```ts
+class RiftApi extends BaseHttpClient {
+  getContacts = this.withQuery('contacts',
+    (p: PageParams) => this.get<Envelope<Contact>>('/api/users', { params: p }));
+
+  getContact = this.withQuery('contact',
+    ({ id }: { id: number }) => this.get<Contact>(`/api/users/${id}`));
+
+  getThread = this.withQuery('thread',
+    (p: PageParams & { userId: number }) => this.get<Envelope<Post>>('/api/posts', { params: p }));
+
+  sendMessage = this.withQuery('send-message',
+    (b: SendMessageInput) => this.post<Post>('/api/posts', b));
+}
+
+export const api = new RiftApi('https://responserift.dev');
+```
+
+### Validation and errors
+
+The response interceptor rejects on non-2xx. Beyond that, each fetcher narrowly checks the shape
+it depends on — that `results` is an array and `total` is a number — and **throws** if it is not,
+so a malformed payload fails at the boundary instead of surfacing as `undefined` three components
+later. No schema library: four endpoints do not justify one.
+
+Errors propagate to React Query, which exposes `error` / `isError` and drives the error state.
 
 ## Query layer
 
@@ -247,14 +319,15 @@ Validation is measured, not asserted: render counts before and after memoisation
 | Layer | Covers |
 | ----- | ------ |
 | Unit | Merge order and stability, the status lifecycle including illegal transitions, relative-time formatting |
-| Integration (RNTL + MSW + real `QueryClient`) | Pagination stop condition, optimistic send happy path, failure, retry, store rehydration |
+| Integration (RNTL + mocked API class + real `QueryClient`) | Pagination stop condition, optimistic send happy path, failure, retry, store rehydration |
 | Component (RNTL) | Composer clears on send, blocked bar replaces the composer, empty states render |
 | E2E (Maestro, one flow) | Launch → scroll → open chat → send → restart → message persists → block |
 
-MSW mocks at the network boundary and **reproduces the quirks**: `POST` returns `id: 101` and
-does not mutate the collection. A handler that persisted the write would hide the bug the whole
-app is designed around. Time is pinned with `jest.setSystemTime()`; MMKV ships its own Jest mock and NetInfo is
-`jest.mock`ed.
+Tests mock the **API class** (`jest.mock('@/core/api')`), which leaves the real React Query
+machinery running. Fixtures **reproduce the quirks**: the `POST` fixture returns `id: 101` and
+the collection fixture is unchanged afterwards. A fixture that persisted the write would hide
+the bug the whole app is designed around. Time is pinned with `jest.setSystemTime()`; MMKV ships
+its own Jest mock and NetInfo is `jest.mock`ed.
 
 ## Security
 

@@ -18,11 +18,18 @@ npm run ios           # build & run the iOS dev build
 build**. Expo Go cannot run this app — MMKV and Reanimated need native code that Expo Go does
 not ship. `npm start` only serves JavaScript to an already-installed build.
 
-If `android/` does not exist yet, or you changed `app.json`, regenerate it first:
+**You do not need to run `prebuild` first.** `expo run:*` invokes it automatically when the
+native folder is missing. Run it by hand only to force a regeneration after changing native
+config in `app.json`:
 
 ```bash
-npx expo prebuild -p android --clean
+npx expo prebuild --clean             # both platforms
+npx expo prebuild -p android --clean  # just Android
 ```
+
+Both platforms build from the same source. Android is where QA, performance measurement and the
+demo recording happen because the APK is the graded deliverable; iOS is verified on the
+simulator.
 
 ## Run tests
 

@@ -60,7 +60,11 @@ The rules, condensed. The _why_ is in [Architecture](../explanation/architecture
 - List rows are memoised components declared outside the parent; no inline arrow props, no
   inline object styles in a row.
 - `expo-image` gets a `recyclingKey` wherever it renders inside a list.
-- Every screen handles four states: loading (skeleton), empty, error (with retry), and content.
+- Every screen handles four states: loading, empty, error (with retry), and content.
+- **Reads get a skeleton, not a spinner** — it matches the shape of the incoming content so the
+  layout does not jump. A background refetch shows nothing at all; a next-page fetch shows a
+  small footer spinner. **Writes usually show nothing**: the optimistic result is the feedback.
+  Use a spinner for a write only when it blocks the UI and there is no optimistic result.
 
 ## Time & determinism
 
@@ -72,7 +76,8 @@ The rules, condensed. The _why_ is in [Architecture](../explanation/architecture
 ## Tests
 
 - Co-locate `*.test.ts(x)` beside the unit.
-- Mock the API at the network boundary with MSW, not by stubbing hooks.
+- Mock the API class (`jest.mock('@/core/api')`), not individual hooks. The API class is the
+  seam; stubbing `useQuery` tests the stub.
 - Query by accessibility role or label; use `testID` only where no role fits.
 - Deterministic: fixed clock, no real timers, no real network.
 - RNTL v14's `render` is async — `await render(<C />)`.

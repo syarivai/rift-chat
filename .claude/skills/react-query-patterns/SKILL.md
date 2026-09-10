@@ -26,6 +26,28 @@ new QueryClient({
 Connectivity is wired to `onlineManager` via NetInfo, so queries **pause** when the device is
 offline instead of failing and burning retries.
 
+## Where endpoints live
+
+Every endpoint is declared **once**, on the `RiftApi` class in `@/core/api/rift-api`, using
+`withQuery`. That returns the fetcher augmented with `.query()`, `.infiniteQuery()` and
+`.mutation()`, so a feature hook is a thin wrapper supplying options:
+
+```ts
+export const useContactsInfinite = () =>
+  api.getContacts.infiniteQuery({ limit: PAGE_SIZE }, {
+    queryKey: queryKeys.contacts.list(),
+    initialPageParam: 0,
+    getNextPageParam: (last) =>
+      last.offset + last.limit >= last.total ? undefined : last.offset + last.limit,
+  });
+```
+
+Never call `axios` from a feature file, and never build a URL outside `RiftApi`.
+
+**`useQuery` has no `onSuccess` / `onError` / `onSettled` in v5** — they were removed. Derive
+from `data` and `error`; if a side effect is genuinely required, use `useEffect`. Mutations
+still have their callbacks.
+
 ## Query keys
 
 From the factory in `@/core/query-keys`, never inline:
@@ -126,15 +148,26 @@ response to a network error.
 
 ## Loading states
 
-Distinguish them — collapsing them produces a spinner where a skeleton belongs:
+**Reads get skeletons. Writes get spinners — and usually not even that.**
 
-- `isPending` — no data yet → skeleton.
-- `isFetching && !isPending` — background refresh → leave content, no spinner.
-- `isFetchingNextPage` → footer spinner on the list.
-- `isError` → error state with a retry that calls `refetch()`.
-- data present but empty → empty state, never a spinner.
+A skeleton shows the shape of the content that is coming, so the layout does not jump when it
+arrives. A spinner says only "something is happening" and is the wrong choice for a screen whose
+shape is already known.
+
+| State | Treatment |
+| ----- | --------- |
+| `isPending` — a read with no data yet | **Skeleton** matching the real layout. Never a spinner. |
+| `isFetching && !isPending` — background refresh | Nothing. Leave the content; do not flash a spinner over data the user is reading. |
+| `isFetchingNextPage` | Small footer spinner on the list — the shape below is unknown, so a skeleton would be a guess. |
+| `isError` | Error state with a retry that calls `refetch()`. |
+| Loaded but empty | Empty state. Never a spinner. |
+| **A mutation in flight** | Usually nothing — the optimistic bubble is the feedback. Show a spinner only where a write blocks the UI and there is no optimistic result to show. |
+
+Sending a message needs **no spinner**: the bubble appears immediately with a pending indicator,
+which communicates more than a spinner would. Adding one on top would be feedback for something
+the user can already see.
 
 ## Testing
 
-Mock at the network boundary with MSW; never stub `useQuery`. A test with a stubbed hook tests
-the stub. See [rn-testing](../rn-testing/SKILL.md).
+Mock the API class (`jest.mock('@/core/api')`); never stub `useQuery`. A test with a stubbed
+hook tests the stub. See [rn-testing](../rn-testing/SKILL.md).

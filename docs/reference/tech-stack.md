@@ -26,6 +26,7 @@ with `npx expo install`, which resolves the SDK-compatible version. The table be
 | `react-native` | 0.86.3 | Native runtime (New Architecture) — SDK 57 pin, *not* npm latest 0.87.x |
 | `react` | 19.2.3 | React — SDK 57 pin, *not* npm latest 19.3.x |
 | `expo-router` | ~57.0 | File-based navigation, typed routes |
+| `axios` | ^1.x | HTTP client — interceptors, timeouts, typed request/response |
 | `@tanstack/react-query` | ^5.102 | Server state: caching, infinite queries, mutations |
 | `zustand` | ^5.0 | Client state: outbox, blocked contacts, preferences |
 | `react-native-mmkv` | ^4.3 | Synchronous persistent storage behind the store — not in Expo's manifest, so npm latest is correct here |
@@ -56,7 +57,6 @@ touches native code, reading the device's locale to choose the initial language.
 | `typescript` | ~6.0 | Strict typing |
 | `jest` + `jest-expo` | 29 / ~57 | Test runner and RN preset |
 | `@testing-library/react-native` | ^14 | Component and hook tests |
-| `msw` | ^2.15 | Mocks the API at the network boundary |
 | `eslint` + `eslint-config-expo` | ^9 / ^57 | Linting (flat config) |
 | `prettier` + `eslint-config-prettier` | ^3 / ^10 | Formatting |
 | `husky` + `lint-staged` | ^9 / ^17 | Git hooks |
@@ -105,7 +105,7 @@ Two authorities, in this order:
 
 1. **Expo's `bundledNativeModules.json` for SDK 57** — the compatible version of every native
    and `expo-*` package. This is what `npx expo install` reads.
-2. **npm** — for JS-only tooling that Expo does not pin (`msw`, `prettier`, `husky`,
+2. **npm** — for JS-only tooling that Expo does not pin (`axios`, `prettier`, `husky`,
    `lint-staged`, and the deliberate `jest` / `eslint` / `typescript` pins above).
 
 For anything Expo pins, npm's `latest` tag is **not** the target. `api-contract-verifier`

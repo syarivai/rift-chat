@@ -11,11 +11,11 @@ A React Native chat client built as a take-home assessment (see
 Settings — over the public [responserift.dev](https://responserift.dev) API, where
 `api/users` are contacts and `api/posts` are messages.
 
-Stack: Expo (prebuild) · expo-router · TypeScript strict · TanStack Query · Zustand + MMKV ·
-hand-built design tokens · i18next (en/ms/id) · Jest + RNTL + MSW · Maestro.
+Stack: Expo (prebuild) · expo-router · TypeScript strict · axios + TanStack Query ·
+Zustand + MMKV · hand-built design tokens · i18next (en/ms/id) · Jest + RNTL · Maestro.
 Full versions and rationale: [Reference: Tech stack](./docs/reference/tech-stack.md).
 
-## The eight rules
+## Repo rules
 
 1. **Never `invalidateQueries` on a message thread.** `POST /api/posts` is not persisted and
    always returns `id: 101`. Invalidating a thread deletes every message the user has ever
@@ -49,7 +49,7 @@ Full versions and rationale: [Reference: Tech stack](./docs/reference/tech-stack
 | ---- | -------- |
 | `src/app/` | expo-router routes — tab group + pushed screens |
 | `src/features/<slice>/` | `api/` (query & mutation hooks) · `model/` (store, selectors, types) · `ui/` (components) |
-| `src/core/` | api client, store, theme, i18n — cross-cutting only |
+| `src/core/` | axios client + API class, store, theme, i18n — cross-cutting only |
 | `docs/` | Diátaxis documentation (this repo's source of truth) |
 | `plans/rift-chat-mvp/` | requirement.md · tech-docs.md · delivery.md |
 | `release/` | the submitted APK |

@@ -15,7 +15,7 @@ thoroughly and cheaply it is tested.
 | ----- | ------- | -------------- | ----- |
 | **Static** | `tsc --noEmit`, ESLint | Exhaustive union handling, no `any`, hook rules, import hygiene | every file |
 | **Unit** | Jest | Pure logic: outbox merge and ordering, the status lifecycle, relative-time formatting, the query-key factory | `*.test.ts` beside the unit |
-| **Integration** | RNTL `renderHook` + real `QueryClient` + MSW | Offset paging and its stop condition, the optimistic send lifecycle, failure and retry, store persistence | `*.test.tsx` |
+| **Integration** | RNTL `renderHook` + real `QueryClient` + a mocked API class | Offset paging and its stop condition, the optimistic send lifecycle, failure and retry, store persistence | `*.test.tsx` |
 | **Component** | RNTL, queried by a11y role | Composer clears on send, blocked bar replaces the composer, empty state renders | `*.test.tsx` |
 | **End-to-end** | Maestro | One real flow on a device: open, scroll, open a chat, send, see it persist, block | `.maestro/` |
 
@@ -33,9 +33,14 @@ The integration row. It is where this app can genuinely be wrong:
 - A failed send that rolls back instead of surfacing a retry.
 - A merge that reorders messages between renders.
 
-MSW mocks at the network boundary rather than stubbing hooks, so these tests exercise the real
-React Query machinery — the actual cache, the actual retry behaviour, the actual mutation
-lifecycle. Stubbing `useQuery` would test the mock.
+These tests mock the **API class**, not the hooks. `@/core/api` is a single object with one
+method per endpoint, so replacing it with `jest.mock` leaves everything above it running for
+real — the actual cache, the actual retry behaviour, the actual mutation lifecycle. Stubbing
+`useQuery` would test the mock.
+
+The axios interceptors and URL building sit *below* that seam and are not exercised here. For
+four endpoints that is an accepted trade, and it is why the Maestro flow runs against the real
+API.
 
 ## Determinism
 

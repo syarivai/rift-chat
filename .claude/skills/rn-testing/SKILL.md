@@ -1,6 +1,6 @@
 ---
 name: rn-testing
-description: Testing setup and patterns for rift-chat — jest-expo config, native module mocks, RNTL conventions, MSW handlers, hook tests with a real QueryClient, and the one Maestro flow. Load before writing any test or touching jest config.
+description: Testing setup and patterns for rift-chat — jest-expo config, native module mocks, RNTL conventions, API mocking, hook tests with a real QueryClient, and the one Maestro flow. Load before writing any test or touching jest config.
 ---
 
 # React Native testing
@@ -41,10 +41,10 @@ Determinism comes from Jest, not from an injected clock abstraction: `jest.setSy
 pins the clock, and `newId()` is mocked in one place. Re-implementing that with a `Clock` port
 would duplicate what the test framework already gives you.
 
-## Integration tests — hooks with MSW
+## Integration tests — hooks with a mocked API class
 
-This is where most of the value is. Mock at the network boundary, so the real React Query
-machinery runs.
+This is where most of the value is. Mock the **API class**, not the hooks, so the real React
+Query machinery — cache, retry, mutation lifecycle — actually runs.
 
 ```ts
 const wrapper = ({ children }) => (
@@ -88,18 +88,37 @@ expect(screen.getByLabelText('Message')).toHaveProp('value', '');
 Test behaviour, not structure. Avoid broad snapshots — they fail on every intentional design
 change and catch almost nothing unintentional.
 
-## MSW handlers
+## Mocking the API
 
-Handlers live in `src/test/msw/handlers.ts` and mirror the real shapes in
-[api-contract.md](../../../docs/reference/api-contract.md) exactly — including the quirks:
-`POST /api/posts` returns `id: 101` and does not mutate the collection. A handler that
-persists the write would hide the very bug the app is designed around.
-
-Override per test for failure cases:
+`@/core/api` exports a single `api` instance. That class is the seam — mock it, and every hook
+above it runs for real:
 
 ```ts
-server.use(http.post('*/api/posts', () => HttpResponse.error()));
+jest.mock('@/core/api');
+const mockedApi = jest.mocked(api);
+
+mockedApi.getContacts.mockResolvedValue({
+  total: 60, limit: 20, offset: 0, results: [contactFixture()],
+});
 ```
+
+Fixtures live in `src/test/fixtures.ts` and **mirror the real shapes exactly**, including the
+quirks from [api-contract.md](../../../docs/reference/api-contract.md): a `POST` fixture returns
+`id: 101` and the collection fixture is unchanged afterwards. A fixture that pretended the write
+persisted would hide the very bug the whole app is designed around.
+
+Failure cases are one line:
+
+```ts
+mockedApi.sendMessage.mockRejectedValue(new Error('network'));
+```
+
+**Do not mock hooks.** `jest.mock('@/features/chat/api/use-thread')` tests the mock. The point
+of these tests is that `getNextPageParam` and the mutation lifecycle are exercised for real.
+
+**What this does not cover**: the axios interceptors and URL building sit below the mock, so
+they are not exercised here. For four endpoints that is an accepted trade — the Maestro flow
+hits the real API.
 
 ## End-to-end — one Maestro flow
 

@@ -44,8 +44,8 @@ discriminated unions so impossible combinations cannot be represented — the ou
 Test-first, at the lowest layer that can express the behaviour:
 
 - **Pure logic** → a plain Jest test beside the unit (`*.test.ts`).
-- **A query or mutation hook** → `renderHook` with a real `QueryClient` over MSW handlers
-  (`*.test.tsx`). This is where most of the value is; see
+- **A query or mutation hook** → `renderHook` with a real `QueryClient` over a mocked API
+  class (`jest.mock('@/core/api')`, `*.test.tsx`). This is where most of the value is; see
   [Testing strategy](../explanation/testing-strategy.md).
 - **A component's behaviour** → RNTL, queried by accessibility role or label, never by testID
   where a role exists.
@@ -54,7 +54,11 @@ Run it. Watch it fail for the right reason before you make it pass.
 
 ## 5. Server state → `api/`
 
-Add the fetcher and the hook. Non-negotiables:
+Endpoints are declared **once**, on the API class in `@/core/api` — one `withQuery` entry per
+endpoint, which exposes `.query()`, `.infiniteQuery()` and `.mutation()` for that endpoint. The
+feature's `api/` folder holds the thin hook that calls it with the right options.
+
+Non-negotiables:
 
 - Query keys come from the factory in `@/core/query-keys` — never an inline array literal.
 - Lists use `useInfiniteQuery` with offset paging; `getNextPageParam` returns `undefined` once

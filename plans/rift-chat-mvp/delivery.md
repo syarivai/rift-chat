@@ -76,7 +76,7 @@ likely late surprise, and discovering it with a day left is recoverable.
     ahead (npm 3.2.x vs the SDK's 2.32.x). `expo install` resolves the right one.
 
 - [ ] **T-0.5** `P0` `[AI]` — Install and pin the tooling
-  - Do: `npm i -D jest jest-expo @testing-library/react-native msw eslint eslint-config-expo
+  - Do: `npm i -D jest jest-expo @testing-library/react-native eslint eslint-config-expo
     prettier eslint-config-prettier husky lint-staged @types/jest @types/node`.
     **Three pins are mandatory**, each verified against the actual dependency graph — see
     [Tech stack](../../docs/reference/tech-stack.md#version-pins-that-matter):
@@ -135,57 +135,77 @@ likely late surprise, and discovering it with a day left is recoverable.
 
 ## Phase 1 — Core infrastructure
 
-- [ ] **T-1.1** `P0` `[AI]` · R-05 — API client and wire types
-  - Do: `core/api` — `fetchJson` (URL builder, JSON header, throws on non-2xx and on a shape
-    that fails a narrow runtime check) plus `Envelope<T>`, `Contact`, `Post` mirroring
-    [api-contract.md](../../docs/reference/api-contract.md).
-  - Done when: types match the documented shapes exactly.
+- [ ] **T-1.1** `P0` `[AI]` · R-05 R-29 — `BaseHttpClient` (axios)
+  - Do: `core/api/base-http-client.ts` — an abstract class holding one `axios.create({ baseURL,
+    timeout: 15_000 })`, a response interceptor that unwraps to `data` and normalises errors on
+    reject, protected `get<T>` / `post<T>`, and the `withQuery(key, fetcher)` helper that
+    returns the fetcher augmented with `.query()`, `.infiniteQuery()` and `.mutation()`.
+  - **Three departures from the `BaseHttpClient` reference** — see
+    [tech-docs](./tech-docs.md#api-layer):
+    1. No `onSuccess`/`onError`/`onSettled` options on `useQuery` — **removed in v5**.
+    2. `infiniteQuery` takes pagination options from the caller; do **not** hardcode the
+       reference's page-based `getNextPageParam`, which never returns `undefined` and so never
+       terminates.
+    3. No auth, device, language or Sentry interceptors — the API is public, so those would be
+       dead code.
   - Verify: `npm run typecheck`
 
-- [ ] **T-1.2** `P0` `[AI]` · R-02 R-28 — Query key factory
+- [ ] **T-1.2** `P0` `[AI]` · R-05 — `RiftApi` and wire types
+  - Do: `core/api/types.ts` — `Envelope<T>`, `Contact`, `Post` mirroring
+    [api-contract.md](../../docs/reference/api-contract.md) exactly.
+    `core/api/rift-api.ts` — `class RiftApi extends BaseHttpClient` declaring the four
+    endpoints via `withQuery` (`getContacts`, `getContact`, `getThread`, `sendMessage`), and
+    exporting a single `api` instance.
+  - Do: each fetcher narrowly checks the shape it depends on (`results` is an array, `total` is
+    a number) and **throws** if not. No schema library — four endpoints do not justify one.
+  - Done when: no feature file needs to import `axios` or build a URL.
+  - Verify: `npm run typecheck`
+
+- [ ] **T-1.3** `P0` `[AI]` · R-02 R-28 — Query key factory
   - Do: `core/query-keys` with `contacts.list/detail` and `messages.thread`, `as const`.
   - Verify: `npm run typecheck`
 
-- [ ] **T-1.3** `P0` `[AI]` · R-02 — QueryClient and provider
+- [ ] **T-1.4** `P0` `[AI]` · R-02 — QueryClient and provider
   - Do: `staleTime: 60_000`, `retry: 2`, `refetchOnWindowFocus: false`; mounted in
     `app/_layout.tsx`.
   - Verify: `npm run typecheck`
 
-- [ ] **T-1.4** `P0` `[AI]` · R-03 R-27 — Zustand store with MMKV persistence
+- [ ] **T-1.5** `P0` `[AI]` · R-03 R-27 — Zustand store with MMKV persistence
   - Do: `core/store` — `outbox`, `blocked`, `prefs` slices behind `persist` with
     `createJSONStorage` over an MMKV adapter. **MMKV v4 API**: `createMMKV()` (a factory, not
     `new MMKV()`), and `remove()` rather than `delete()` for `removeItem`.
   - Acceptance: R-18 *"The blocked state survives a restart"*.
   - Verify: `npm test -- store`
 
-- [ ] **T-1.5** `P0` `[AI]` · R-30 — Design tokens and theming
+- [ ] **T-1.6** `P0` `[AI]` · R-30 — Design tokens and theming
   - Do: `core/theme` — semantic colour tokens with light and dark maps, spacing, radius, and
     type scales; `useTheme()`; resolution order explicit → OS → light.
   - Done when: every token key exists in both palettes.
   - Verify: `npm run typecheck`
 
-- [ ] **T-1.6** `P1` `[AI]` · O-02 — i18n bootstrap
+- [ ] **T-1.7** `P1` `[AI]` · O-02 — i18n bootstrap
   - Do: `core/i18n` — i18next + react-i18next, device locale via `expo-localization`,
     `en`/`ms`/`id` catalogs, `en` fallback.
   - Acceptance: O-02 *"The app opens in the device language"*, *"...falls back to English"*.
   - Verify: `npm test -- i18n`
 
-- [ ] **T-1.7** `P0` `[AI]` · R-34 — Shared UI primitives
+- [ ] **T-1.8** `P0` `[AI]` · R-34 — Shared UI primitives
   - Do: `core/ui` — `Screen`, `Avatar` (expo-image, `recyclingKey`, placeholder on error),
     `Skeleton`, `EmptyState`, `ErrorState` (with retry).
   - Verify: `npm test -- core/ui`
 
-- [ ] **T-1.8** `P0` `[AI]` · R-06 — Navigation shell
+- [ ] **T-1.9** `P0` `[AI]` · R-06 — Navigation shell
   - Do: `app/(tabs)/_layout.tsx` with Chats and Settings; `chat/[id]` and `profile/[id]` routes
     pushing over the group; route params validated.
   - Acceptance: R-06 *"Both tabs are reachable"*.
   - Verify: `npm run android`, tap both tabs
 
-- [ ] **T-1.9** `P0` `[AI]` · R-32 — MSW handlers
-  - Do: `src/test/msw` reproducing the real shapes **including the quirks** — `POST` returns
-    `id: 101` and does not mutate the collection.
-  - Done when: a handler-backed test can assert the collection is unchanged after a POST.
-  - Verify: `npm test -- msw`
+- [ ] **T-1.10** `P0` `[AI]` · R-32 — Test fixtures
+  - Do: `src/test/fixtures.ts` mirroring the real shapes **including the quirks** — the `POST`
+    fixture returns `id: 101` and the collection fixture is unchanged afterwards.
+  - Done when: a test using `jest.mock('@/core/api/rift-api')` can assert the collection is unchanged
+    after a send.
+  - Verify: `npm test -- fixtures`
 
 ### Phase 1 gate
 
@@ -574,7 +594,7 @@ rather than dropped:
 | Phase | P0 | P1 | P2 | Done |
 | ----- | -- | -- | -- | ---- |
 | 0 · Environment | 10 | 2 | 0 | 0/12 |
-| 1 · Core | 8 | 1 | 0 | 0/9 |
+| 1 · Core | 9 | 1 | 0 | 0/10 |
 | 2 · Chats | 6 | 0 | 0 | 0/6 |
 | 3 · Chat & outbox | 11 | 0 | 0 | 0/11 |
 | 4 · Profile | 4 | 0 | 0 | 0/4 |
@@ -585,7 +605,7 @@ rather than dropped:
 | Cut line | 3 | 0 | 0 | 0/3 |
 | 9 · Performance | 0 | 4 | 0 | 0/4 |
 | 10 · Release | 9 | 0 | 0 | 0/9 |
-| **Total** | **52** | **17** | **4** | **0/73** |
+| **Total** | **53** | **17** | **4** | **0/74** |
 
 Update this table whenever a phase completes. `delivery-tracker` verifies it independently —
 a table that disagrees with the checkboxes is itself a finding.

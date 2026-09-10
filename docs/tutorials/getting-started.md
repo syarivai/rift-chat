@@ -10,6 +10,8 @@ By the end of this tutorial you will have rift-chat running on an emulator, you 
 a message and watched it survive an app restart, and you will have run the test suite. It
 takes about twenty minutes, most of which is the first native build.
 
+## 0. Prerequisite
+
 You need **Node 24**, **Java 17**, and either **Android Studio** (with an emulator) or
 **Xcode**. Check what you have:
 
@@ -29,30 +31,41 @@ npm install
 
 `npm install` also sets up the git hooks, so your first commit will be linted automatically.
 
-## 2. Generate the native project
-
-The `android/` and `ios/` folders are not in the repository — they are generated from
-`app.json` whenever you need them. This is Expo's Continuous Native Generation, and it is why
-you never have to resolve a merge conflict inside a Gradle file.
-
-```bash
-npx expo prebuild -p android
-```
-
-## 3. Run it
+## 2. Run it
 
 ```bash
 npm run android      # or: npm run ios
 ```
 
-The first build takes several minutes because Gradle is compiling the native project from
-scratch. Later runs are much faster, and pure JavaScript changes reload instantly without
+That is the whole step. The `android/` and `ios/` folders are not in the repository — they are
+generated from `app.json` — but **you do not need to generate them yourself**: `expo run:android`
+and `expo run:ios` each run `prebuild` automatically when the folder is missing. This is Expo's
+Continuous Native Generation, and it is why you never have to resolve a merge conflict inside a
+Gradle file.
+
+You would only run `prebuild` by hand to *force* a regeneration after changing native config in
+`app.json`:
+
+```bash
+npx expo prebuild --clean            # both platforms
+npx expo prebuild -p android --clean # just Android
+```
+
+Both platforms are supported. `-p android` narrows it to one; omitting `-p` generates both. The
+app is developed cross-platform, and Android is simply where QA, performance measurement and the
+demo recording happen, because the APK is the deliverable.
+
+The first build takes several minutes because Gradle (or Xcode) is compiling the native project
+from scratch. Later runs are much faster, and pure JavaScript changes reload instantly without
 rebuilding at all.
+
+> **Expo Go will not work.** MMKV and Reanimated need native code that Expo Go does not ship,
+> so a development build is required. That is what the commands above produce.
 
 You should land on the **Chats** tab, showing a list of contacts fetched from
 `responserift.dev`. Scroll to the bottom and the next page loads automatically.
 
-## 4. Send your first message
+## 3. Send your first message
 
 Tap any contact. You will see their messages — and, most likely, an empty-looking thread,
 because the API only has two or three posts per user. That is expected; the
@@ -69,7 +82,7 @@ Type something and hit send. Three things happen, and they are worth watching cl
 Now force-quit the app and reopen it. Your message is still there. It is stored locally,
 because the API accepts posts but does not persist them — so the app keeps its own record.
 
-## 5. Break it on purpose
+## 4. Negative Tests
 
 Turn on airplane mode and send another message. An offline banner appears, the bubble shows a
 red retry icon instead of a tick, and nothing is lost. Turn the network back on: the queued
@@ -77,7 +90,7 @@ message sends itself.
 
 This is the failure path working as designed, and it is worth seeing once so you trust it.
 
-## 6. Run the tests
+## 5. Run the tests
 
 ```bash
 npm test
