@@ -20,7 +20,7 @@ matter more than this app's threat model, and because a reviewer will look.
 - No API keys, tokens, passwords, or private URLs in source, config, or committed fixtures.
 - `.env` is gitignored; only `.env.example` with placeholder values is committed.
 - If this app ever needs a credential, it belongs in the platform keystore
-  (Keychain / Android Keystore) behind a `core/` port — never in MMKV, never in JS memory
+  (Keychain / Android Keystore), wrapped once in `core/` — never in MMKV, never in JS memory
   longer than needed.
 
 ## Transport
@@ -44,7 +44,7 @@ matter more than this app's threat model, and because a reviewer will look.
 - The API returns real-shaped personal data: names, emails, phone numbers, addresses. Do not
   log user objects, message bodies, or full API responses.
 - Strip or guard `console.*` in release builds.
-- Crash and error reports must carry a `Failure` kind and a code path, never message content.
+- Crash and error reports must carry an error type and a code path, never message content.
 - Screenshots and recordings for the README show fixture data only — check for anything that
   looks like a real phone number before committing an image.
 
@@ -54,8 +54,7 @@ matter more than this app's threat model, and because a reviewer will look.
   markup.
 - Trim and length-cap the composer input before it reaches the outbox or the network.
 - Treat every API response as untrusted: validate the shape at the boundary in `core/api` and
-  return a `Failure` rather than letting a malformed payload propagate as `undefined` into the
-  UI.
+  **throw** rather than letting a malformed payload propagate as `undefined` into the UI.
 
 ## Deep links and navigation
 

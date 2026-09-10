@@ -13,7 +13,7 @@ thoroughly and cheaply it is tested.
 
 | Level | Tooling | What it covers | Where |
 | ----- | ------- | -------------- | ----- |
-| **Static** | `tsc --noEmit`, ESLint | Exhaustive `Failure` handling, no `any`, hook rules, import hygiene | every file |
+| **Static** | `tsc --noEmit`, ESLint | Exhaustive union handling, no `any`, hook rules, import hygiene | every file |
 | **Unit** | Jest | Pure logic: outbox merge and ordering, the status lifecycle, relative-time formatting, the query-key factory | `*.test.ts` beside the unit |
 | **Integration** | RNTL `renderHook` + real `QueryClient` + MSW | Offset paging and its stop condition, the optimistic send lifecycle, failure and retry, store persistence | `*.test.tsx` |
 | **Component** | RNTL, queried by a11y role | Composer clears on send, blocked bar replaces the composer, empty state renders | `*.test.tsx` |
@@ -39,10 +39,11 @@ lifecycle. Stubbing `useQuery` would test the mock.
 
 ## Determinism
 
-Logic that reads the clock or generates ids takes them by injection (`Clock`, id generator),
-so tests supply a fixed clock and assert exact ordering. The storage port is swapped for an
-in-memory map; the connectivity monitor is a controllable fake with `setOnline()`. No real
-timers, no real network, no flake.
+Determinism comes from Jest, not from injected abstractions: `jest.setSystemTime()` pins the
+clock so ordering is assertable, `newId()` is mocked in one place, and `jest.mock` replaces
+MMKV and NetInfo. Building a `Clock` port and a storage port to achieve this would have
+re-implemented the test framework — see [Architecture](./architecture.md). No real timers, no
+real network, no flake.
 
 ## What is deliberately not tested
 

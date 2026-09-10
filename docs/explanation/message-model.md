@@ -70,12 +70,12 @@ enqueue ──► sending ──► sent
 ```
 
 1. **Enqueue.** The user hits send. A message with a fresh `localId`, status `sending`, and a
-   `Clock`-supplied timestamp is appended to the outbox and persisted. The bubble appears
+   timestamp is appended to the outbox and persisted. The bubble appears
    immediately — this is the optimistic update, and it is optimistic about *delivery*, not
    about existence: the message is already durable before the request leaves.
 2. **`201`.** Status becomes `sent`, `createdAt` is refined from the response, and a tick
    renders. No query is touched.
-3. **Failure.** Status becomes `failed`. The bubble stays put with a red retry affordance. The
+3. **The request fails.** Status becomes `failed`. The bubble stays put with a red retry affordance. The
    message is not lost and is not rolled back — rolling back would delete something the user
    wrote, which is the wrong instinct for a messaging app even when the request genuinely failed.
 4. **Retry.** Status returns to `sending` and the request is re-issued.

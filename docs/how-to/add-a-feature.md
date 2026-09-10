@@ -26,18 +26,18 @@ still be true if we swapped React Query, the UI, or the API?**
 
 - **No** (the common case) — the logic is fetching, mapping, or rendering. Put it in `api/`
   or `ui/` and move on.
-- **Yes** — it belongs in `src/features/<name>/model/` as **pure functions** with injected
-  `Clock` and id generation, unit-tested without React. The outbox is the current example: its
-  merge order and status lifecycle are real rules, so they live in pure functions.
+- **Yes** — it belongs in `src/features/<name>/model/` as **pure functions**, unit-tested
+   without React. The outbox is the current example: its merge order and status lifecycle are
+   real rules, so they live in pure functions. Tests control time with `jest.setSystemTime()`.
 
 Resisting the urge to add layers is part of the job here. See
 [Architecture](../explanation/architecture.md) for why the ceiling is set where it is.
 
 ## 3. Types first
 
-Declare the feature's types in `model/types.ts`. Entities are `readonly`. Anything that can
-fail returns `Result<T, Failure>` from `@/core/result` — never throw for an expected failure,
-and handle every `kind` of `Failure` at the call site.
+Declare the feature's types in `model/types.ts`. Entities are `readonly`. Model states as
+discriminated unions so impossible combinations cannot be represented — the outbox message's
+`status` is the example. Errors throw; React Query surfaces them.
 
 ## 4. Write the failing test
 
@@ -65,9 +65,8 @@ Add the fetcher and the hook. Non-negotiables:
 
 ## 6. Client state → `model/`
 
-If the feature needs state that outlives a screen, add a slice to the Zustand store. Persisted
-slices go through the MMKV storage port in `@/core/storage`, never `react-native-mmkv`
-directly, so tests can swap in an in-memory implementation.
+If the feature needs state that outlives a screen, add a slice to the Zustand store. Persistence
+goes through the store's `persist` middleware; tests mock the MMKV module.
 
 Select narrowly — `useStore((s) => s.thing)`, not the whole store — or every row in a
 60-item list re-renders when any unrelated value changes.
@@ -80,7 +79,7 @@ Select narrowly — `useStore((s) => s.thing)`, not the whole store — or every
 - Interactive elements get `accessibilityLabel` and `accessibilityRole` — the tests and the
   Maestro flow both rely on them.
 - List rows are memoised components defined outside the parent, with no inline arrow props.
-  See [rn-performance](../../.claude/skills/rn-performance/SKILL.md).
+  See the `rn-performance` skill.
 
 ## 8. Route it
 

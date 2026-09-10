@@ -25,8 +25,11 @@ Full versions and rationale: [Reference: Tech stack](./docs/reference/tech-stack
    profiles are queries. The outbox, the blocked set, and preferences are store slices
    persisted to MMKV. Never cache client state in the query cache or mirror server data in
    the store. Boundary: [Reference: Query keys & state](./docs/reference/query-keys-and-state.md).
-3. **Errors are values.** Fallible operations return `Result<T, Failure>` from `@/core/result`.
-   `Failure` is a sealed union — handle every `kind`. Never throw for an expected failure.
+3. **Take the laziest rung that works.** Before writing code, climb the ponytail ladder: does
+   it need to exist, does it already exist here, does the stdlib or an installed dependency
+   cover it, can it be one line. No abstraction nobody asked for, no port with one
+   implementation, no barrel file. Errors propagate — React Query surfaces `error`, and the
+   outbox's `status` carries send state. There is no `Result` type.
 4. **No hardcoded user-facing strings.** Every string is an i18n key present in **all three**
    catalogs (`en`, `ms`, `id`). See [Reference: i18n](./docs/reference/i18n.md).
 5. **No hardcoded colors, spacing, radii, or type sizes.** Use `@/core/theme` tokens so dark
@@ -46,14 +49,15 @@ Full versions and rationale: [Reference: Tech stack](./docs/reference/tech-stack
 | ---- | -------- |
 | `src/app/` | expo-router routes — tab group + pushed screens |
 | `src/features/<slice>/` | `api/` (query & mutation hooks) · `model/` (store, selectors, types) · `ui/` (components) |
-| `src/core/` | api client, result, storage, theme, i18n, time — cross-cutting only |
+| `src/core/` | api client, store, theme, i18n — cross-cutting only |
 | `docs/` | Diátaxis documentation (this repo's source of truth) |
 | `plans/rift-chat-mvp/` | requirement.md · tech-docs.md · delivery.md |
 | `release/` | the submitted APK |
 
 Architecture is **feature-sliced with a domain layer only where logic is real** — the outbox
-is the one place with genuine business rules and gets pure functions, an injected `Clock`,
-and exhaustive tests. Everything else stays thin on purpose.
+is the one place with genuine business rules, and gets pure functions and thorough tests.
+Everything else stays thin on purpose. Time is read directly; tests control it with
+`jest.setSystemTime()`.
 See [Explanation: Architecture](./docs/explanation/architecture.md).
 
 ## Documentation map
@@ -117,3 +121,8 @@ touching any query or mutation) and **`project-conventions`** (the house rules).
   dropped and recorded in the README as a deliberate decision, not an omission.
 - **Evidence before claims.** Never report a task complete without running its verification
   command and reading the output. Performance claims need measured numbers.
+- **Ponytail is installed.** Its ladder governs implementation: fewest files, shortest working
+  diff, deletion over addition, no unrequested abstraction. It does not override decisions
+  made deliberately in [the ADRs](./docs/explanation/adr/README.md) — those were requested.
+  Mark a deliberate simplification that cuts a real corner with a `ponytail:` comment naming
+  the ceiling and the upgrade path.

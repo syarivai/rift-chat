@@ -82,9 +82,8 @@ merges the outbox with whatever the thread query holds. See
 
 ## Store shape
 
-A single store composed of three slices, each persisted through the storage port in
-`@/core/storage` — never `react-native-mmkv` directly, so tests can substitute an in-memory
-adapter.
+A single store composed of three slices, persisted with MMKV through Zustand's `persist`
+middleware. Feature code imports the store, never `react-native-mmkv`; tests mock the module.
 
 ```ts
 type AppState = {

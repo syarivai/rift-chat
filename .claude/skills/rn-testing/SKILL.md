@@ -18,9 +18,9 @@ These cost an afternoon each if you trip them.
   the `overrides` block of `package.json`.
 - **Reanimated needs its jest setup entry** in `setupFiles`, plus `react-native-worklets` — a
   separate package since Reanimated 4.
-- **MMKV cannot run under Jest.** Tests use the in-memory adapter from `@/core/storage`. If a
-  test needs to mock `react-native-mmkv` directly, the feature code imported it directly, and
-  *that* is the bug.
+- **MMKV cannot run under Jest.** Mock it with `jest.mock('react-native-mmkv')` in the setup
+  file, backed by a plain `Map`. That is one small mock in one place, and it is what Jest is
+  for.
 - **RNTL v14's `render` is async** — `await render(<C />)`.
 - **`transformIgnorePatterns`** must keep the jest-expo default; narrowing it breaks ESM
   dependencies.
@@ -31,13 +31,14 @@ The outbox merge, ordering, status lifecycle, and relative-time formatting. No R
 network, no renderer.
 
 ```ts
-const clock = fixedClock('2026-09-10T10:00:00Z');
-const merged = mergeThread({ posts, outbox, clock });
+jest.useFakeTimers().setSystemTime(new Date('2026-09-10T10:00:00Z'));
+const merged = mergeThread({ posts, outbox });
 expect(merged.map((m) => m.id)).toEqual([...]);
 ```
 
-Determinism comes from injection: a fixed `Clock` and a seeded id generator. Never let logic
-call `Date.now()` — ordering assertions become flaky the moment a test runs slowly.
+Determinism comes from Jest, not from an injected clock abstraction: `jest.setSystemTime()`
+pins the clock, and `newId()` is mocked in one place. Re-implementing that with a `Clock` port
+would duplicate what the test framework already gives you.
 
 ## Integration tests — hooks with MSW
 
@@ -69,6 +70,7 @@ produces order-dependent failures.
 | Retry returns `failed` → `sending` | The recovery path |
 | Merge order is stable across renders | Wrong → bubbles jump around |
 | Outbox and blocked set survive a store rehydrate | The persistence promise |
+| A malformed API payload throws at the boundary | Otherwise it surfaces as `undefined` three components later |
 
 ## Component tests — RNTL
 

@@ -28,7 +28,7 @@ Volume is small: tens of messages, a handful of ids, two preference values.
 | - | - |
 | **Synchronous** reads via JSI — the store is hydrated on first render, so no flash and no rehydration gate | Native module: requires a development build, cannot run in Expo Go |
 | Roughly an order of magnitude faster than AsyncStorage on both reads and writes | v3+ needs the New Architecture and cannot run under the legacy Chrome remote debugger (use React Native DevTools) |
-| Simple key-value API that maps directly onto Zustand's `persist` | Tests need the storage port swapped for an in-memory adapter |
+| Simple key-value API that maps directly onto Zustand's `persist` | Tests need `jest.mock('react-native-mmkv')` — one small mock in the setup file |
 | Optional encryption available if the data ever warrants it | One more native dependency to justify |
 
 ### AsyncStorage

@@ -35,9 +35,12 @@ makes stale.
    open. Read its acceptance criteria before writing anything.
 2. **Locate the seam.** Read the surrounding slice. Follow the existing shape rather than
    inventing a parallel one.
-3. **Decide where the logic lives.** Ask: would this rule survive swapping React Query, the UI,
-   or the API? If no, it is `api/` or `ui/` code. If yes, it is a pure function in `model/` with
-   an injected `Clock`. Today the outbox is the only place that qualifies —
+3. **Climb the ponytail ladder first.** Does this need to exist · does it already exist here ·
+   does the stdlib or an installed dependency cover it · can it be one line. No unrequested
+   abstraction, no port with one implementation, no barrel file.
+   Then decide where the logic lives: would this rule survive swapping React Query, the UI, or
+   the API? If no, it is `api/` or `ui/` code. If yes, it is a pure function in `model/`. Today
+   the outbox is the only place that qualifies —
    [Architecture](../../docs/explanation/architecture.md).
 4. **Write the failing test first**, at the lowest layer that can express the behaviour. Run it.
    Confirm it fails for the right reason.
@@ -54,6 +57,10 @@ These come from [CLAUDE.md](../../CLAUDE.md) and are non-negotiable:
   need it, stop and re-read [state-boundaries](../skills/state-boundaries/SKILL.md).
 - **Never roll back a failed send.** Mark it `failed` with retry.
 - Query keys from the factory; no inline literals.
+- Errors throw — no `Result` type. React Query surfaces read failures; the outbox `status`
+  union carries send state.
+- Mark a deliberate simplification that cuts a real corner with a `ponytail:` comment naming
+  the ceiling and the upgrade path.
 - No raw colours or spacing — tokens only. No string literals in JSX — `t()` keys in all three
   catalogs.
 - Every screen handles loading, empty, error, and content.

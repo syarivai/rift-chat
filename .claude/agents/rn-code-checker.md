@@ -56,15 +56,18 @@ its own work.
 - The server response `id` used as a React key or an identity (it is always `101`).
 - Server data written into the store, or client state written into the query cache.
 - `any`, `@ts-ignore`, or a non-null assertion added to silence a failure.
-- A `Failure` union `switch` with no exhaustiveness guard.
 - A feature file importing `react-native-mmkv`, `expo-localization`, or NetInfo directly
-  instead of through a `core/` port.
+  instead of through its `core/` wrapper.
 - A slice importing another slice.
+- An abstraction with exactly one implementation — a port, a wrapper, a factory, or a `Result`
+  type — reintroduced. These were removed deliberately; see
+  [Architecture](../../docs/explanation/architecture.md).
+- A barrel `index.ts` that only re-exports.
 
 ### MEDIUM
 
 - An inline query-key literal instead of the factory.
-- `Date.now()` inside logic instead of the injected `Clock`.
+- A deliberate corner cut with no `ponytail:` comment naming its ceiling.
 - An inline arrow prop, inline style object, or non-memoised row inside a list.
 - `expo-image` in a list without `recyclingKey`.
 - A Zustand selector returning a fresh object without `useShallow`.
@@ -72,7 +75,7 @@ its own work.
 
 ### LOW
 
-- Naming, file placement, barrel omissions, comment noise.
+- Naming, file placement, comment noise.
 
 ## Output format
 

@@ -13,7 +13,7 @@ stricter and slower than the last, so problems are caught as early and as cheapl
 
 | Gate | Command | Enforces |
 | ---- | ------- | -------- |
-| **Type-check** | `npm run typecheck` | `tsc --noEmit` in strict mode — no `any`, exhaustive `Result`/`Failure` handling |
+| **Type-check** | `npm run typecheck` | `tsc --noEmit` in strict mode — no `any`, exhaustive discriminated-union handling |
 | **Lint** | `npm run lint` | `eslint .` with `eslint-config-expo` — hook rules, import hygiene, RN pitfalls |
 | **Format** | `npm run format:check` | Prettier consistency |
 | **Test** | `npm run test:ci` | Unit, integration, and component tests, with coverage thresholds |

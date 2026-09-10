@@ -1,6 +1,6 @@
 ---
 name: typescript-standards
-description: TypeScript idioms, the Result/Failure error model, and antipatterns for rift-chat. Load before writing TypeScript.
+description: TypeScript idioms, discriminated-union modelling, error handling, and antipatterns for rift-chat. Load before writing TypeScript.
 ---
 
 # TypeScript standards
@@ -16,34 +16,22 @@ description: TypeScript idioms, the Result/Failure error model, and antipatterns
 - **`readonly` on entities and state.** Updates produce new objects.
 - **`as const`** on literal maps, key factories, and token objects, so their types are exact.
 
-## Errors are values
+## Errors
 
-Fallible operations return `Result<T, Failure>` rather than throwing. `Failure` is a **sealed
-union**, which is what makes handling exhaustive:
+Errors propagate. There is no `Result` type in this codebase — that was considered and
+rejected as an abstraction nobody asked for (see the ponytail ladder in
+[project-conventions](../project-conventions/SKILL.md)).
 
-```ts
-type Failure =
-  | { kind: 'network'; status?: number }
-  | { kind: 'validation'; field: string }
-  | { kind: 'storage' }
-  | { kind: 'unknown'; cause?: unknown };
+- **Reads**: let the fetcher throw. React Query catches it and gives you `error`, `isError`,
+  and retry for free. Re-implementing that in the type system buys nothing the UI uses.
+- **Writes**: the send path's outcome is already modelled where the UI reads it — the outbox
+  message's `status` is `'sending' | 'sent' | 'failed'`. That union *is* the error handling,
+  and it is the one the screen renders.
+- **Validation at the API boundary**: if a payload is malformed, throw. It is not an expected
+  outcome, and pretending otherwise spreads handling across every caller.
 
-type Result<T, E = Failure> =
-  | { ok: true; value: T }
-  | { ok: false; error: E };
-```
-
-Adding a `kind` surfaces every unhandled `switch` at compile time — which is the entire point.
-Use an exhaustiveness guard:
-
-```ts
-function assertNever(x: never): never {
-  throw new Error(`Unhandled: ${JSON.stringify(x)}`);
-}
-```
-
-Throw only for **programmer errors** (an impossible state), never for expected failures like a
-network timeout.
+Throw `Error` with a useful message. Do not invent an error class hierarchy until something
+actually branches on the type — today nothing does.
 
 ## Inference
 
@@ -61,7 +49,7 @@ type Msg = { sending: boolean; failed: boolean; sent: boolean };
 type Msg =
   | { status: 'sending' }
   | { status: 'sent'; deliveredAt: string }
-  | { status: 'failed'; error: Failure };
+  | { status: 'failed'; error: string };
 ```
 
 The second version makes the impossible states unrepresentable and gives each state exactly the
@@ -81,14 +69,16 @@ data it needs. This is the outbox message model.
 | Antipattern | Instead |
 | ----------- | ------- |
 | `any` in a catch | `catch (e: unknown)` then narrow |
+| A `Result` wrapper around a throw | Let it throw; React Query already models the failure |
 | Optional properties everywhere | A discriminated union with exact members |
 | `as SomeType` to force a shape | Validate at the boundary and return a `Result` |
 | Enums | `as const` object plus a derived union type |
 | Deep generic gymnastics | A simpler runtime shape |
-| `Promise<void>` that swallows errors | Return `Promise<Result<T>>` |
+| `Promise<void>` that swallows errors | Let it throw; React Query surfaces it |
 
 ## At the API boundary
 
-Never trust a response. Validate the shape in `core/api` and return
-`Result<T, Failure>`, so a malformed payload becomes a handled failure instead of an
-`undefined` that surfaces three components later as a crash.
+Never trust a response. Validate the shape in `core/api` and **throw** on a malformed payload,
+so it fails at the boundary instead of surfacing three components later as an `undefined`
+crash with no useful stack. React Query turns that throw into an error state the screen
+already knows how to render.

@@ -18,8 +18,9 @@ app  →  features  →  core
   from a slice. No data fetching, no business logic.
 - **`src/features/<slice>/`** — `api/` (query and mutation hooks), `model/` (store slices,
   types, pure logic), `ui/` (components). Slices never import each other.
-- **`src/core/`** — cross-cutting infrastructure: the fetch client, `Result`, the storage port,
-  the query-key factory, theme, i18n, `Clock`, network monitoring, shared UI primitives.
+- **`src/core/`** — cross-cutting infrastructure: the fetch client, the store and its MMKV
+  persistence, the query-key factory, theme, i18n, formatting, network monitoring, shared UI
+  primitives.
 
 The dependency direction is one-way. `core/` knows nothing about features; features know
 nothing about each other. When two slices need the same thing, it moves down into `core/` —
@@ -52,37 +53,34 @@ Message handling is genuinely non-trivial, and none of it is about React or Reac
   returns `id: 101` for every write.
 
 These are rules that would still be true if React Query were replaced tomorrow. So they live in
-`src/features/chat/model/` as **pure functions** taking an injected `Clock`, tested without
-React, without a network, and without a renderer. That is a domain layer in everything but
-name, applied to the one place that earns it.
+`src/features/chat/model/` as **pure functions**, tested without React, without a network, and
+without a renderer. That is a domain layer in everything but name, applied to the one place
+that earns it.
 
 This is the position worth defending: **architecture proportional to complexity**. Uniform
 layering across four slices would have looked more rigorous and taught a reader less about
 where the difficulty actually is.
 
-## Ports where swappability pays
+## No ports, no Result type
 
-Interfaces are introduced only where a second implementation genuinely exists:
+An earlier draft of this design had interfaces for storage, the clock, and connectivity, plus a
+`Result<T, Failure>` sealed union at every fallible boundary. Both were cut, for the same
+reason: **an interface with one implementation is not an abstraction, it is a redirect.**
 
-| Port (`core/`) | Real implementation | Test implementation |
-| -------------- | ------------------- | ------------------- |
-| `Storage` | MMKV | in-memory map |
-| `Clock` | system clock | fixed clock |
-| `ConnectivityMonitor` | NetInfo | controllable fake |
+- **Storage** — the store persists through MMKV directly. Tests use `jest.mock`, which is what
+  Jest is for.
+- **Time** — logic reads the clock directly. Tests use `jest.setSystemTime()`. A `Clock` port
+  would have been re-implementing the test framework.
+- **Connectivity** — NetInfo is wired to React Query's `onlineManager` in one small module and
+  mocked in tests.
+- **Errors** — reads throw and React Query surfaces `error`, `isError`, and retry. The send
+  path's outcome is already modelled where the UI reads it: the outbox message's `status` is
+  `'sending' | 'sent' | 'failed'`. A parallel `Result` type would have described the same
+  states twice.
 
-The API client is not behind a port, because MSW intercepts at the network boundary — a fake
-client would test less and cost more. Everything else is concrete until a second implementation
-shows up.
-
-## Errors are values
-
-Fallible operations return `Result<T, Failure>` rather than throwing, and `Failure` is a sealed
-union (`network | validation | storage | unknown`). Callers must handle both branches, and
-adding a failure kind surfaces every unhandled `switch` at compile time.
-
-This matters most on the send path. The failure case is not an edge case there — it is a state
-the UI renders (a red retry affordance under the bubble), so it deserves to be in the type
-rather than in a `catch` block someone might forget.
+Native modules are still wrapped **once**, in `core/`, so a feature file never imports
+`react-native-mmkv` directly — but as one thin module, not as an interface plus an adapter plus
+a fake. The wrapping earns its place; the indirection did not.
 
 ## State ownership
 
@@ -107,6 +105,14 @@ and all three languages without conditionals.
 No manual `useMemo`/`useCallback` scattered on principle — but list rows *are* memoised
 deliberately, with the render-count evidence in
 [ADR 0003](./adr/0003-list-rendering-flatlist.md) rather than an assumption.
+
+## The through-line
+
+Every decision above is the same decision: **build the smallest thing that is actually correct,
+and let the tools you already have do their job.** React Query already models request failure.
+Jest already controls time and mocks modules. Zustand already persists. The one place that got
+a genuine domain layer is the one place none of them cover — the outbox's merge and lifecycle
+rules.
 
 ## See also
 

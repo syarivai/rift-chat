@@ -63,7 +63,8 @@ and being unconventional needs a stronger reason than taste.
 
 ## Consequences
 
-- One store, three slices, composed in `src/core/store`, persisted through the storage port.
+- One store, three slices, composed in `src/core/store`, persisted with MMKV via the `persist`
+  middleware. Tests mock the MMKV module.
 - Every selector must be narrow. Object- and array-returning selectors are wrapped in
   `useShallow`; this is in [Conventions](../../reference/conventions.md) and checked in review.
 - No devtools time-travel. Acceptable at this size, and partly offset by the outbox being

@@ -14,22 +14,26 @@ The rules, condensed. The _why_ is in [Architecture](../explanation/architecture
 - `core/` imports nothing from `features/`.
 - Feature slices never import each other; shared code moves to `core/`.
 - `model/` holds pure logic and store slices — no React components, no JSX.
-- Native capabilities are reached only through a `core/` port. Feature code never imports
-  `react-native-mmkv`, `expo-localization`, or `@react-native-community/netinfo` directly.
+- Native modules are wrapped once, in `core/`, and used directly from there — one thin module,
+  not an interface with a single implementation. Tests mock the module.
 - Add a domain layer only when a rule would survive swapping React Query, the UI, or the API.
+- Take the laziest rung that works: does it need to exist, does it already exist here, does the
+  stdlib or an installed dependency cover it, can it be one line.
 
 ## Modules & imports
 
-- One folder, one barrel `index.ts`; import through it, not deep paths.
-- Use the `@/…` alias, never `../../../`.
+- Import the file you mean, through the `@/…` alias. **No barrel `index.ts` files** — a file
+  per folder that re-exports what is already there is boilerplate, and it hides what a module
+  actually depends on.
+- Never `../../../`.
 - `kebab-case.ts` filenames; one primary export per file where practical.
 
 ## Types & errors
 
 - `strict` TypeScript; no `any`. Prefer `unknown` plus narrowing.
-- Fallible operations return `Result<T, Failure>`; never throw for an expected failure.
-- `Failure` is a sealed union (`network | validation | storage | unknown`) — handle every
-  `kind`, so adding a case surfaces every unhandled `switch` at compile time.
+- **Errors throw.** There is no `Result` type: React Query surfaces `error` for reads, and the
+  outbox's `status` union carries send state. Throw at the API boundary on a malformed payload.
+- Model states as discriminated unions, so impossible combinations cannot be represented.
 - Entities and state are `readonly`; updates produce new objects.
 
 ## Server state (React Query)
@@ -42,7 +46,7 @@ The rules, condensed. The _why_ is in [Architecture](../explanation/architecture
 ## Client state (Zustand)
 
 - The outbox, blocked contacts, and preferences are the only client state.
-- Persist through the `@/core/storage` port so tests can swap in memory.
+- Persist with MMKV via the store's `persist` middleware; tests mock the module.
 - Select narrowly; wrap object- or array-returning selectors in `useShallow`.
 - Client-generated `localId` identifies an outbox message. The server's `id` is always `101`
   and must never be used as a key or identity.
@@ -60,9 +64,10 @@ The rules, condensed. The _why_ is in [Architecture](../explanation/architecture
 
 ## Time & determinism
 
-- Inject `Clock` from `@/core/time`; never call `Date.now()` inside logic.
-- Generate ids through the injected generator, never `Math.random()` inline.
-- This is what makes outbox ordering assertable in tests.
+- Read the clock directly. Tests control it with `jest.useFakeTimers()` and
+  `jest.setSystemTime()` — Jest already solves this, so a Clock abstraction would be
+  re-implementing the test framework.
+- Ids come from one small `newId()` helper so they can be mocked in a single place.
 
 ## Tests
 

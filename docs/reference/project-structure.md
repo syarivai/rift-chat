@@ -28,13 +28,12 @@ rift-chat/
     │   ├── chat/[id].tsx     #   Chat thread (pushed over the tabs)
     │   └── profile/[id].tsx  #   Contact profile
     ├── core/                 # cross-cutting infrastructure
-    │   ├── api/              #   fetch client, envelope types, error mapping
-    │   ├── result/           #   Result<T, Failure> and the sealed Failure union
-    │   ├── storage/          #   storage port + MMKV adapter + in-memory adapter
+    │   ├── api/              #   fetch client, envelope types
+    │   ├── store/            #   the Zustand store + MMKV persistence
     │   ├── query-keys/       #   the single query-key factory
     │   ├── theme/            #   design tokens, light/dark palettes, useTheme
     │   ├── i18n/             #   i18next setup + en/ms/id catalogs
-    │   ├── time/             #   Clock port (injectable) + relative-time formatting
+    │   ├── format/           #   relative-time formatting, newId()
     │   ├── network/          #   NetInfo → React Query onlineManager wiring
     │   └── ui/               #   shared primitives: Avatar, Skeleton, EmptyState, ErrorState
     └── features/
@@ -61,21 +60,24 @@ app  →  features  →  core
 ```
 
 - `core/` imports nothing from `features/`. It is the only place that touches a native module
-  directly, and it does so behind a port.
+  directly — wrapped once, in one thin module, not behind an interface with a single
+  implementation.
 - A feature slice imports from `core/` and from itself. **Slices do not import each other** —
   if two need the same thing, it moves to `core/`.
 - `model/` holds pure logic and store slices; it imports no React components.
-- Native capabilities are reached only through a `core/` port, so a test can substitute an
-  in-memory implementation. Feature code never imports `react-native-mmkv`.
+- Tests mock the native module (`react-native-mmkv`, NetInfo) with `jest.mock`, which is what
+  Jest is for.
 
 Only the `chat` slice has a `model/` layer with real business rules — the outbox merge,
 ordering, and status lifecycle. That is deliberate; see
 [Architecture](../explanation/architecture.md).
 
+There are no barrel `index.ts` files. Import the module you mean.
+
 ## Naming conventions
 
 - Files: `kebab-case.ts`; one primary export per file where practical.
-- Each folder exposes a barrel `index.ts`; import through it (`@/core/result`), not deep paths.
+- No barrels. Import the file directly through the `@/` alias (`@/core/query-keys/keys`).
 - Tests: `*.test.ts(x)` co-located beside the unit.
 - Path alias `@/*` → `src/*`. Never `../../../`.
 

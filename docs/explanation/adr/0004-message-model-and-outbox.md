@@ -68,7 +68,8 @@ immediately, reconcile with the server when possible.
 - **A send never invalidates the thread query.** The refetch would return the original posts
   and delete everything the user had sent. This is rule 1 in `CLAUDE.md`.
 - Outbox messages are identified by a client-generated `localId`; the server's `id` is unusable.
-- The merge, ordering, and status lifecycle are pure functions with an injected `Clock`, and are
+- The merge, ordering, and status lifecycle are pure functions — tests pin the clock with
+  `jest.setSystemTime()` — and are
   the one part of the app with a real domain layer (see [Architecture](../architecture.md)).
 - A failed send is **not** rolled back. It stays visible as `failed` with a retry affordance;
   deleting content the user wrote is the wrong response to a network error.
