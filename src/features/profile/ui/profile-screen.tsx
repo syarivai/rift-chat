@@ -1,10 +1,11 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useAppStore } from '@/core/store/store';
 import { useTheme } from '@/core/theme/use-theme';
 import { Avatar } from '@/core/ui/avatar';
+import { Button } from '@/core/ui/button';
 import { Screen } from '@/core/ui/screen';
 import { EmptyState, ErrorState, Skeleton } from '@/core/ui/states';
 import { useContact } from '../api/use-contact';
@@ -82,27 +83,18 @@ export function ProfileScreen() {
           </Text>
         </View>
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={isBlocked ? t('profile.unblock') : t('profile.block')}
-          accessibilityState={{ selected: isBlocked }}
+        <Button
+          label={isBlocked ? t('profile.unblock') : t('profile.block')}
           onPress={() => toggleBlocked(contactId)}
-          style={[
-            styles.action,
-            { borderColor: colors.danger, borderRadius: radius.md, padding: spacing.lg },
-          ]}
-        >
-          <Text style={[typography.label, { color: colors.danger }]}>
-            {isBlocked ? t('profile.unblock') : t('profile.block')}
-          </Text>
-        </Pressable>
+          variant="outlined"
+          tone="danger"
+        />
       </ScrollView>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  action: { alignItems: 'center', borderWidth: StyleSheet.hairlineWidth },
   card: { borderWidth: StyleSheet.hairlineWidth, gap: 4 },
   center: { alignItems: 'center' },
 });

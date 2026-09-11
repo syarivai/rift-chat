@@ -19,7 +19,7 @@ rift-chat/
 ├── plans/rift-chat-mvp/      # requirement.md, tech-docs.md, delivery.md
 ├── release/                  # the submitted APK  (committed)
 └── src/
-    ├── app/                  # expo-router routes
+    ├── app/                  # expo-router routes (expo-router finds src/app automatically)
     │   ├── _layout.tsx       #   providers: QueryClient, i18n, theme, safe area
     │   ├── (tabs)/
     │   │   ├── _layout.tsx   #     the bottom tab bar
@@ -29,11 +29,11 @@ rift-chat/
     │   └── profile/[id].tsx  #   Contact profile
     ├── core/                 # cross-cutting infrastructure
     │   ├── api/              #   base-http-client.ts (axios) · rift-api.ts · types.ts
-    │   ├── store/            #   the Zustand store + MMKV persistence
+    │   ├── store/            #   store.ts (Zustand) · storage.ts (MMKV adapter) · types.ts
     │   ├── query-keys/       #   the single query-key factory
     │   ├── theme/            #   design tokens, light/dark palettes, useTheme
     │   ├── i18n/             #   i18next setup + en/ms/id catalogs
-    │   ├── format/           #   relative-time formatting, newId()
+    │   ├── format/           #   relative-time formatting
     │   ├── network/          #   NetInfo → React Query onlineManager wiring
     │   └── ui/               #   shared primitives: Avatar, Skeleton, EmptyState, ErrorState
     └── features/

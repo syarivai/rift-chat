@@ -1,20 +1,25 @@
-import { createMMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
-import { createJSONStorage, persist, type StateStorage } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { newId } from '../format/new-id';
+import { mmkvStorage } from './storage';
+
 import type { Language, OutboxMessage, ThemeChoice } from './types';
 
-// MMKV v4 is a factory (`createMMKV()`), not `new MMKV()`, and its delete method is
-// `remove()`. Reads are synchronous, which is the whole point: the store is hydrated on the
-// first render, so there is no flash of an empty thread or the wrong theme.
-const mmkv = createMMKV();
+/**
+ * Client-side id for an outbox message. The server's `id` is always 101 and identifies
+ * nothing — see docs/reference/api-contract.md.
+ *
+ * ponytail: timestamp + counter + a short random suffix rather than a UUID dependency.
+ * Ceiling: unique per device, not globally. The outbox is local-only, so that is enough.
+ * Upgrade path: expo-crypto's randomUUID() if messages ever sync.
+ */
+let idCounter = 0;
 
-const mmkvStorage: StateStorage = {
-  getItem: (name) => mmkv.getString(name) ?? null,
-  setItem: (name, value) => mmkv.set(name, value),
-  removeItem: (name) => mmkv.remove(name),
-};
+function newId(): string {
+  idCounter += 1;
+  const random = Math.random().toString(36).slice(2, 8);
+  return `${Date.now().toString(36)}-${idCounter.toString(36)}-${random}`;
+}
 
 export type AppState = {
   /** Messages the user sent, keyed by contact. The server does not keep these. */

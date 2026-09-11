@@ -1,7 +1,8 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { useTheme } from '../theme/use-theme';
+import { Button } from './button';
 
 /**
  * Reads get a skeleton, not a spinner: it matches the shape of the content that is coming, so
@@ -47,26 +48,11 @@ export function ErrorState({
   retryLabel: string;
   onRetry: () => void;
 }) {
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography } = useTheme();
   return (
     <View style={[styles.centered, { padding: spacing.xl, gap: spacing.md }]}>
       <Text style={[typography.body, { color: colors.text }]}>{message}</Text>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={retryLabel}
-        onPress={onRetry}
-        style={[
-          styles.button,
-          {
-            backgroundColor: colors.accent,
-            borderRadius: radius.md,
-            paddingHorizontal: spacing.lg,
-            paddingVertical: spacing.sm,
-          },
-        ]}
-      >
-        <Text style={[typography.label, { color: colors.onAccent }]}>{retryLabel}</Text>
-      </Pressable>
+      <Button label={retryLabel} onPress={onRetry} />
     </View>
   );
 }
@@ -79,7 +65,6 @@ export function Spinner() {
 }
 
 const styles = StyleSheet.create({
-  button: { alignItems: 'center' },
   centered: { alignItems: 'center', flex: 1, justifyContent: 'center' },
   skeleton: { overflow: 'hidden' },
 });

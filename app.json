@@ -7,7 +7,7 @@
     "scheme": "riftchat",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "plugins": ["expo-router", "expo-image", "expo-localization"],
+    "plugins": ["expo-router", "expo-image", "expo-localization", "expo-asset"],
     "ios": {
       "bundleIdentifier": "dev.riftchat.app",
       "supportsTablet": true

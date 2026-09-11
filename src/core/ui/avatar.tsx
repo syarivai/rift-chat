@@ -32,9 +32,10 @@ export function Avatar({ uri, name, size = 48, recyclingKey }: Props) {
 }
 
 /** Rendered underneath the image, so a failed or slow load degrades to initials for free. */
-function initials(name: string): string {
+export function initials(name: string): string {
   return name
-    .split(' ')
+    .trim()
+    .split(/\s+/)
     .slice(0, 2)
     .map((part) => part[0] ?? '')
     .join('')

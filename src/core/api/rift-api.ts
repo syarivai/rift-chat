@@ -1,7 +1,10 @@
 import { BaseHttpClient, assertEnvelope } from './base-http-client';
 import type { Contact, Envelope, PageParams, Post, SendMessageInput } from './types';
 
-export const API_BASE_URL = 'https://responserift.dev';
+// EXPO_PUBLIC_* is inlined into the bundle at build time, so this is configuration, not a
+// secret — the API is public and unauthenticated. Anything genuinely secret must never live
+// here; see the app-security skill.
+export const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://responserift.dev';
 
 /**
  * Every endpoint the app uses, declared once. No feature file imports axios or builds a URL.

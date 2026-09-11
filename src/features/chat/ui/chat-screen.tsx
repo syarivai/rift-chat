@@ -6,6 +6,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useAppStore } from '@/core/store/store';
 import { useTheme } from '@/core/theme/use-theme';
 import { Avatar } from '@/core/ui/avatar';
+import { Button } from '@/core/ui/button';
 import { EmptyState, ErrorState, Skeleton } from '@/core/ui/states';
 import { useKeyboardHeight } from '@/core/ui/use-keyboard-height';
 import { useContact } from '@/features/profile/api/use-contact';
@@ -102,15 +103,11 @@ export function ChatScreen() {
             <Text style={[typography.caption, { color: colors.textMuted }]}>
               {t('chat.blocked')}
             </Text>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={t('profile.unblock')}
+            <Button
+              label={t('profile.unblock')}
               onPress={() => useAppStore.getState().toggleBlocked(contactId)}
-            >
-              <Text style={[typography.label, { color: colors.accent }]}>
-                {t('profile.unblock')}
-              </Text>
-            </Pressable>
+              variant="text"
+            />
           </View>
         ) : (
           <Composer onSend={send} />

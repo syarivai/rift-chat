@@ -1,11 +1,12 @@
 import Constants from 'expo-constants';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { changeLanguage, SUPPORTED_LANGUAGES } from '@/core/i18n';
 import { useAppStore } from '@/core/store/store';
 import type { Language, ThemeChoice } from '@/core/store/types';
 import { useTheme } from '@/core/theme/use-theme';
+import { Button } from '@/core/ui/button';
 import { Screen } from '@/core/ui/screen';
 
 const DEVELOPER_NAME = 'Muhammad Syarif Abdullah';
@@ -15,7 +16,7 @@ const THEME_OPTIONS: ThemeChoice[] = ['system', 'light', 'dark'];
 
 export function SettingsScreen() {
   const { t } = useTranslation();
-  const { colors, spacing, radius, typography } = useTheme();
+  const { spacing } = useTheme();
 
   const language = useAppStore((state) => state.language);
   const theme = useAppStore((state) => state.theme);
@@ -39,34 +40,17 @@ export function SettingsScreen() {
         <Section title={t('settings.language')}>
           <View style={[styles.options, { gap: spacing.sm }]}>
             {LANGUAGE_OPTIONS.map((option) => (
-              <Pressable
+              <Button
                 key={option}
-                accessibilityRole="radio"
-                accessibilityState={{ selected: language === option }}
-                accessibilityLabel={languageLabel(option, t)}
+                label={languageLabel(option, t)}
+                variant="chip"
+                role="radio"
+                selected={language === option}
                 onPress={() => {
                   setLanguage(option);
                   changeLanguage();
                 }}
-                style={[
-                  styles.chip,
-                  {
-                    backgroundColor: language === option ? colors.accent : colors.surfaceMuted,
-                    borderRadius: radius.full,
-                    paddingHorizontal: spacing.lg,
-                    paddingVertical: spacing.sm,
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    typography.caption,
-                    { color: language === option ? colors.onAccent : colors.text },
-                  ]}
-                >
-                  {languageLabel(option, t)}
-                </Text>
-              </Pressable>
+              />
             ))}
           </View>
         </Section>
@@ -74,31 +58,14 @@ export function SettingsScreen() {
         <Section title={t('settings.theme')}>
           <View style={[styles.options, { gap: spacing.sm }]}>
             {THEME_OPTIONS.map((option) => (
-              <Pressable
+              <Button
                 key={option}
-                accessibilityRole="radio"
-                accessibilityState={{ selected: theme === option }}
-                accessibilityLabel={themeLabel(option, t)}
+                label={themeLabel(option, t)}
+                variant="chip"
+                role="radio"
+                selected={theme === option}
                 onPress={() => setTheme(option)}
-                style={[
-                  styles.chip,
-                  {
-                    backgroundColor: theme === option ? colors.accent : colors.surfaceMuted,
-                    borderRadius: radius.full,
-                    paddingHorizontal: spacing.lg,
-                    paddingVertical: spacing.sm,
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    typography.caption,
-                    { color: theme === option ? colors.onAccent : colors.text },
-                  ]}
-                >
-                  {themeLabel(option, t)}
-                </Text>
-              </Pressable>
+              />
             ))}
           </View>
         </Section>
@@ -138,6 +105,5 @@ function Row({ label }: { label: string }) {
 }
 
 const styles = StyleSheet.create({
-  chip: { alignItems: 'center' },
   options: { flexDirection: 'row', flexWrap: 'wrap' },
 });

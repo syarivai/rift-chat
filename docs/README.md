@@ -58,6 +58,7 @@ teach, serves neither reader well. Pick the quadrant by the reader's need, not t
   thread is never invalidated.
 - [Testing strategy](./explanation/testing-strategy.md) — the pyramid and what each layer buys.
 - [Guardrails](./explanation/guardrails.md) — type-check, lint, format, test gates.
+- [Security posture](./explanation/security.md) — threat model, OWASP MASVS review, findings.
 - [Decision records](./explanation/adr/README.md) — the four ADRs, each with a plus/minus table.
 
 ## See also

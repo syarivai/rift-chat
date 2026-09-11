@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useColorScheme } from 'react-native';
 
 import { useAppStore } from '../store/store';
@@ -17,11 +18,17 @@ export function useTheme(): Theme {
   const scheme: 'light' | 'dark' =
     themeChoice === 'system' ? (system === 'dark' ? 'dark' : 'light') : themeChoice;
 
-  return {
-    colors: scheme === 'dark' ? darkColors : lightColors,
-    spacing,
-    radius,
-    typography,
-    scheme,
-  };
+  // Memoised so the returned object is referentially stable while the scheme is unchanged.
+  // Keeps the object referentially stable while the scheme is unchanged, so consumers that
+  // depend on it are not invalidated on every render.
+  return useMemo(
+    () => ({
+      colors: scheme === 'dark' ? darkColors : lightColors,
+      spacing,
+      radius,
+      typography,
+      scheme,
+    }),
+    [scheme],
+  );
 }

@@ -21,6 +21,12 @@ module.exports = [
     // with "could not find plugin @typescript-eslint".
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
+      // `tsc --noEmit` already resolves and checks every import, including the `@/` alias.
+      // eslint-plugin-import would resolve them a second time through unrs-resolver, a native
+      // binding that breaks whenever the editor's Node architecture differs from the one that
+      // ran `npm install` (x64 Node under Rosetta on an arm64 Mac installs only the x64
+      // binding). Two resolvers, one authority: keep tsc, drop the duplicate.
+      'import/no-unresolved': 'off',
       // The conventions forbid `any`; this makes CI enforce it rather than review.
       '@typescript-eslint/no-explicit-any': 'error',
       // Type-only imports are erased at compile time — keeps types out of the runtime graph.
