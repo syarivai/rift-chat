@@ -37,5 +37,11 @@
     "themeLight": "Cerah",
     "themeDark": "Gelap",
     "languageSystem": "Sistem"
+  },
+  "time": {
+    "now": "kini",
+    "minutes": "{{count}} min",
+    "hours": "{{count}} jam",
+    "days": "{{count}} hr"
   }
 }

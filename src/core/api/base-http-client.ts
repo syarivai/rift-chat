@@ -2,7 +2,6 @@ import {
   useInfiniteQuery,
   useMutation,
   useQuery,
-  type UseInfiniteQueryOptions,
   type UseMutationOptions,
   type UseQueryOptions,
 } from '@tanstack/react-query';
@@ -63,9 +62,24 @@ export abstract class BaseHttpClient {
         ...options,
       });
 
-    const useApiInfiniteQuery = <TPageParam>(
-      options: UseInfiniteQueryOptions<Res, Error, Res, readonly unknown[], TPageParam>,
-    ) => useInfiniteQuery(options);
+    // Offset paging: the wrapper supplies the queryFn (merging `offset` from pageParam);
+    // the caller supplies the key from the queryKeys factory plus the stop condition, because
+    // only the caller knows the shape of `total` it is paging against.
+    const useApiInfiniteQuery = (
+      req: Omit<Req, 'offset'>,
+      options: {
+        queryKey: readonly unknown[];
+        initialPageParam: number;
+        getNextPageParam: (lastPage: Res) => number | undefined;
+      },
+    ) =>
+      useInfiniteQuery({
+        queryKey: options.queryKey,
+        queryFn: ({ pageParam }: { pageParam: number }) =>
+          fetcher({ ...req, offset: pageParam } as Req),
+        initialPageParam: options.initialPageParam,
+        getNextPageParam: options.getNextPageParam,
+      });
 
     const useApiMutation = (options?: UseMutationOptions<Res, Error, Req, unknown>) =>
       useMutation<Res, Error, Req>({ mutationKey: [key], mutationFn: fetcher, ...options });

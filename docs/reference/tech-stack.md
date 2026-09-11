@@ -103,7 +103,13 @@ be found`. The docs describe an automatic mock; it does not apply at this versio
   Reanimated alone gives cryptic worklet errors at runtime. For tests it needs
   `require('react-native-reanimated').setUpTests()` in a file referenced by
   **`setupFilesAfterEnv`**.
-- **RNTL v14's `render` is async** — `await render(<C />)` in component tests.
+- **RNTL v14's `render` is async** — `await render(<C />)` in component tests. So is
+  `renderHook`.
+- **Hermes does NOT implement `Intl.RelativeTimeFormat`.** It is `undefined` on device. Node
+  has full Intl, so unit tests pass while the app crashes — this was found only by running on
+  a device. Relative times are formatted from the i18n catalogs instead; see
+  `src/core/format/relative-time.ts`. `Intl.DateTimeFormat` and `Intl.NumberFormat` are
+  available, but nothing in this app depends on them.
 - **TanStack Query v5.90 mutation callbacks take four arguments.** The `onMutate` return value
   is the third (`onMutateResult`); the fourth is a `context` carrying `context.client`, so a
   callback needing the QueryClient does not need `useQueryClient()`.

@@ -37,5 +37,11 @@
     "themeLight": "Terang",
     "themeDark": "Gelap",
     "languageSystem": "Sistem"
+  },
+  "time": {
+    "now": "baru saja",
+    "minutes": "{{count}} mnt",
+    "hours": "{{count}} jam",
+    "days": "{{count}} hr"
   }
 }

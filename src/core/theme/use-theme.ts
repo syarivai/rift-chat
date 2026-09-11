@@ -11,11 +11,11 @@ import { darkColors, lightColors, radius, spacing, typography, type Theme } from
  * AsyncStorage (ADR 0002).
  */
 export function useTheme(): Theme {
-  const choice = useAppStore((state) => state.theme);
+  const themeChoice = useAppStore((state) => state.theme);
   const system = useColorScheme();
 
   const scheme: 'light' | 'dark' =
-    choice === 'system' ? (system === 'dark' ? 'dark' : 'light') : choice;
+    themeChoice === 'system' ? (system === 'dark' ? 'dark' : 'light') : themeChoice;
 
   return {
     colors: scheme === 'dark' ? darkColors : lightColors,

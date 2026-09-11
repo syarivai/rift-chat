@@ -114,7 +114,7 @@ prettier eslint-config-prettier husky lint-staged @types/jest @types/node`.
 
 - [x] **T-0.10** `P0` `[HUMAN]` · R-23 — Create the public GitHub repository
   - Do: `gh repo create rift-chat --public --source . --push`, MIT licensed.
-  - Done: `github.com/syarifabdullah/rift-chat` — done ahead of Phase 0, since the repo is
+  - Done: `github.com/syarivai/rift-chat` — done ahead of Phase 0, since the repo is
     where everything else lands.
   - Verify: `gh repo view --json visibility,url`
 
@@ -217,38 +217,38 @@ timeout: 15_000 })`, a response interceptor that unwraps to `data` and normalise
 
 ## Phase 2 — Chats tab
 
-- [ ] **T-2.1** `P0` `[AI]` · R-07 R-09 R-28 — `useContactsInfinite`
+- [x] **T-2.1** `P0` `[AI]` · R-07 R-09 R-28 — `useContactsInfinite`
   - Do: `useInfiniteQuery` over `GET /api/users`, 20 per page, `getNextPageParam` returning
     `undefined` when `offset + limit >= total`.
   - Acceptance: R-09 _"Scrolling loads the next page"_, _"The list stops at the end of the
     data"_, _"Pagination does not duplicate rows"_.
   - Verify: `npm test -- contacts`
 
-- [ ] **T-2.2** `P0` `[AI]` · R-08 — `ContactRow`
+- [x] **T-2.2** `P0` `[AI]` · R-08 — `ContactRow`
   - Do: memoised, declared outside the parent, fixed height, avatar + name + preview +
     timestamp; no inline arrow props or style objects.
   - Verify: `npm test -- contact-row`
 
-- [ ] **T-2.3** `P0` `[AI]` · R-08 O-01 — Last-message selector
+- [x] **T-2.3** `P0` `[AI]` · R-08 O-01 — Last-message selector
   - Do: read the contact's outbox tail; real message + relative timestamp if present,
     otherwise the empty-state string and no timestamp.
   - Acceptance: R-08 _"A contact with no history shows an honest empty state"_, _"A contact
     with history shows the real last message"_.
   - Verify: `npm test -- last-message`
 
-- [ ] **T-2.4** `P0` `[AI]` · R-07 R-09 R-33 — Chats screen
+- [x] **T-2.4** `P0` `[AI]` · R-07 R-09 R-33 — Chats screen
   - Do: `FlatList` with `keyExtractor`, `getItemLayout`, tuned window props,
     `onEndReached` guarded by `hasNextPage && !isFetchingNextPage`, footer spinner,
     pull-to-refresh.
   - Verify: `npm test -- chats-screen`
 
-- [ ] **T-2.5** `P0` `[AI]` · R-34 R-30 — Chats screen states
+- [x] **T-2.5** `P0` `[AI]` · R-34 R-30 — Chats screen states
   - Do: skeleton on first load, empty state, error state with a working retry.
   - Acceptance: R-07 _"The list shows a skeleton before data arrives"_, _"A failed load offers
     a retry"_.
   - Verify: `npm test -- chats-screen`
 
-- [ ] **T-2.6** `P0` `[AI]` · R-10 — Navigate to the chat
+- [x] **T-2.6** `P0` `[AI]` · R-10 — Navigate to the chat
   - Acceptance: R-10 _"Opening a conversation"_.
   - Verify: `npm run android`, tap a row
 
@@ -263,25 +263,25 @@ green.
 
 The core of the assignment. Test-first throughout — this is the one place with real logic.
 
-- [ ] **T-3.1** `P0` `[AI]` · R-14 O-01 — Outbox types and reducer
+- [x] **T-3.1** `P0` `[AI]` · R-14 O-01 — Outbox types and reducer
   - Do: `OutboxMessage` discriminated union; `enqueue`, `markSent`, `markFailed`, `retry`;
     illegal transitions (`sent → sending`, `sent → failed`) rejected.
   - Done when: tests cover every legal and illegal transition.
   - Verify: `npm test -- outbox`
 
-- [ ] **T-3.2** `P0` `[AI]` · R-11 O-01 — `mergeThread` (pure)
+- [x] **T-3.2** `P0` `[AI]` · R-11 O-01 — `mergeThread` (pure)
   - Do: map posts to incoming and outbox to outgoing, sort by `createdAt` ascending with a
     stable tiebreaker.
   - Done when: a test proves the order is identical across repeated calls with equal timestamps.
   - Verify: `npm test -- merge-thread`
 
-- [ ] **T-3.3** `P0` `[AI]` · R-11 R-28 — `useThread`
+- [x] **T-3.3** `P0` `[AI]` · R-11 R-28 — `useThread`
   - Do: `useInfiniteQuery` over `GET /api/posts?userId=N`, merged with the contact's outbox.
   - Acceptance: R-11 _"A contact's messages are shown"_, _"Only this contact's messages
     appear"_.
   - Verify: `npm test -- use-thread`
 
-- [ ] **T-3.4** `P0` `[AI]` · R-13 R-14 — `useSendMessage`
+- [x] **T-3.4** `P0` `[AI]` · R-13 R-14 — `useSendMessage`
   - Do: `onMutate` enqueues (durable before the request leaves), `onSuccess` marks sent from
     the response `createdAt`, `onError` marks failed. **No `invalidateQueries`. No rollback.
     The response `id` is discarded.**
@@ -295,36 +295,36 @@ The core of the assignment. Test-first throughout — this is the one place with
   - **This is the highest-risk task in the plan.** Re-read
     [state-boundaries](../../.claude/skills/state-boundaries/SKILL.md) before starting.
 
-- [ ] **T-3.5** `P0` `[AI]` · R-14 — Retry a failed message
+- [x] **T-3.5** `P0` `[AI]` · R-14 — Retry a failed message
   - Acceptance: R-14 _"Retrying a failed message"_.
   - Verify: `npm test -- send-message`
 
-- [ ] **T-3.6** `P0` `[AI]` · R-30 — `MessageBubble`
+- [x] **T-3.6** `P0` `[AI]` · R-30 — `MessageBubble`
   - Do: incoming and outgoing variants; status affordance — pending, delivered, failed with a
     tappable retry. Failure indicated by icon _and_ colour, never colour alone.
   - Verify: `npm test -- message-bubble`
 
-- [ ] **T-3.7** `P0` `[AI]` · R-12 — `Composer`
+- [x] **T-3.7** `P0` `[AI]` · R-12 — `Composer`
   - Do: input pinned to the bottom, send disabled on whitespace-only, clears on send, keyboard
     stays open, trimmed and length-capped before enqueue.
   - Acceptance: R-12 _"The input clears after sending"_, _"An empty message cannot be sent"_.
   - Verify: `npm test -- composer`
 
-- [ ] **T-3.8** `P0` `[AI]` · R-12 R-30 — Keyboard handling
+- [x] **T-3.8** `P0` `[AI]` · R-12 R-30 — Keyboard handling
   - Acceptance: R-12 _"The keyboard does not cover the input"_.
   - Verify: `npm run android`, focus the input on a full thread
 
-- [ ] **T-3.9** `P0` `[AI]` · R-11 R-34 — Chat screen states
+- [x] **T-3.9** `P0` `[AI]` · R-11 R-34 — Chat screen states
   - Do: skeleton, empty conversation placeholder, error with retry; auto-scroll to newest on
     send.
   - Acceptance: R-11 _"A conversation with no history shows an empty state"_.
   - Verify: `npm test -- chat-screen`
 
-- [ ] **T-3.10** `P0` `[AI]` · R-15 — Header navigates to the profile
+- [x] **T-3.10** `P0` `[AI]` · R-15 — Header navigates to the profile
   - Acceptance: R-15 _"Opening a contact profile from the chat header"_.
   - Verify: `npm run android`, tap the header
 
-- [ ] **T-3.11** `P0` `[HUMAN]` · O-01 — Verify persistence on a device
+- [x] **T-3.11** `P0` `[HUMAN]` · O-01 — Verify persistence on a device
   - Do: send messages, force-quit, reopen.
   - Acceptance: O-01 _"A sent message survives an app restart"_.
   - Verify: manual, on device — an emulator restart is not the same test
@@ -338,7 +338,7 @@ retry · sending repeatedly never removes an earlier message · `npm run check` 
 
 ## Phase 4 — Profile and blocking
 
-- [ ] **T-4.1** `P0` `[AI]` · R-16 R-17 R-28 — `useContact` seeded from the list cache
+- [x] **T-4.1** `P0` `[AI]` · R-16 R-17 R-28 — `useContact` seeded from the list cache
   - Do: `useQuery` with `initialData` from the contacts list cache **and**
     `initialDataUpdatedAt` — without the timestamp the seed counts as fresh and the background
     refetch never runs.
@@ -346,18 +346,18 @@ retry · sending repeatedly never removes an earlier message · `npm run check` 
     background"_.
   - Verify: `npm test -- use-contact`
 
-- [ ] **T-4.2** `P0` `[AI]` · R-16 — Profile screen
+- [x] **T-4.2** `P0` `[AI]` · R-16 — Profile screen
   - Do: name, avatar, phone; avatar failure degrades to a placeholder.
   - Acceptance: R-16 _"The profile shows the contact's details"_, _"A missing avatar degrades
     gracefully"_.
   - Verify: `npm test -- profile-screen`
 
-- [ ] **T-4.3** `P0` `[AI]` · R-18 R-27 — Block/unblock toggle
+- [x] **T-4.3** `P0` `[AI]` · R-18 R-27 — Block/unblock toggle
   - Do: toggle the `blocked` slice; the control reflects state immediately.
   - Acceptance: R-18 _"Blocking a contact"_, _"The blocked state survives a restart"_.
   - Verify: `npm test -- blocked`
 
-- [ ] **T-4.4** `P0` `[AI]` · R-18 R-27 — Blocked state across screens
+- [x] **T-4.4** `P0` `[AI]` · R-18 R-27 — Blocked state across screens
   - Do: chat composer replaced by an unblock bar with history still visible; a blocked
     indicator on the Chats row.
   - Acceptance: R-18 _"Blocked history remains readable"_, _"Unblocking restores sending"_;
@@ -373,19 +373,19 @@ restart.
 
 ## Phase 5 — Settings
 
-- [ ] **T-5.1** `P0` `[AI]` · R-19 — Settings screen
+- [x] **T-5.1** `P0` `[AI]` · R-19 — Settings screen
   - Do: developer name and app version read from `expo-constants`.
   - Acceptance: R-19 _"Settings shows the developer name and app version"_, _"The version is
     not hardcoded"_.
   - Verify: `npm test -- settings`
 
-- [ ] **T-5.2** `P1` `[AI]` · O-02 — Language picker
+- [x] **T-5.2** `P1` `[AI]` · O-02 — Language picker
   - Do: System / English / Malay / Indonesian, persisted.
   - Acceptance: O-02 _"Changing language takes effect immediately"_, _"The language choice
     persists"_.
   - Verify: `npm test -- settings`
 
-- [ ] **T-5.3** `P1` `[AI]` · O-03 — Theme picker
+- [x] **T-5.3** `P1` `[AI]` · O-03 — Theme picker
   - Do: System / Light / Dark, persisted.
   - Acceptance: O-03 _"An explicit theme choice overrides the system"_.
   - Verify: `npm test -- settings`

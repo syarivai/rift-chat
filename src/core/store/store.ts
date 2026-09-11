@@ -11,8 +11,8 @@ import type { Language, OutboxMessage, ThemeChoice } from './types';
 const mmkv = createMMKV();
 
 const mmkvStorage: StateStorage = {
-  setItem: (name, value) => mmkv.set(name, value),
   getItem: (name) => mmkv.getString(name) ?? null,
+  setItem: (name, value) => mmkv.set(name, value),
   removeItem: (name) => mmkv.remove(name),
 };
 
@@ -42,14 +42,14 @@ function mapMessage(
   const next: Record<number, OutboxMessage[]> = {};
   let changed = false;
 
-  for (const [key, messages] of Object.entries(outbox)) {
-    const contactId = Number(key);
+  for (const [contactId, messages] of Object.entries(outbox)) {
+    const contactIdNum = Number(contactId);
     if (!messages.some((message) => message.localId === localId)) {
-      next[contactId] = messages;
+      next[contactIdNum] = messages;
       continue;
     }
     changed = true;
-    next[contactId] = messages.map((message) =>
+    next[contactIdNum] = messages.map((message) =>
       message.localId === localId ? update(message) : message,
     );
   }

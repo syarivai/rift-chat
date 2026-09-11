@@ -92,8 +92,39 @@ change and catch almost nothing unintentional.
 
 ## Mocking the API
 
-`@/core/api` exports a single `api` instance. That class is the seam — mock it, and every hook
-above it runs for real:
+**Which seam depends on how the code calls the API.**
+
+`api.getContacts` is not a plain function — `withQuery` attaches `.useQuery`,
+`.useInfiniteQuery` and `.useMutation` to it. Replacing it with a bare `jest.fn()` strips those
+and the hook fails with `api.getContacts.useInfiniteQuery is not a function`.
+
+| Code under test                                          | Mock this                                                         |
+| -------------------------------------------------------- | ----------------------------------------------------------------- |
+| Calls `api.x.useQuery(...)` / `.useInfiniteQuery(...)`   | **axios** — keeps withQuery, the fetcher and React Query all real |
+| Calls `api.x(...)` directly (e.g. inside a `mutationFn`) | the **`@/core/api/rift-api` module**                              |
+
+Mocking axios:
+
+```ts
+const mockGet = jest.fn();
+const mockPost = jest.fn();
+
+jest.mock('axios', () => ({
+  __esModule: true,
+  default: {
+    create: () => ({
+      // Delegate rather than referencing mockGet directly: jest.mock is hoisted above the
+      // const declarations, and `api` is constructed at module load.
+      get: (...args: unknown[]) => mockGet(...args),
+      post: (...args: unknown[]) => mockPost(...args),
+      interceptors: { response: { use: jest.fn() } },
+    }),
+  },
+}));
+```
+
+Mocking the module — declare the endpoints explicitly, because jest's automock does not
+reproduce a class instance's `Object.assign`ed properties:
 
 ```ts
 jest.mock('@/core/api');
