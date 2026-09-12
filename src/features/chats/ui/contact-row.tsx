@@ -73,7 +73,7 @@ function ContactRowComponent({ contact, onPress }: Props) {
             {lastMessage ? lastMessage.body : t('chats.noMessages')}
           </Text>
           {isBlocked ? (
-            <Text style={[typography.micro, { color: colors.danger }]}>{t('profile.block')}</Text>
+            <Text style={[typography.micro, { color: colors.danger }]}>{t('chats.blocked')}</Text>
           ) : null}
         </View>
       </View>

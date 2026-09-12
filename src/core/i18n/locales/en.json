@@ -8,7 +8,8 @@
     "title": "Chats",
     "empty": "No conversations yet",
     "noMessages": "Tap to start chatting",
-    "loadError": "Could not load contacts"
+    "loadError": "Could not load contacts",
+    "blocked": "Blocked"
   },
   "chat": {
     "composerPlaceholder": "Message",

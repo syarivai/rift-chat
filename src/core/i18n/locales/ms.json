@@ -8,7 +8,8 @@
     "title": "Perbualan",
     "empty": "Belum ada perbualan",
     "noMessages": "Ketik untuk mula berbual",
-    "loadError": "Tidak dapat memuatkan kenalan"
+    "loadError": "Tidak dapat memuatkan kenalan",
+    "blocked": "Disekat"
   },
   "chat": {
     "composerPlaceholder": "Mesej",

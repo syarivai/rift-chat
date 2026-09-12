@@ -130,7 +130,7 @@ sufficient and adds no dependency.
 
 ## Testing
 
-**147 tests, 88% statements / 82% branches**, with the coverage threshold set just
+**153 tests, 89% statements / 82% branches**, with the coverage threshold set just
 under what the suite reaches so a regression trips it. Unit tests cover the outbox merge and
 status lifecycle, integration tests cover the send lifecycle and pagination, and one Maestro flow
 covers navigation, the real keyboard and persistence across a process restart.

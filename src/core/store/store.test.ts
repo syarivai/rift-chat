@@ -1,4 +1,5 @@
-import { useAppStore } from './store';
+import type { OutboxMessage } from './types';
+import { settleInterrupted, useAppStore } from './store';
 
 const initial = useAppStore.getState();
 
@@ -123,5 +124,56 @@ describe('preferences', () => {
 
     expect(useAppStore.getState().language).toBe('id');
     expect(useAppStore.getState().theme).toBe('dark');
+  });
+});
+
+describe('settleInterrupted', () => {
+  const sending = (localId: string): OutboxMessage => ({
+    localId,
+    contactId: 5,
+    body: 'hello',
+    createdAt: '2026-09-10T12:00:00.000Z',
+    status: 'sending',
+  });
+
+  // A process restart leaves nothing in flight, so a restored `sending` message is stranded:
+  // only a live mutation settles one, and retry() accepts `failed` only.
+  it('settles a restored sending message to failed, so it can be retried', () => {
+    const settled = settleInterrupted({ 5: [sending('local-1')] });
+
+    expect(settled[5]?.[0]).toMatchObject({ status: 'failed', body: 'hello' });
+  });
+
+  it('leaves already-settled messages exactly as they are', () => {
+    const outbox = {
+      5: [
+        {
+          localId: 'a',
+          contactId: 5,
+          body: 'sent one',
+          createdAt: '2026-09-10T12:00:00.000Z',
+          status: 'sent',
+          deliveredAt: '2026-09-10T12:00:01.000Z',
+        } as OutboxMessage,
+        {
+          localId: 'b',
+          contactId: 5,
+          body: 'failed one',
+          createdAt: '2026-09-10T12:00:02.000Z',
+          status: 'failed',
+          error: 'Network request failed',
+        } as OutboxMessage,
+      ],
+    };
+
+    // Same reference back: nothing changed, so nothing should re-render.
+    expect(settleInterrupted(outbox)).toBe(outbox);
+  });
+
+  it('settles across every contact, not just the first', () => {
+    const settled = settleInterrupted({ 5: [sending('a')], 9: [sending('b')] });
+
+    expect(settled[5]?.[0]?.status).toBe('failed');
+    expect(settled[9]?.[0]?.status).toBe('failed');
   });
 });

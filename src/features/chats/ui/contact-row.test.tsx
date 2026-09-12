@@ -36,4 +36,18 @@ describe('ContactRow', () => {
     await render(<ContactRow contact={contact({ id: 1 })} onPress={jest.fn()} />);
     expect(screen.getByRole('button', { name: 'Alice Johnson' })).toBeTruthy();
   });
+
+  // The badge is a status, not the Profile screen's imperative "Block contact" action label.
+  it('marks a blocked contact on the row', async () => {
+    useAppStore.setState({ blockedIds: [1] });
+    await render(<ContactRow contact={contact({ id: 1 })} onPress={jest.fn()} />);
+
+    expect(screen.getByText('chats.blocked')).toBeOnTheScreen();
+  });
+
+  it('shows no badge for a contact who is not blocked', async () => {
+    await render(<ContactRow contact={contact({ id: 1 })} onPress={jest.fn()} />);
+
+    expect(screen.queryByText('chats.blocked')).toBeNull();
+  });
 });

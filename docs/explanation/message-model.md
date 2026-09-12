@@ -111,3 +111,16 @@ correct design mandatory rather than optional.
 - [API contract](../reference/api-contract.md) — the probes behind the two facts.
 - [ADR 0004](./adr/0004-message-model-and-outbox.md) — the alternatives considered.
 - [Query keys & state](../reference/query-keys-and-state.md) — the invalidation table.
+
+## Offline sends fail rather than pause
+
+React Query's default `networkMode: 'online'` **pauses** a mutation while the device is offline:
+the mutation function never runs, so `onError` never fires and the outbox message sits on
+`sending` with no retry affordance for as long as connectivity is out. The client sets
+`mutations: { networkMode: 'always' }` to take the opposite path — attempt the send, let it fail
+fast, mark it `failed`, and show tap-to-retry. The reconnect flush then picks it up.
+
+The same reasoning applies across a restart. Nothing is in flight after the process dies, so a
+message restored from MMKV as `sending` would be stranded: only a live mutation calls
+`markSent`/`markFailed`, and `retry` accepts `failed` only. `settleInterrupted` runs on rehydrate
+and settles those to `failed`, which is the state that has a way out.

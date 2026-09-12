@@ -8,7 +8,8 @@
     "title": "Obrolan",
     "empty": "Belum ada obrolan",
     "noMessages": "Ketuk untuk mulai mengobrol",
-    "loadError": "Tidak dapat memuat kontak"
+    "loadError": "Tidak dapat memuat kontak",
+    "blocked": "Diblokir"
   },
   "chat": {
     "composerPlaceholder": "Pesan",

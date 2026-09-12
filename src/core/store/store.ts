@@ -62,6 +62,31 @@ function mapMessage(
   return changed ? next : outbox;
 }
 
+/**
+ * Nothing is in flight after a process restart, so a message restored as `sending` is stranded:
+ * only a live mutation calls `markSent`/`markFailed`, and `retry` accepts `failed` only. Left
+ * alone it shows the clock icon forever with no way out. Settling it to `failed` on rehydrate
+ * gives it the retry affordance — and the reconnect flush then picks it up.
+ *
+ * Pure and exported so it is testable without persistence or a renderer.
+ */
+export function settleInterrupted(
+  outbox: Record<number, OutboxMessage[]>,
+): Record<number, OutboxMessage[]> {
+  const next: Record<number, OutboxMessage[]> = {};
+  let changed = false;
+
+  for (const [contactId, messages] of Object.entries(outbox)) {
+    next[Number(contactId)] = messages.map((message) => {
+      if (message.status !== 'sending') return message;
+      changed = true;
+      return { ...message, status: 'failed', error: 'Interrupted before it was sent' };
+    });
+  }
+
+  return changed ? next : outbox;
+}
+
 export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
@@ -127,6 +152,9 @@ export const useAppStore = create<AppState>()(
         language: state.language,
         theme: state.theme,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state) state.outbox = settleInterrupted(state.outbox);
+      },
     },
   ),
 );

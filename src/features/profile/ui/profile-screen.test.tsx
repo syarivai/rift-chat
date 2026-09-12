@@ -67,6 +67,10 @@ describe('ProfileScreen', () => {
   // ADR: GET /api/users already returns every field this screen shows, so the detail query is
   // seeded from the list cache — no spinner for data the app is already holding.
   it('renders instantly from the list cache instead of spinning', async () => {
+    // The background refetch is held open for the whole test. Letting it resolve would race
+    // the assertion — the seeded name would be replaced mid-test by the fetched one, which is
+    // correct behaviour but makes the test about timing rather than about the seed.
+    mockGet.mockReturnValue(new Promise(() => {}));
     queryClient.setQueryData(queryKeys.contacts.list(), {
       pages: [contactsPage(0, 20, 60)],
       pageParams: [0],
@@ -74,8 +78,9 @@ describe('ProfileScreen', () => {
 
     await render(<ProfileScreen />, { wrapper });
 
-    // Present on the very first frame, before any request could have resolved.
+    // Present on the very first frame, with the request still in flight.
     expect(screen.getByText('Contact 1')).toBeOnTheScreen();
+    expect(screen.queryByText('profile.loadError')).toBeNull();
   });
 });
 

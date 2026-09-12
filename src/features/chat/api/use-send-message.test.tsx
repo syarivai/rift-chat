@@ -1,7 +1,8 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, onlineManager } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 import type { ReactNode } from 'react';
 
+import { createQueryClient } from '@/core/api/query-client';
 import { useIsOnline } from '@/core/network/network-info';
 import { queryKeys } from '@/core/query-keys/keys';
 import { useAppStore } from '@/core/store/store';
@@ -232,5 +233,36 @@ describe('reconnecting', () => {
     await act(async () => rerender({}));
 
     expect(mockPost.mock.calls).toHaveLength(callsBefore);
+  });
+});
+
+// Regression: React Query's default `networkMode: 'online'` PAUSES a mutation while offline —
+// mutationFn never runs, onError never fires, and the message sits on `sending` with no retry
+// affordance. The suite above could not see it: it mocks the app's own useIsOnline hook and
+// rejects axios directly, so the real onlineManager is never consulted. This test uses the real
+// client factory and the real onlineManager, which is the only way the setting is exercised.
+describe('sending while genuinely offline', () => {
+  let realClient: QueryClient;
+
+  afterEach(() => {
+    onlineManager.setOnline(true);
+    // The real factory uses a 5-minute gcTime, which otherwise keeps Jest's worker alive.
+    realClient.clear();
+  });
+
+  it('fails fast and offers retry rather than pausing on "sending"', async () => {
+    realClient = createQueryClient();
+    const realWrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={realClient}>{children}</QueryClientProvider>
+    );
+
+    mockPost.mockRejectedValue(new Error('Network request failed'));
+    onlineManager.setOnline(false);
+
+    const { result } = await renderHook(() => useSendMessage(5), { wrapper: realWrapper });
+    await act(async () => result.current.send('queued while offline'));
+
+    await waitFor(() => expect(outboxFor(5)[0]).toMatchObject({ status: 'failed' }));
+    expect(mockPost).toHaveBeenCalled();
   });
 });

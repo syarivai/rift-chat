@@ -65,7 +65,9 @@ export function ChatScreen() {
               style={[styles.header, { gap: spacing.sm }]}
             >
               {contact ? <Avatar uri={contact.avatar} name={contact.name} size={32} /> : null}
-              <Text style={[typography.title, { color: colors.text }]}>{contact?.name ?? ''}</Text>
+              <Text numberOfLines={1} style={[typography.title, { color: colors.text }]}>
+                {contact?.name ?? ''}
+              </Text>
             </Pressable>
           ),
         }}
