@@ -26,7 +26,7 @@ class RiftApi extends BaseHttpClient {
     return data as Contact;
   });
 
-  getThread = this.withQuery('thread', async (params: PageParams & { userId: number }) => {
+  getMessages = this.withQuery('messages', async (params: PageParams & { userId: number }) => {
     const data = await this.get<unknown>('/api/posts', { params });
     assertEnvelope<Post>(data, '/api/posts');
     return data as Envelope<Post>;

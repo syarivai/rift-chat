@@ -23,7 +23,7 @@ export function SettingsScreen() {
   const setLanguage = useAppStore((state) => state.setLanguage);
   const setTheme = useAppStore((state) => state.setTheme);
 
-  // Read from the build, never hardcoded — so it cannot drift from what was shipped.
+  // Read from the build, never hardcoded
   const version = Constants.expoConfig?.version ?? '—';
 
   return (

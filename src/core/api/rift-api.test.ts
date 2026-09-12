@@ -76,11 +76,11 @@ describe('getContact', () => {
   });
 });
 
-describe('getThread', () => {
+describe('getMessages', () => {
   it('filters server-side by userId', async () => {
     mockGet.mockResolvedValue({ total: 3, limit: 20, offset: 0, results: [post] });
 
-    await api.getThread({ userId: 5, limit: 20, offset: 0 });
+    await api.getMessages({ userId: 5, limit: 20, offset: 0 });
 
     expect(mockGet).toHaveBeenCalledWith('/api/posts', {
       params: { userId: 5, limit: 20, offset: 0 },

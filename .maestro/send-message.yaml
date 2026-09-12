@@ -1,0 +1,61 @@
+# The one end-to-end flow. Capped at one deliberately: the second flow costs about as much as
+# the first and proves considerably less.
+#
+# Covers what no unit test can: real navigation, the real keyboard, and real MMKV persistence
+# across a process restart.
+#
+#   npm run e2e
+appId: dev.riftchat.app
+---
+- launchApp:
+    clearState: true
+
+# The contacts list loads from the live API.
+- assertVisible: 'Chats'
+# clearState wipes the query cache, so the first load is a real network round trip.
+- extendedWaitUntil:
+    visible: 'Alice Johnson'
+    timeout: 20000
+
+# Infinite scroll pulls the next page.
+- scrollUntilVisible:
+    element: 'Isabella Scott'
+    direction: DOWN
+
+# Open a conversation.
+- tapOn: 'Bob Smith'
+- assertVisible: 'Bob Smith'
+
+# Send a message: it must appear immediately, before any response.
+- tapOn:
+    id: 'composer-input'
+- inputText: 'Maestro was here'
+- tapOn:
+    id: 'composer-send'
+- assertVisible: 'Maestro was here'
+
+# The message survives a process restart — this is the outbox doing its job. A refetch of the
+# thread would return only the contact's original posts, so this assertion is the proof that
+# sending never invalidates the thread query.
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: 'Bob Smith'
+    timeout: 20000
+- tapOn: 'Bob Smith'
+- extendedWaitUntil:
+    visible: 'Maestro was here'
+    timeout: 10000
+
+# Blocking replaces the composer but keeps history readable.
+- tapOn: 'Bob Smith'
+- assertVisible: 'Block contact'
+- tapOn: 'Block contact'
+- back
+- assertVisible: 'You blocked this contact'
+- assertVisible: 'Maestro was here'
+
+# And unblocking restores the composer.
+- tapOn: 'Unblock contact'
+- assertVisible:
+    id: 'composer-input'

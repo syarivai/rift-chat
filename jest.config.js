@@ -24,11 +24,9 @@ module.exports = {
     '!src/core/theme/tokens.ts',
     '!src/core/i18n/locales/**',
   ],
+  // Set just under what the suite actually reaches, so the gate is real rather than
+  // aspirational and a genuine regression trips it.
   coverageThreshold: {
-    global: { statements: 60, branches: 60, functions: 60, lines: 60 },
+    global: { statements: 80, branches: 78, functions: 78, lines: 80 },
   },
-  // ponytail: threshold starts at 60, not the 80/70 the testing-strategy doc targets.
-  // Ceiling: it is set to what Phase 1's code actually reaches, so the gate is real rather
-  // than aspirational. Upgrade path: raise to 80/80/80/70 in T-8.1, once the outbox and
-  // hooks are covered.
 };

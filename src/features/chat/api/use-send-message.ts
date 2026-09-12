@@ -1,8 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+
+import { useIsOnline } from '@/core/network/network-info';
 
 import { api } from '@/core/api/rift-api';
-import type { Post, SendMessageInput } from '@/core/api/types';
+import type { SendMessageInput } from '@/core/api/types';
 import { useAppStore } from '@/core/store/store';
 
 export const MAX_MESSAGE_LENGTH = 1000;
@@ -25,28 +26,23 @@ type SendVariables = {
  * A failure is NOT rolled back. It is marked `failed` and stays visible with a retry
  * affordance: deleting content the user typed is the wrong answer to a network error.
  *
- * Uses `useMutation` directly rather than `api.sendMessage.useMutation` because the variables
- * carry the outbox `localId` alongside the request body, which the generic wrapper cannot
- * model. The request still goes through the API class.
+ * Goes through `api.sendMessage.useMutation` like every other call in the app, so the axios
+ * instance, the URL, the error mapping and the response shape all stay in one place. The
+ * variables are wider than the request body — they carry the outbox `localId` — so `toRequest`
+ * narrows them at the seam.
  */
 export function useSendMessage(contactId: number) {
-  const mutation = useMutation<Post, Error, SendVariables>({
+  const { mutate } = api.sendMessage.useMutation<SendVariables>({
     mutationKey: ['send-message', contactId],
-    mutationFn: ({ input }) => api.sendMessage(input),
-
+    toRequest: ({ input }) => input,
     onSuccess: (post, variables) => {
       // Only `createdAt` is read: the response `id` is always 101 and identifies nothing.
       useAppStore.getState().markSent(variables.localId, post.createdAt);
     },
-
     onError: (error, variables) => {
       useAppStore.getState().markFailed(variables.localId, error.message);
     },
-
-    // Deliberately no onSettled and no invalidateQueries.
   });
-
-  const { mutate } = mutation;
 
   const send = useCallback(
     (rawBody: string) => {
@@ -71,6 +67,24 @@ export function useSendMessage(contactId: number) {
     },
     [contactId, mutate],
   );
+
+  // T-7.3: flush this contact's failed messages when connectivity returns, oldest first.
+  //
+  // ponytail: scoped to the open conversation rather than a global queue processor.
+  // Ceiling: messages that failed in other threads stay failed until you open them.
+  // Upgrade path: a store-level flush driven by the same online signal, if it matters.
+  const isOnline = useIsOnline();
+  const wasOnline = useRef(isOnline);
+
+  useEffect(() => {
+    const reconnected = isOnline && !wasOnline.current;
+    wasOnline.current = isOnline;
+    if (!reconnected) return;
+
+    for (const message of useAppStore.getState().outbox[contactId] ?? []) {
+      if (message.status === 'failed') retry(message.localId);
+    }
+  }, [isOnline, contactId, retry]);
 
   return { send, retry };
 }

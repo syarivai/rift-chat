@@ -7,12 +7,12 @@ describe('queryKeys', () => {
     expect(queryKeys.contacts.list().slice(0, 1)).toEqual([...queryKeys.contacts.all]);
   });
 
-  it('scopes a thread to one contact', () => {
-    expect(queryKeys.messages.thread(5)).toEqual(['messages', 'thread', 5]);
-    expect(queryKeys.messages.thread(5)).not.toEqual(queryKeys.messages.thread(6));
+  it('scopes messages to one contact', () => {
+    expect(queryKeys.messages.byContact(5)).toEqual(['messages', 'byContact', 5]);
+    expect(queryKeys.messages.byContact(5)).not.toEqual(queryKeys.messages.byContact(6));
   });
 
   it('returns a stable key for the same input', () => {
-    expect(queryKeys.messages.thread(5)).toEqual(queryKeys.messages.thread(5));
+    expect(queryKeys.messages.byContact(5)).toEqual(queryKeys.messages.byContact(5));
   });
 });

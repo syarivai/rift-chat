@@ -2,17 +2,24 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { relativeTime } from '@/core/format/relative-time';
 import { useTheme } from '@/core/theme/use-theme';
-import type { ThreadMessage } from '../model/thread';
+import type { Message } from '../api/use-messages';
 
 type Props = {
-  message: ThreadMessage;
+  message: Message;
   onRetry: (localId: string) => void;
+  /**
+   * Only the newest bubble animates in. `entering` fires on mount, and a FlatList mounts rows
+   * as they scroll into the window — animating every bubble would replay the effect while
+   * scrolling instead of only when a message arrives.
+   */
+  animate?: boolean;
 };
 
-function MessageBubbleComponent({ message, onRetry }: Props) {
+function MessageBubbleComponent({ message, onRetry, animate = false }: Props) {
   const { colors, spacing, radius, typography } = useTheme();
   const { t } = useTranslation();
 
@@ -43,8 +50,11 @@ function MessageBubbleComponent({ message, onRetry }: Props) {
     </View>
   );
 
+  const Container = animate ? Animated.View : View;
+
   return (
-    <View
+    <Container
+      entering={animate ? FadeInDown.duration(180) : undefined}
       style={[
         styles.row,
         { paddingHorizontal: spacing.lg, paddingVertical: spacing.xs },
@@ -75,7 +85,7 @@ function MessageBubbleComponent({ message, onRetry }: Props) {
         {status === 'sent' ? <Ionicons name="checkmark" size={12} color={colors.success} /> : null}
         {failed ? <Ionicons name="refresh" size={12} color={colors.danger} /> : null}
       </View>
-    </View>
+    </Container>
   );
 }
 

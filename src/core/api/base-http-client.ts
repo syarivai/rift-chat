@@ -81,8 +81,22 @@ export abstract class BaseHttpClient {
         getNextPageParam: options.getNextPageParam,
       });
 
-    const useApiMutation = (options?: UseMutationOptions<Res, Error, Req, unknown>) =>
-      useMutation<Res, Error, Req>({ mutationKey: [key], mutationFn: fetcher, ...options });
+    // `TVars` is the request body by default. Widen it with `toRequest` when the mutation has
+    // to carry something the endpoint knows nothing about — the outbox `localId` that
+    // `onSuccess`/`onError` use to mark the right message is the reason this exists.
+    const useApiMutation = <TVars = Req>(
+      options?: Omit<UseMutationOptions<Res, Error, TVars>, 'mutationFn'> & {
+        toRequest?: (variables: TVars) => Req;
+      },
+    ) => {
+      const { toRequest, ...rest } = options ?? {};
+      return useMutation<Res, Error, TVars>({
+        mutationKey: [key],
+        mutationFn: (variables) =>
+          fetcher(toRequest ? toRequest(variables) : (variables as unknown as Req)),
+        ...rest,
+      });
+    };
 
     return Object.assign(fetcher, {
       useQuery: useApiQuery,

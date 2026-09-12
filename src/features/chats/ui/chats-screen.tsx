@@ -34,6 +34,7 @@ export function ChatsScreen() {
   } = useContactsInfinite();
 
   // Flattened once per data change, not inline in JSX where it would rebuild every render.
+  // {"pageParams": [0, 20, 40], "pages": [{"limit": 20, "offset": 0, "results": [Array], "total": 60}, {"limit": 20, "offset": 20, "results": [Array], "total": 60}, {"limit": 20, "offset": 40, "results": [Array], "total": 60}]}
   const contacts = useMemo(() => data?.pages.flatMap((page) => page.results) ?? [], [data]);
 
   const openChat = useCallback((contactId: number) => router.push(`/chat/${contactId}`), [router]);

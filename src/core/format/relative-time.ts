@@ -18,17 +18,17 @@ const WEEK = 7 * DAY;
  * with locale data, if prose is ever wanted.
  */
 export function relativeTime(iso: string, t: TFunction, now: number = Date.now()): string {
-  const then = new Date(iso).getTime();
-  if (Number.isNaN(then)) return '';
+  const isoTime = new Date(iso).getTime();
+  if (Number.isNaN(isoTime)) return '';
 
-  const elapsed = Math.max(0, now - then);
+  const elapsed = Math.max(0, now - isoTime);
 
   if (elapsed < MINUTE) return t('time.now');
   if (elapsed < HOUR) return t('time.minutes', { count: Math.floor(elapsed / MINUTE) });
   if (elapsed < DAY) return t('time.hours', { count: Math.floor(elapsed / HOUR) });
   if (elapsed < WEEK) return t('time.days', { count: Math.floor(elapsed / DAY) });
 
-  return shortDate(then);
+  return shortDate(isoTime);
 }
 
 /** Hermes does implement DateTimeFormat, but guard anyway — a crash here is not worth a date. */

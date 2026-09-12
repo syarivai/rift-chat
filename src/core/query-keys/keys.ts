@@ -17,6 +17,6 @@ export const queryKeys = {
      * NEVER pass this key to invalidateQueries after a send. POST /api/posts is not
      * persisted, so the refetch would delete every message the user has sent.
      */
-    thread: (contactId: number) => [...queryKeys.messages.all, 'thread', contactId] as const,
+    byContact: (contactId: number) => [...queryKeys.messages.all, 'byContact', contactId] as const,
   },
 } as const;

@@ -32,6 +32,7 @@ export function Composer({ onSend }: { onSend: (body: string) => void }) {
       ]}
     >
       <TextInput
+        testID="composer-input"
         accessibilityLabel={t('chat.composerPlaceholder')}
         placeholder={t('chat.composerPlaceholder')}
         placeholderTextColor={colors.textMuted}
@@ -53,6 +54,7 @@ export function Composer({ onSend }: { onSend: (body: string) => void }) {
         ]}
       />
       <Pressable
+        testID="composer-send"
         accessibilityRole="button"
         accessibilityLabel={t('chat.send')}
         accessibilityState={{ disabled: !canSend }}
@@ -75,5 +77,6 @@ export function Composer({ onSend }: { onSend: (body: string) => void }) {
 const styles = StyleSheet.create({
   bar: { alignItems: 'flex-end', borderTopWidth: StyleSheet.hairlineWidth, flexDirection: 'row' },
   input: { flex: 1, maxHeight: 120 },
-  send: { alignItems: 'center', height: 40, justifyContent: 'center', width: 40 },
+  // 44x44 is the minimum comfortable touch target.
+  send: { alignItems: 'center', height: 44, justifyContent: 'center', width: 44 },
 });

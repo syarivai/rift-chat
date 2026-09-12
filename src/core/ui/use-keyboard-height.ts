@@ -13,6 +13,17 @@ import { Keyboard, Platform, useWindowDimensions } from 'react-native';
  * keyboard's animation. Upgrade path: react-native-keyboard-controller for interactive
  * tracking, if the snap ever reads as cheap.
  */
+/**
+ * Space below the keyboard's top edge.
+ *
+ * Measured from `screenY` rather than the keyboard's reported `height`: under Android
+ * edge-to-edge the reported height under-measures against a full-screen window, which left
+ * the composer clipped behind the keyboard.
+ */
+export function keyboardHeightFrom(windowHeight: number, keyboardTopY: number): number {
+  return Math.max(0, windowHeight - keyboardTopY);
+}
+
 export function useKeyboardHeight(): number {
   const [height, setHeight] = useState(0);
   const { height: windowHeight } = useWindowDimensions();
@@ -22,11 +33,8 @@ export function useKeyboardHeight(): number {
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
     const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
 
-    // Measure from the keyboard's top edge rather than trusting `height`: under edge-to-edge
-    // the reported height under-measures against the full-screen window, leaving the composer
-    // clipped.
     const show = Keyboard.addListener(showEvent, (event) =>
-      setHeight(Math.max(0, windowHeight - event.endCoordinates.screenY)),
+      setHeight(keyboardHeightFrom(windowHeight, event.endCoordinates.screenY)),
     );
     const hide = Keyboard.addListener(hideEvent, () => setHeight(0));
 

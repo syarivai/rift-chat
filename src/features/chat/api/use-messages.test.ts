@@ -1,6 +1,6 @@
 import { post } from '@/test/fixtures';
 import type { OutboxMessage } from '@/core/store/types';
-import { mergeThread } from './thread';
+import { mergeMessages } from './use-messages';
 
 const sent = (overrides: Partial<OutboxMessage> = {}): OutboxMessage =>
   ({
@@ -12,23 +12,23 @@ const sent = (overrides: Partial<OutboxMessage> = {}): OutboxMessage =>
     ...overrides,
   }) as OutboxMessage;
 
-describe('mergeThread', () => {
+describe('mergeMessages', () => {
   it('renders server posts as incoming', () => {
-    const merged = mergeThread([post({ id: 1, body: 'from alice' })], []);
+    const merged = mergeMessages([post({ id: 1, body: 'from alice' })], []);
 
     expect(merged).toHaveLength(1);
     expect(merged[0]).toMatchObject({ kind: 'incoming', body: 'from alice' });
   });
 
   it('renders outbox entries as outgoing', () => {
-    const merged = mergeThread([], [sent({ body: 'from me' })]);
+    const merged = mergeMessages([], [sent({ body: 'from me' })]);
 
     expect(merged).toHaveLength(1);
     expect(merged[0]).toMatchObject({ kind: 'outgoing' });
   });
 
   it('interleaves both sources oldest first', () => {
-    const merged = mergeThread(
+    const merged = mergeMessages(
       [
         post({ id: 1, body: 'first', createdAt: '2025-07-01T10:00:00Z' }),
         post({ id: 2, body: 'third', createdAt: '2025-07-03T10:00:00Z' }),
@@ -46,14 +46,14 @@ describe('mergeThread', () => {
     ];
     const outbox = [sent({ localId: 'z', body: 'z', createdAt: '2025-07-01T10:00:00Z' })];
 
-    const first = mergeThread(posts, outbox).map((m) => m.id);
-    const second = mergeThread(posts, outbox).map((m) => m.id);
+    const first = mergeMessages(posts, outbox).map((m) => m.id);
+    const second = mergeMessages(posts, outbox).map((m) => m.id);
 
     expect(first).toEqual(second);
   });
 
   it('gives incoming and outgoing distinct ids, so id 101 cannot collide', () => {
-    const merged = mergeThread(
+    const merged = mergeMessages(
       [post({ id: 101 })],
       [sent({ localId: 'local-101' }), sent({ localId: 'local-102' })],
     );
@@ -62,11 +62,11 @@ describe('mergeThread', () => {
   });
 
   it('returns an empty thread when both sources are empty', () => {
-    expect(mergeThread([], [])).toEqual([]);
+    expect(mergeMessages([], [])).toEqual([]);
   });
 
   it('keeps failed messages in the thread rather than dropping them', () => {
-    const merged = mergeThread(
+    const merged = mergeMessages(
       [],
       [sent({ status: 'failed', error: 'network' } as Partial<OutboxMessage>)],
     );
@@ -76,6 +76,6 @@ describe('mergeThread', () => {
   });
 });
 
-function bodyOf(message: ReturnType<typeof mergeThread>[number]): string {
+function bodyOf(message: ReturnType<typeof mergeMessages>[number]): string {
   return message.kind === 'incoming' ? message.body : message.message.body;
 }

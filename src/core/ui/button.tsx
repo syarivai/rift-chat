@@ -61,6 +61,9 @@ export function Button({
       accessibilityState={{ disabled, selected: role === 'radio' ? selected : undefined }}
       disabled={disabled}
       onPress={onPress}
+      // The text and chip variants are shorter than the 44x44 minimum touch target. hitSlop
+      // expands the touchable area without changing the layout.
+      hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
       style={({ pressed }) => [
         styles.base,
         { borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },

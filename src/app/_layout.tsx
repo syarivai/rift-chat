@@ -6,9 +6,12 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { createQueryClient } from '@/core/api/query-client';
 import { initI18n } from '@/core/i18n';
+import { setupOnlineManager } from '@/core/network/network-info';
+import { OfflineBanner } from '@/core/ui/offline-banner';
 import { useTheme } from '@/core/theme/use-theme';
 
 initI18n();
+setupOnlineManager();
 
 export default function RootLayout() {
   // A single client for the app's lifetime. useState, not useMemo: useMemo is a performance
@@ -20,11 +23,14 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+        <OfflineBanner />
         <Stack
           screenOptions={{
             headerStyle: { backgroundColor: colors.surface },
             headerTintColor: colors.text,
             contentStyle: { backgroundColor: colors.bg },
+            animation: 'slide_from_right',
+            animationDuration: 220,
           }}
         >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
