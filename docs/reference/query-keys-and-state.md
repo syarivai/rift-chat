@@ -39,7 +39,7 @@ export const queryKeys = {
   },
   messages: {
     all: ['messages'] as const,
-    thread: (contactId: number) => [...queryKeys.messages.all, 'thread', contactId] as const,
+    byContact: (contactId: number) => [...queryKeys.messages.all, 'byContact', contactId] as const,
   },
 } as const;
 ```
@@ -82,29 +82,26 @@ merges the outbox with whatever the thread query holds. See
 
 ## Store shape
 
-A single store composed of three slices, persisted with MMKV through Zustand's `persist`
-middleware. Feature code imports the store, never `react-native-mmkv`; tests mock the module.
+One flat store, persisted with MMKV through Zustand's `persist` middleware. Feature code imports
+the store, never `react-native-mmkv`; tests mock the module. Flat rather than nested slices
+because nesting buys nothing at this size and costs a selector hop on every read.
 
 ```ts
-type AppState = {
-  outbox: {
-    // keyed by contactId; append-only from the UI's perspective
-    byContact: Record<number, OutboxMessage[]>;
-    enqueue: (contactId: number, body: string) => string; // returns a local id
-    markSent: (localId: string, serverCreatedAt: string) => void;
-    markFailed: (localId: string) => void;
-    retry: (localId: string) => void;
-  };
-  blocked: {
-    ids: number[];
-    toggle: (contactId: number) => void;
-  };
-  prefs: {
-    language: 'en' | 'ms' | 'id' | 'system';
-    theme: 'light' | 'dark' | 'system';
-    setLanguage: (l: AppState['prefs']['language']) => void;
-    setTheme: (t: AppState['prefs']['theme']) => void;
-  };
+export type AppState = {
+  /** Messages the user sent, keyed by contact. The server does not keep these. */
+  outbox: Record<number, OutboxMessage[]>;
+  blockedIds: number[];
+  language: Language;
+  theme: ThemeChoice;
+
+  enqueue: (contactId: number, body: string) => string; // returns a local id
+  markSent: (localId: string, deliveredAt: string) => void;
+  markFailed: (localId: string, error: string) => void;
+  retry: (localId: string) => void;
+
+  toggleBlocked: (contactId: number) => void;
+  setLanguage: (language: Language) => void;
+  setTheme: (theme: ThemeChoice) => void;
 };
 ```
 
@@ -116,7 +113,7 @@ type AppState = {
 Select the narrowest slice a component needs:
 
 ```ts
-const blocked = useAppStore((s) => s.blocked.ids.includes(contactId)); // good
+const blocked = useAppStore((s) => s.blockedIds.includes(contactId)); // good
 const store = useAppStore(); // re-renders on everything
 ```
 

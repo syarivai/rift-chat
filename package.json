@@ -20,6 +20,7 @@
     "e2e": "maestro test .maestro",
     "check": "npm run typecheck && npm run lint && npm run format:check && npm run test:ci",
     "build:android": "expo prebuild -p android --clean && cd android && ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a,x86_64",
+    "apk": "npm run build:android && mkdir -p release && cp android/app/build/outputs/apk/release/app-release.apk release/rift-chat-v1.0.0.apk && shasum -a 256 release/rift-chat-v1.0.0.apk",
     "prepare": "husky"
   },
   "dependencies": {

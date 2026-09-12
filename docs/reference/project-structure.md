@@ -39,14 +39,13 @@ rift-chat/
     └── features/
         ├── chats/            # the conversation list
         │   ├── api/          #   useContactsInfinite
-        │   ├── model/        #   row view-model, last-message selector
+        │   ├── model/        #   last-message selector
         │   └── ui/           #   ChatsScreen, ContactRow
         ├── chat/             # the message thread — the feature with real logic
         │   ├── api/          #   useMessages, useSendMessage
         │   └── ui/           #   ChatScreen, MessageBubble, Composer, BlockedBar
         ├── profile/
         │   ├── api/          #   useContact
-        │   ├── model/        #   blocked-contacts slice
         │   └── ui/           #   ProfileScreen
         └── settings/
             └── ui/           #   SettingsScreen, LanguagePicker, ThemePicker
@@ -67,8 +66,10 @@ app  →  features  →  core
 - Tests mock the native module (`react-native-mmkv`, NetInfo) with `jest.mock`, which is what
   Jest is for.
 
-Only the `chat` slice has a `model/` layer with real business rules — the outbox merge,
-ordering, and status lifecycle. That is deliberate; see
+Only `chats` has a `model/` folder, holding the last-message selector. The outbox's own rules —
+the merge, the ordering, the status lifecycle — are pure functions too, but they live beside
+their callers in `chat/api/use-messages.ts` and `core/store/store.ts` rather than in a folder of
+their own: one function does not need a layer. That is deliberate; see
 [Architecture](../explanation/architecture.md).
 
 There are no barrel `index.ts` files. Import the module you mean.

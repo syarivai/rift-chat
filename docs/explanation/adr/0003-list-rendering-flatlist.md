@@ -61,10 +61,11 @@ That position is only earned if the tuning is actually done:
 
 - One fewer dependency, and no New Architecture constraint from this decision.
 - The tuning is load-bearing rather than optional; `rn-code-checker` verifies it.
-- The README carries measured numbers rather than a performance claim.
+- The README argues from the data size — 60 contacts, paged 20 at a time — rather than from a
+  benchmark. No frame-time numbers were taken, and none are claimed.
 
 ## Revisit if
 
-The measurement misses the acceptance bar after tuning, or the data set grows past a few
+Scrolling visibly janks on a mid-range device after tuning, or the data set grows past a few
 hundred rows, or rows become heterogeneous in height. Any of those flips the calculation toward
 FlashList.

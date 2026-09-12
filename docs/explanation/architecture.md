@@ -52,10 +52,12 @@ Message handling is genuinely non-trivial, and none of it is about React or Reac
 - **Identity** — outbox messages are keyed by a client-generated `localId`, because the server
   returns `id: 101` for every write.
 
-These are rules that would still be true if React Query were replaced tomorrow. So they live in
-`src/features/chat/model/` as **pure functions**, tested without React, without a network, and
-without a renderer. That is a domain layer in everything but name, applied to the one place
-that earns it.
+These are rules that would still be true if React Query were replaced tomorrow. So they are
+**pure functions**, tested without React, without a network, and without a renderer: the merge
+in `src/features/chat/api/use-messages.ts`, beside the hook that reads it, and the lifecycle
+guards in `src/core/store/store.ts`. A domain layer in everything but name, applied to the one
+place that earns it — and deliberately not given a `model/` folder of its own, because one
+function does not need a layer.
 
 This is the position worth defending: **architecture proportional to complexity**. Uniform
 layering across four slices would have looked more rigorous and taught a reader less about

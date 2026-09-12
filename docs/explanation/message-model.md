@@ -26,7 +26,7 @@ sends — has nowhere on the server to live. So the app models a thread as the u
 sources:
 
 ```text
-thread(contactId) = server posts (incoming)  ∪  outbox messages (outgoing)
+messages(contactId) = server posts (incoming)  ∪  outbox messages (outgoing)
                     ordered by createdAt
 ```
 

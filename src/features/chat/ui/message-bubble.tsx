@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { relativeTime } from '@/core/format/relative-time';
+import { spacing } from '@/core/theme/tokens';
 import { useTheme } from '@/core/theme/use-theme';
 import type { Message } from '../api/use-messages';
 
@@ -78,12 +79,32 @@ function MessageBubbleComponent({ message, onRetry, animate = false }: Props) {
           {failed ? t('chat.failed') : relativeTime(createdAt, t)}
         </Text>
         {/* Status is carried by an icon as well as colour — colour alone is not an accessible
-            signal. */}
+            signal — and each icon is labelled, because an unlabelled one is invisible to a
+            screen reader and would leave colour doing the work again. */}
         {status === 'sending' ? (
-          <Ionicons name="time-outline" size={12} color={colors.textMuted} />
+          <Ionicons
+            name="time-outline"
+            size={12}
+            color={colors.textMuted}
+            accessibilityLabel={t('chat.sending')}
+          />
         ) : null}
-        {status === 'sent' ? <Ionicons name="checkmark" size={12} color={colors.success} /> : null}
-        {failed ? <Ionicons name="refresh" size={12} color={colors.danger} /> : null}
+        {status === 'sent' ? (
+          <Ionicons
+            name="checkmark"
+            size={12}
+            color={colors.success}
+            accessibilityLabel={t('chat.sent')}
+          />
+        ) : null}
+        {failed ? (
+          <Ionicons
+            name="refresh"
+            size={12}
+            color={colors.danger}
+            accessibilityLabel={t('chat.failed')}
+          />
+        ) : null}
       </View>
     </Container>
   );
@@ -95,6 +116,6 @@ const styles = StyleSheet.create({
   alignEnd: { alignItems: 'flex-end' },
   alignStart: { alignItems: 'flex-start' },
   bubble: { maxWidth: '80%' },
-  meta: { alignItems: 'center', flexDirection: 'row', marginTop: 2 },
+  meta: { alignItems: 'center', flexDirection: 'row', marginTop: spacing.xs },
   row: { width: '100%' },
 });

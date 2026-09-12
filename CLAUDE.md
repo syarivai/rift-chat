@@ -67,7 +67,7 @@ Organised by [Diátaxis](https://diataxis.fr/) — index at [`docs/README.md`](.
 
 - **Learning** → [Tutorial: Getting started](./docs/tutorials/getting-started.md)
 - **Doing** → [Add a feature](./docs/how-to/add-a-feature.md) ·
-  [Run and test](./docs/how-to/run-and-test.md) (also: build the release APK, measure performance)
+  [Run and test](./docs/how-to/run-and-test.md) (also: build the release APK)
 - **Looking up** → [Conventions](./docs/reference/conventions.md) ·
   [Commands](./docs/reference/commands.md) ·
   [API contract](./docs/reference/api-contract.md) ·

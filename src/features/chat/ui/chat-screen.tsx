@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useAppStore } from '@/core/store/store';
+import { spacing } from '@/core/theme/tokens';
 import { useTheme } from '@/core/theme/use-theme';
 import { Avatar } from '@/core/ui/avatar';
 import { Button } from '@/core/ui/button';
@@ -126,7 +127,7 @@ export function ChatScreen() {
 const keyExtractor = (item: Message) => item.id;
 
 const styles = StyleSheet.create({
-  blocked: { alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth, gap: 4 },
+  blocked: { alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth, gap: spacing.xs },
   content: { flexGrow: 1, justifyContent: 'flex-end' },
   fill: { flex: 1 },
   header: { alignItems: 'center', flexDirection: 'row' },

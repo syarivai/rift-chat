@@ -484,10 +484,12 @@ Airplane mode produces a banner, a failed send with retry, and no crash.
 
 Stop and reassess. `[HUMAN]` decision.
 
-- [ ] **T-CUT.1** `P0` `[AI]` — Run `delivery-tracker` and get an honest status by tier
-- [ ] **T-CUT.2** `P0` `[HUMAN]` — Cut every unfinished P2 and record it in the README as a
+- [x] **T-CUT.1** `P0` `[AI]` — Run `delivery-tracker` and get an honest status by tier
+- [x] **T-CUT.2** `P0` `[HUMAN]` — Cut every unfinished P2 and record it in the README as a
       deliberate decision, not an omission
-- [ ] **T-CUT.3** `P0` `[HUMAN]` · R-24 R-35 — **Build the APK and install it on a real
+  - Outcome: **nothing was cut.** All four P2 tasks (T-6.4, T-6.5, T-7.3, T-8.4) finished
+    before the cut line, so there is no omission to record.
+- [x] **T-CUT.3** `P0` `[HUMAN]` · R-24 R-35 — **Build the APK and install it on a real
       device.** A release build that fails is the most likely late surprise; there is a day left
       to fix it.
   - Verify: `npm run apk` then `adb install -r release/rift-chat-v1.0.0.apk`, launch, load
@@ -516,10 +518,10 @@ Stop and reassess. `[HUMAN]` decision.
   - Acceptance: R-24 _"A reviewer can install the app from the repository"_.
   - Verify: manual, on device
 
-- [ ] **T-10.5** `P0` `[AI]` · R-20 R-21 R-22 — Write the README
+- [x] **T-10.5** `P0` `[AI]` · R-20 R-21 R-22 — Write the README
   - Do: run `readme-maker`. Must contain: demo assets, quick start, "the interesting part" (the
-    API stores nothing and what that forced), architecture overview, the ADR table, measured
-    performance numbers, testing summary, **the AI-usage section**, and what was cut and why.
+    API stores nothing and what that forced), architecture overview, the ADR table, testing
+    summary, **the AI-usage section**, and what was cut and why.
   - Verify: every one of R-20, R-21, R-22, R-24 has a visible section
 
 - [x] **T-10.6** `P0` `[AI]` — Requirement coverage check
@@ -528,7 +530,7 @@ Stop and reassess. `[HUMAN]` decision.
     cut.
   - Verify: report shows zero uncovered MUST requirements
 
-- [ ] **T-10.7** `P0` `[AI]` — Full quality pass
+- [x] **T-10.7** `P0` `[AI]` — Full quality pass
   - Do: run `rn-code-checker`, `rn-ui-checker`, `docs-maintainer` (check mode),
     `api-contract-verifier`, and `qa-tester`. Fix every HIGH-confidence CRITICAL and HIGH
     finding.
@@ -572,9 +574,9 @@ rather than dropped:
 | 6 · Polish        | 0      | 3      | 2     | 5/5       |
 | 7 · Offline       | 0      | 2      | 1     | 3/3       |
 | 8 · Testing       | 0      | 3      | 1     | 4/4       |
-| Cut line          | 3      | 0      | 0     | 0/3       |
-| 10 · Release      | 9      | 0      | 0     | 5/9       |
-| **Total**         | **53** | **13** | **4** | **63/70** |
+| Cut line          | 3      | 0      | 0     | 3/3       |
+| 10 · Release      | 9      | 0      | 0     | 7/9       |
+| **Total**         | **53** | **13** | **4** | **68/70** |
 
 Update this table whenever a phase completes. `delivery-tracker` verifies it independently —
 a table that disagrees with the checkboxes is itself a finding.

@@ -84,12 +84,17 @@ export abstract class BaseHttpClient {
     // `TVars` is the request body by default. Widen it with `toRequest` when the mutation has
     // to carry something the endpoint knows nothing about — the outbox `localId` that
     // `onSuccess`/`onError` use to mark the right message is the reason this exists.
+    //
+    // The conditional makes `toRequest` REQUIRED as soon as `TVars` stops being assignable to
+    // `Req`. Without it, widening the variables and forgetting the mapper still compiles and
+    // ships a mis-shaped body at runtime — a silent failure rather than a type error.
     const useApiMutation = <TVars = Req>(
-      options?: Omit<UseMutationOptions<Res, Error, TVars>, 'mutationFn'> & {
-        toRequest?: (variables: TVars) => Req;
-      },
+      options?: Omit<UseMutationOptions<Res, Error, TVars>, 'mutationFn'> &
+        (TVars extends Req
+          ? { toRequest?: (variables: TVars) => Req }
+          : { toRequest: (variables: TVars) => Req }),
     ) => {
-      const { toRequest, ...rest } = options ?? {};
+      const { toRequest, ...rest } = (options ?? {}) as { toRequest?: (v: TVars) => Req };
       return useMutation<Res, Error, TVars>({
         mutationKey: [key],
         mutationFn: (variables) =>

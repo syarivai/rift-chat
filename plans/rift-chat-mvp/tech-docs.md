@@ -57,13 +57,13 @@ src/
 │   ├── query-keys/           # the single key factory
 │   ├── theme/                # tokens, light/dark palettes, useTheme
 │   ├── i18n/                 # i18next setup + en/ms/id catalogs
-│   ├── format/               # relative time, newId()
+│   ├── format/               # relative time
 │   ├── network/              # NetInfo → onlineManager
 │   └── ui/                   # Avatar, Skeleton, EmptyState, ErrorState, Screen
 └── features/
-    ├── chats/   { api, model, ui }
-    ├── chat/    { api, model, ui }     ← the only slice with real domain logic
-    ├── profile/ { api, model, ui }
+    ├── chats/   { api, model, ui }     ← model/ holds the last-message selector
+    ├── chat/    { api, ui }            ← the outbox merge lives beside its hook, in api/
+    ├── profile/ { api, ui }
     └── settings/{ ui }
 ```
 
@@ -95,7 +95,7 @@ type Post = {
   createdAt: string;
 };
 
-// features/chat/model/types.ts — what the UI actually renders
+// core/store/types.ts — what the UI actually renders
 type OutboxMessage = {
   readonly localId: string; // client-generated; the server id is always 101
   readonly contactId: number;

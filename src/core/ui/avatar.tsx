@@ -3,6 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { useTheme } from '../theme/use-theme';
 
+/** The list-row size. Exported so a row's separator inset can be derived rather than guessed. */
+export const AVATAR_SIZE = 48;
+
 type Props = {
   uri: string;
   name: string;
@@ -11,7 +14,7 @@ type Props = {
   recyclingKey?: string;
 };
 
-export function Avatar({ uri, name, size = 48, recyclingKey }: Props) {
+export function Avatar({ uri, name, size = AVATAR_SIZE, recyclingKey }: Props) {
   const { colors, typography } = useTheme();
   const dimensions = { width: size, height: size, borderRadius: size / 2 };
 

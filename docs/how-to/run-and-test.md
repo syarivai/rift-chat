@@ -1,6 +1,6 @@
 ---
 title: 'Run and test'
-description: Day-to-day commands, building the release APK, measuring list performance, and troubleshooting.
+description: Day-to-day commands, building the release APK, and troubleshooting.
 category: how-to
 ---
 
@@ -27,9 +27,8 @@ npx expo prebuild --clean             # both platforms
 npx expo prebuild -p android --clean  # just Android
 ```
 
-Both platforms build from the same source. Android is where QA, performance measurement and the
-demo recording happen because the APK is the graded deliverable; iOS is verified on the
-simulator.
+Both platforms build from the same source. Android is where QA and the demo recording happen,
+because the APK is the graded deliverable; iOS is verified on the simulator.
 
 ## Run tests
 

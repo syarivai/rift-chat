@@ -11,7 +11,9 @@ import {
 } from 'react-native';
 
 import type { Contact } from '@/core/api/types';
+import { spacing } from '@/core/theme/tokens';
 import { useTheme } from '@/core/theme/use-theme';
+import { AVATAR_SIZE } from '@/core/ui/avatar';
 import { Screen } from '@/core/ui/screen';
 import { EmptyState, ErrorState, Skeleton } from '@/core/ui/states';
 import { useContactsInfinite } from '../api/use-contacts';
@@ -34,7 +36,8 @@ export function ChatsScreen() {
   } = useContactsInfinite();
 
   // Flattened once per data change, not inline in JSX where it would rebuild every render.
-  // {"pageParams": [0, 20, 40], "pages": [{"limit": 20, "offset": 0, "results": [Array], "total": 60}, {"limit": 20, "offset": 20, "results": [Array], "total": 60}, {"limit": 20, "offset": 40, "results": [Array], "total": 60}]}
+  // `data` is one envelope per fetched page — { pageParams: [0, 20, 40], pages: [{ total, limit,
+  // offset, results }, ...] } — so flatMap is what turns three pages into one list of contacts.
   const contacts = useMemo(() => data?.pages.flatMap((page) => page.results) ?? [], [data]);
 
   const openChat = useCallback((contactId: number) => router.push(`/chat/${contactId}`), [router]);
@@ -87,7 +90,12 @@ export function ChatsScreen() {
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
         ItemSeparatorComponent={() => (
-          <View style={[styles.separator, { backgroundColor: colors.border, marginLeft: 76 }]} />
+          <View
+            style={[
+              styles.separator,
+              { backgroundColor: colors.border, marginLeft: SEPARATOR_INSET },
+            ]}
+          />
         )}
         ListEmptyComponent={<EmptyState message={t('chats.empty')} />}
         ListFooterComponent={
@@ -110,6 +118,10 @@ export function ChatsScreen() {
 }
 
 // Module-level so their identity is stable across renders.
+/** Separators start where the row's text does, so they clear the avatar. Derived, not a
+ *  literal: a change to the row padding or the avatar size would otherwise silently desync. */
+const SEPARATOR_INSET = spacing.lg + AVATAR_SIZE + spacing.md;
+
 const keyExtractor = (item: Contact) => String(item.id);
 
 const getItemLayout = (_: unknown, index: number) => ({

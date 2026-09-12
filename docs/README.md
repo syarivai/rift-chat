@@ -38,7 +38,7 @@ teach, serves neither reader well. Pick the quadrant by the reader's need, not t
 
 - [Add a feature](./how-to/add-a-feature.md) — the vertical-slice workflow.
 - [Run and test](./how-to/run-and-test.md) — day-to-day commands, building the release APK,
-  measuring list performance, and troubleshooting.
+  and troubleshooting.
 
 ### Reference (information-oriented)
 

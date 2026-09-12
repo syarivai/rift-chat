@@ -2,6 +2,17 @@ import { useEffect, useState } from 'react';
 import { Keyboard, Platform, useWindowDimensions } from 'react-native';
 
 /**
+ * Space below the keyboard's top edge.
+ *
+ * Measured from `screenY` rather than the keyboard's reported `height`: under Android
+ * edge-to-edge the reported height under-measures against a full-screen window, which left
+ * the composer clipped behind the keyboard.
+ */
+export function keyboardHeightFrom(windowHeight: number, keyboardTopY: number): number {
+  return Math.max(0, windowHeight - keyboardTopY);
+}
+
+/**
  * The keyboard's height, or 0 when it is closed.
  *
  * ponytail: `KeyboardAvoidingView` does not work on Android under Expo SDK 54+, which enables
@@ -13,17 +24,6 @@ import { Keyboard, Platform, useWindowDimensions } from 'react-native';
  * keyboard's animation. Upgrade path: react-native-keyboard-controller for interactive
  * tracking, if the snap ever reads as cheap.
  */
-/**
- * Space below the keyboard's top edge.
- *
- * Measured from `screenY` rather than the keyboard's reported `height`: under Android
- * edge-to-edge the reported height under-measures against a full-screen window, which left
- * the composer clipped behind the keyboard.
- */
-export function keyboardHeightFrom(windowHeight: number, keyboardTopY: number): number {
-  return Math.max(0, windowHeight - keyboardTopY);
-}
-
 export function useKeyboardHeight(): number {
   const [height, setHeight] = useState(0);
   const { height: windowHeight } = useWindowDimensions();

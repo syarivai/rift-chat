@@ -7,7 +7,7 @@ category: how-to
 # How to add a feature
 
 Features are added as **vertical slices**: a folder under `src/features/<name>/` with its own
-`api/`, `model/`, and `ui/`. Use the existing `chat` slice as the template.
+`api/`, `model/`, and `ui/`. Use the existing `chats` slice as the template.
 
 Read [Conventions](../reference/conventions.md) first — this guide is the workflow, that page
 is the rules.

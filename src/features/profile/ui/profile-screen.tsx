@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useAppStore } from '@/core/store/store';
+import { spacing } from '@/core/theme/tokens';
 import { useTheme } from '@/core/theme/use-theme';
 import { Avatar } from '@/core/ui/avatar';
 import { Button } from '@/core/ui/button';
@@ -95,6 +96,6 @@ export function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  card: { borderWidth: StyleSheet.hairlineWidth, gap: 4 },
+  card: { borderWidth: StyleSheet.hairlineWidth, gap: spacing.xs },
   center: { alignItems: 'center' },
 });

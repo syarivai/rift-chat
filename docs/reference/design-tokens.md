@@ -71,9 +71,11 @@ light. The choice persists in MMKV, so the app opens in the right theme with no 
 reads synchronously, which is precisely why it was chosen (see
 [ADR 0002](../explanation/adr/0002-storage-mmkv.md)).
 
-Components consume tokens through `useTheme()`. Styles that depend on the theme are built
-inside the component from tokens; styles that do not are hoisted to a module-level
-`StyleSheet.create` so they are not rebuilt on every render — which matters inside a list row.
+Components consume theme-dependent tokens — the colours — through `useTheme()`, and build those
+styles inside the component. Styles that do not depend on the theme are hoisted to a module-level
+`StyleSheet.create` so they are not rebuilt on every render, which matters inside a list row;
+`spacing`, `radius` and `typography` are the same values in both themes, so import them straight
+from `@/core/theme/tokens` there rather than reaching for a raw number.
 
 ## Contrast
 

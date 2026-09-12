@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { Contact } from '@/core/api/types';
 import { relativeTime } from '@/core/format/relative-time';
+import { spacing } from '@/core/theme/tokens';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useAppStore } from '@/core/store/store';
@@ -89,7 +90,7 @@ export const ContactRow = memo(ContactRowComponent);
 const styles = StyleSheet.create({
   body: { flex: 1, justifyContent: 'center' },
   line: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
-  name: { flex: 1, marginRight: 8 },
-  preview: { flex: 1, marginRight: 8 },
+  name: { flex: 1, marginRight: spacing.sm },
+  preview: { flex: 1, marginRight: spacing.sm },
   row: { alignItems: 'center', flexDirection: 'row', height: ROW_HEIGHT },
 });

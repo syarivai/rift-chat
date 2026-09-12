@@ -36,7 +36,7 @@ with `npx expo install`, which resolves the SDK-compatible version. The table be
 | `i18next` / `react-i18next`       | ^26 / ^17 | Translation engine and its React bindings                                                               |
 | `react-native-reanimated`         | 4.5.1     | Screen and shared-element transitions — SDK 57 pin, _not_ npm latest 4.6.x                              |
 | `react-native-worklets`           | 0.10.1    | Required peer of Reanimated 4 — a separate package since v4                                             |
-| `@react-native-community/netinfo` | ^12       | Connectivity, wired to React Query's `onlineManager`                                                    |
+| `@react-native-community/netinfo` | 12.0.1    | Connectivity, wired to React Query's `onlineManager`                                                    |
 | `react-native-safe-area-context`  | ~5.7.0    | Safe-area insets                                                                                        |
 | `react-native-screens`            | ~4.26.0   | Native screen primitives under expo-router                                                              |
 | `react-native-gesture-handler`    | ~2.32.0   | Gesture primitives — **npm latest is 3.2.x, a major ahead; do not install it**                          |
