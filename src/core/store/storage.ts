@@ -17,8 +17,3 @@ export const mmkvStorage: StateStorage = {
   setItem: (name, value) => mmkv.set(name, value),
   removeItem: (name) => mmkv.remove(name),
 };
-
-/** Used by Settings' "clear local data", and by tests that need a clean slate. */
-export function clearStorage(): void {
-  mmkv.clearAll();
-}

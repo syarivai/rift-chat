@@ -83,13 +83,13 @@ checklist, and it is what the checker agents cite.
 
 ## Agents
 
-Nine agents in [`.claude/agents/`](./.claude/agents/), following the **maker · checker · fixer**
+Seven agents in [`.claude/agents/`](./.claude/agents/), following the **maker · checker · fixer**
 pattern: makers build, checkers report findings rated by criticality × confidence, and only
-**HIGH-confidence** findings are applied.
+**HIGH-confidence** findings are applied. The list is what was actually used — an agent nobody
+ran is a claim, not a tool.
 
 | Agent                   | Role                                                                |
 | ----------------------- | ------------------------------------------------------------------- |
-| `rn-feature-dev`        | maker — implements the next delivery.md task, test-first            |
 | `rn-code-checker`       | checker — TypeScript, layering, the eight rules                     |
 | `rn-ui-checker`         | checker — tokens, a11y, i18n coverage, dark mode                    |
 | `docs-maintainer`       | maker/checker — Diátaxis placement, accuracy, links                 |
@@ -97,17 +97,15 @@ pattern: makers build, checkers report findings rated by criticality × confiden
 | `qa-tester`             | checker — pre-submission sweep across locales, themes, error states |
 | `api-contract-verifier` | checker — re-probes the API, detects contract drift                 |
 | `requirement-extractor` | maker — brief → requirement.md with traceable IDs                   |
-| `readme-maker`          | maker — the graded README, incl. the AI-usage section               |
 
 ## Skills
 
-Thirteen skills in [`.claude/skills/`](./.claude/skills/). Load the relevant one **before**
+Eleven skills in [`.claude/skills/`](./.claude/skills/). Load the relevant one **before**
 acting, not after.
 
 `grillme` · `react-query-patterns` · `state-boundaries` · `rn-testing` ·
 `project-conventions` · `app-security` · `criticality-confidence` · `maker-checker-fixer` ·
-`docs-diataxis` · `writing-readmes` · `gherkin-criteria` · `typescript-standards` ·
-`agent-developing-agents`
+`docs-diataxis` · `gherkin-criteria` · `typescript-standards`
 
 The two you will need most: **`state-boundaries`** (rule 1 and 2 in depth — read it before
 touching any query or mutation) and **`project-conventions`** (the house rules).

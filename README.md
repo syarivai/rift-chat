@@ -4,13 +4,13 @@ A React Native chat client built with Expo, TanStack Query and Zustand, over the
 [responserift.dev](https://responserift.dev) API — where `api/users` are contacts and
 `api/posts` are messages.
 
-> **Status.** 68 of 70 tasks in the [delivery plan](./plans/rift-chat-mvp/delivery.md) are
-> complete, verified on an Android emulator. The release APK, the demo recording and the
-> screenshots are all committed; only closing the plan and submitting remain — see
-> [What's left](#whats-left). Nothing in this README claims work that has not been done.
+> **Status: complete.** All 70 tasks in the
+> [delivery plan](./plans/rift-chat-mvp/delivery.md) are done, verified on an Android emulator
+> and on a physical device from the committed APK. Nothing was cut at the day-3 line.
+> Nothing in this README claims work that has not been done.
 
 **[Download the APK](./release/rift-chat-v1.0.0.apk)** · 67 MB · SHA-256
-`5a32d7d3e44fedf2a7bf9d870ca81ad2b18c912bd6061db54bca084f55015869`
+`c265f92a36c09cbac2b050a437c39df4971cb207f9092fac446386d3bea31bee`
 
 Signed with a debug keystore — a review artifact, not a distributable build. Packaged for
 `arm64-v8a` and `x86_64`, which covers physical devices and the emulators reviewers use; a
@@ -22,9 +22,6 @@ four-ABI build comes out at 106 MB and GitHub rejects files over 100 MB.
   <img src="./docs/assets/demo.gif" width="240"
        alt="Screen recording: opening a contact from the Chats list, typing a message and watching the bubble appear immediately, then going back to the list where that contact's row now previews the message with a &quot;now&quot; timestamp" />
 </p>
-
-Sending a message, then going back to the list — the row previews what was just sent, marked
-**now**. The server stored none of it; the outbox did.
 
 The screenshots below are the same build running against the live API on an Android emulator.
 
@@ -124,10 +121,6 @@ names the condition that would change the answer.
 | [0003](./docs/explanation/adr/0003-list-rendering-flatlist.md)  | List rendering     | **FlatList, tuned** over FlashList — 60 rows paged 20 at a time does not need a recycler      |
 | [0004](./docs/explanation/adr/0004-message-model-and-outbox.md) | Conversation model | **Persisted outbox merged at read time** over two fabricated-data alternatives                |
 
-ADR 0003 is the one I would most expect to be challenged. Reaching for FlashList would have
-signalled "performance work" without evidence; at 60 rows paged 20 at a time, a tuned FlatList is
-sufficient and adds no dependency.
-
 ## Testing
 
 **153 tests, 89% statements / 82% branches**, with the coverage threshold set just
@@ -147,35 +140,24 @@ user data while demoing perfectly. Reasoning and what was deliberately left unte
 
 ## How AI aided development
 
-This project was built with Claude Code, and the evidence is committed rather than described:
-[`.claude/`](./.claude) holds 9 agents and 13 skills, and
-[`plans/rift-chat-mvp/`](./plans/rift-chat-mvp) holds the requirements, technical design and a
-70-task delivery checklist. The commit history shows the sequence.
+Built with Claude Code. The evidence is committed rather than described —
+[`.claude/`](./.claude) holds the agents and skills, [`plans/`](./plans/rift-chat-mvp) holds the
+requirements, design and a 70-task checklist, and the commit history shows the order.
 
-**What the AI did that mattered.** It probed the live API before any code was written and found
-that `POST` does not persist and always returns `id: 101` — the fact the entire architecture turns
-on, and one I would not have discovered until much later from the brief alone. It then ran a
-structured design interrogation (~20 decisions, each with alternatives and trade-offs) _before_
-implementation, and wrote the Diátaxis docs and ADRs.
+**Where it helped most.** It probed the live API before any code was written and found that
+`POST` does not persist and always returns `id: 101` — the fact the whole architecture turns on.
+It then ran a structured design interrogation before implementation, and wrote the docs and ADRs.
 
-**What I decided.** Every architectural fork, including several where I overruled it:
+**What I decided.** Every architectural fork, including three where I overruled it: FlashList
+(unmeasured over-engineering at 60 rows), seeded placeholder messages (fabricating data the API
+does not have), and `Result<T, Failure>` plus ports and barrel files (abstractions nobody asked
+for).
 
-- It proposed **FlashList**; I rejected it as unmeasured over-engineering at 60 rows. It agreed
-  the reasoning was sound and wrote ADR 0003 around the measured position instead.
-- It proposed **seeded placeholder messages** to make the Chats list look populated; I rejected
-  fabricating data the API does not have. The honest empty state is the result.
-- It proposed `Result<T, Failure>`, ports, and barrel files; I cut all three as abstractions
-  nobody asked for.
-
-**Where it was wrong, and how that was caught.** Twice it documented things confidently that
-turned out to be false, and both were caught by _running_ rather than reading: it claimed
-`react-native-mmkv` ships a Jest mock (v4 is a Nitro module and cannot load under Jest at all),
-and it claimed Hermes ships full `Intl` (`Intl.RelativeTimeFormat` is **undefined** on device —
-Node implements it, so every unit test passed while the app crashed with a red box).
-
-That second one is the clearest lesson from this build: a green test suite is not evidence that an
-app runs. Four bugs reached a working device despite full test coverage, and each was found by
-driving the real app and reading a screenshot.
+**Where it was wrong.** Twice it documented things confidently that were false — that
+`react-native-mmkv` ships a Jest mock, and that Hermes ships full `Intl`. Both were caught by
+_running_ rather than reading, and `Intl.RelativeTimeFormat` is the clearest lesson in the build:
+undefined on device, defined in Node, so every unit test passed while the app crashed with a red
+box. A green suite is not evidence that an app runs.
 
 ## Documentation
 
@@ -190,15 +172,17 @@ Organised with [Diátaxis](https://diataxis.fr/) — index at [`docs/`](./docs/R
 - **Doing** → [Add a feature](./docs/how-to/add-a-feature.md) ·
   [Run and test](./docs/how-to/run-and-test.md)
 
-## What's left
+## Scope
 
-Named so their absence reads as a plan rather than an omission:
+Recorded so what is _not_ here reads as a decision rather than an omission:
 
-| Item                            | Status                                                      |
-| ------------------------------- | ----------------------------------------------------------- |
-| Tick the plan closed            | T-10.8                                                      |
-| Push and share the link         | T-10.9                                                      |
-| **Scope cut at the day-3 line** | **None.** All four P2 tasks landed, so nothing was dropped. |
+| Item                                        | Decision                                                                                                                                                           |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Scope cut at the day-3 line                 | **None.** All four P2 tasks landed.                                                                                                                                |
+| UI library                                  | **Declined** — the brief made it optional; a hand-built token layer is used instead.                                                                               |
+| Measured performance numbers                | **Not taken, and not claimed.** The tuning ADR 0003 describes is in place; no emulator figure was reliable enough to be worth citing.                              |
+| RASP / certificate pinning                  | **Declined** — it defends assets this app does not have. See [Security](./docs/explanation/security.md).                                                           |
+| Contact's own last message on the Chats row | **Declined** — `GET /api/users` carries no last post, so it would cost 60 extra requests. See [ADR 0004](./docs/explanation/adr/0004-message-model-and-outbox.md). |
 
 ## Tech stack
 

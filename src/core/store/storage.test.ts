@@ -1,31 +1,30 @@
-import { clearStorage, mmkvStorage } from './storage';
+import { mmkvStorage } from './storage';
 
-beforeEach(() => clearStorage());
-
+// Each test uses its own key, so the suite needs no shared reset between cases.
 describe('mmkvStorage', () => {
   it('round-trips a value', () => {
-    mmkvStorage.setItem('k', 'v');
-    expect(mmkvStorage.getItem('k')).toBe('v');
+    mmkvStorage.setItem('round-trip', 'v');
+    expect(mmkvStorage.getItem('round-trip')).toBe('v');
   });
 
   it('returns null for a missing key, which is what Zustand expects', () => {
     // undefined would make persist treat the store as corrupt rather than empty.
-    expect(mmkvStorage.getItem('nope')).toBeNull();
+    expect(mmkvStorage.getItem('never-written')).toBeNull();
   });
 
   it('removes a value', () => {
-    mmkvStorage.setItem('k', 'v');
-    mmkvStorage.removeItem('k');
-    expect(mmkvStorage.getItem('k')).toBeNull();
+    mmkvStorage.setItem('to-remove', 'v');
+    mmkvStorage.removeItem('to-remove');
+    expect(mmkvStorage.getItem('to-remove')).toBeNull();
   });
 
-  it('clearStorage empties everything', () => {
-    mmkvStorage.setItem('a', '1');
-    mmkvStorage.setItem('b', '2');
+  it('removes only the named key', () => {
+    mmkvStorage.setItem('keep', 'kept');
+    mmkvStorage.setItem('drop', 'dropped');
 
-    clearStorage();
+    mmkvStorage.removeItem('drop');
 
-    expect(mmkvStorage.getItem('a')).toBeNull();
-    expect(mmkvStorage.getItem('b')).toBeNull();
+    expect(mmkvStorage.getItem('drop')).toBeNull();
+    expect(mmkvStorage.getItem('keep')).toBe('kept');
   });
 });

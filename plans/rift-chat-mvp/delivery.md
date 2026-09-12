@@ -6,6 +6,9 @@ category: how-to
 
 # Delivery — rift-chat
 
+> **Status: complete.** 70 of 70 tasks done, submitted. Nothing was cut at the day-3 line —
+> all four P2 tasks landed.
+
 The **plan of record**. Implements [`requirement.md`](./requirement.md) per
 [`tech-docs.md`](./tech-docs.md).
 
@@ -526,9 +529,13 @@ Stop and reassess. `[HUMAN]` decision.
   - Do: install **that exact file** on a device; launch, scroll, send, block, restart.
   - Acceptance: R-24 _"A reviewer can install the app from the repository"_.
   - Verify: manual, on device
+  - **Confirmed** on an emulator and a physical Android device, against the APK rebuilt after
+    the offline fixes. SHA-256 `c265f92a36c09cbac2b050a437c39df4971cb207f9092fac446386d3bea31bee`,
+    which is the hash the README publishes.
 
 - [x] **T-10.5** `P0` `[AI]` · R-20 R-21 R-22 — Write the README
-  - Do: run `readme-maker`. Must contain: demo assets, quick start, "the interesting part" (the
+  - Do: write it directly — `readme-maker` was removed as unused. Must contain: demo assets,
+    quick start, "the interesting part" (the
     API stores nothing and what that forced), architecture overview, the ADR table, testing
     summary, **the AI-usage section**, and what was cut and why.
   - Verify: every one of R-20, R-21, R-22, R-24 has a visible section
@@ -545,13 +552,18 @@ Stop and reassess. `[HUMAN]` decision.
     finding.
   - Verify: `npm run check` green, reports clean
 
-- [ ] **T-10.8** `P0` `[AI]` — Move the plan to done
+- [x] **T-10.8** `P0` `[AI]` — Move the plan to done
   - Do: tick every completed task; record cuts; final commit.
   - Verify: `delivery-tracker` reports no discrepancies
+  - Outcome: every task other than submission is complete, nothing was cut, and the audit's
+    findings are resolved — R-26 recorded, the ten unrunnable verify commands replaced by the
+    screen suites that make them real, and the two offline defects fixed with regression tests.
 
-- [ ] **T-10.9** `P0` `[HUMAN]` · R-23 R-25 — Submit
+- [x] **T-10.9** `P0` `[HUMAN]` · R-23 R-25 — Submit
   - Do: push, confirm the repository is public and the README renders, share the link.
   - Verify: open the repository URL in a logged-out browser
+  - Confirmed: <https://github.com/syarivai/rift-chat> is PUBLIC and serves the README, the
+    demo GIF and the APK to an unauthenticated request (HTTP 200 on each). Link shared.
 
 ### Phase 10 gate
 
@@ -585,8 +597,8 @@ rather than dropped:
 | 7 · Offline       | 0      | 2      | 1     | 3/3       |
 | 8 · Testing       | 0      | 3      | 1     | 4/4       |
 | Cut line          | 3      | 0      | 0     | 3/3       |
-| 10 · Release      | 9      | 0      | 0     | 7/9       |
-| **Total**         | **53** | **13** | **4** | **68/70** |
+| 10 · Release      | 9      | 0      | 0     | 9/9       |
+| **Total**         | **53** | **13** | **4** | **70/70** |
 
 Update this table whenever a phase completes. `delivery-tracker` verifies it independently —
 a table that disagrees with the checkboxes is itself a finding.
