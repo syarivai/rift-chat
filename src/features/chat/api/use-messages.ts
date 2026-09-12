@@ -66,6 +66,9 @@ export function useMessages(contactId: number) {
     { limit: PAGE_SIZE, userId: contactId },
     {
       queryKey: queryKeys.messages.byContact(contactId),
+      // A route param is outside input. The screen's not-found branch cannot prevent this
+      // fetch on its own, because hooks run before the early return.
+      enabled: Number.isInteger(contactId) && contactId > 0,
       initialPageParam: 0,
       getNextPageParam: (last) => {
         const next = last.offset + last.limit;

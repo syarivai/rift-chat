@@ -24,6 +24,21 @@ module.exports = [
     },
   },
   {
+    // Node scripts run outside the app bundle: they get Node globals, and `console.log` is
+    // their output, not a stray debug statement.
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      globals: {
+        __dirname: 'readonly',
+        require: 'readonly',
+        module: 'writable',
+        process: 'readonly',
+        console: 'readonly',
+      },
+    },
+    rules: { 'no-console': 'off' },
+  },
+  {
     // Must be scoped to TypeScript files: eslint-config-expo registers the
     // `@typescript-eslint` plugin only for this glob, so a rule declared outside it fails
     // with "could not find plugin @typescript-eslint".

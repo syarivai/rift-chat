@@ -1,4 +1,6 @@
 import {
+  type InfiniteData,
+  type UseInfiniteQueryOptions,
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -65,21 +67,31 @@ export abstract class BaseHttpClient {
     // Offset paging: the wrapper supplies the queryFn (merging `offset` from pageParam);
     // the caller supplies the key from the queryKeys factory plus the stop condition, because
     // only the caller knows the shape of `total` it is paging against.
+    //
+    // `rest` carries the remaining React Query options through — `enabled` above all. A closed
+    // option set here silently dropped whatever it did not name, which is worse than rejecting
+    // it: the call site reads as if the option applied.
     const useApiInfiniteQuery = (
       req: Omit<Req, 'offset'>,
       options: {
         queryKey: readonly unknown[];
         initialPageParam: number;
         getNextPageParam: (lastPage: Res) => number | undefined;
-      },
-    ) =>
-      useInfiniteQuery({
-        queryKey: options.queryKey,
+      } & Omit<
+        UseInfiniteQueryOptions<Res, Error, InfiniteData<Res>, readonly unknown[], number>,
+        'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam'
+      >,
+    ) => {
+      const { queryKey, initialPageParam, getNextPageParam, ...rest } = options;
+      return useInfiniteQuery({
+        queryKey,
         queryFn: ({ pageParam }: { pageParam: number }) =>
           fetcher({ ...req, offset: pageParam } as Req),
-        initialPageParam: options.initialPageParam,
-        getNextPageParam: options.getNextPageParam,
+        initialPageParam,
+        getNextPageParam,
+        ...rest,
       });
+    };
 
     // `TVars` is the request body by default. Widen it with `toRequest` when the mutation has
     // to carry something the endpoint knows nothing about — the outbox `localId` that

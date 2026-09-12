@@ -4,10 +4,10 @@ A React Native chat client built with Expo, TanStack Query and Zustand, over the
 [responserift.dev](https://responserift.dev) API — where `api/users` are contacts and
 `api/posts` are messages.
 
-> **Status.** Phases 0–8 of the [delivery plan](./plans/rift-chat-mvp/delivery.md) are complete
-> (68 of 70 tasks), verified on an Android emulator, and the release APK is built and committed.
-> The demo recording and the final submission steps remain — see [What's left](#whats-left).
-> Nothing in this README claims work that has not been done.
+> **Status.** 68 of 70 tasks in the [delivery plan](./plans/rift-chat-mvp/delivery.md) are
+> complete, verified on an Android emulator. The release APK, the demo recording and the
+> screenshots are all committed; only closing the plan and submitting remain — see
+> [What's left](#whats-left). Nothing in this README claims work that has not been done.
 
 **[Download the APK](./release/rift-chat-v1.0.0.apk)** · 67 MB · SHA-256
 `5a32d7d3e44fedf2a7bf9d870ca81ad2b18c912bd6061db54bca084f55015869`
@@ -130,7 +130,7 @@ sufficient and adds no dependency.
 
 ## Testing
 
-**125 tests, 81% statements / 79% branches** over the logic, with the coverage threshold set just
+**147 tests, 88% statements / 82% branches**, with the coverage threshold set just
 under what the suite reaches so a regression trips it. Unit tests cover the outbox merge and
 status lifecycle, integration tests cover the send lifecycle and pagination, and one Maestro flow
 covers navigation, the real keyboard and persistence across a process restart.

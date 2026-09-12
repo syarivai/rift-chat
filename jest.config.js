@@ -27,6 +27,6 @@ module.exports = {
   // Set just under what the suite actually reaches, so the gate is real rather than
   // aspirational and a genuine regression trips it.
   coverageThreshold: {
-    global: { statements: 80, branches: 78, functions: 78, lines: 80 },
+    global: { statements: 87, branches: 81, functions: 82, lines: 88 },
   },
 };

@@ -2,7 +2,7 @@ import type { Contact, Envelope, Post } from '@/core/api/types';
 
 /**
  * Fixtures mirror the real API shapes, including the quirks that drive the design:
- * `sentPost` returns id 101, and `threadPage` is unchanged after a send. A fixture that
+ * `sentPost` returns id 101, and `messagesPage` is unchanged after a send. A fixture that
  * pretended the write persisted would hide the bug the whole app is built around.
  * See docs/reference/api-contract.md.
  */
@@ -43,9 +43,14 @@ export function contactsPage(offset = 0, limit = 20, total = 60): Envelope<Conta
 }
 
 /** A contact's thread. The real API returns two or three posts per user. */
-export function threadPage(userId = 5, count = 3): Envelope<Post> {
+export function messagesPage(userId = 5, count = 3): Envelope<Post> {
   const results = Array.from({ length: count }, (_, i) =>
-    post({ id: i + 1, userId, createdAt: `2025-07-0${i + 1}T10:00:00Z` }),
+    post({
+      id: i + 1,
+      userId,
+      body: `Message ${i + 1} from the contact.`,
+      createdAt: `2025-07-0${i + 1}T10:00:00Z`,
+    }),
   );
   return { total: count, limit: 20, offset: 0, results };
 }

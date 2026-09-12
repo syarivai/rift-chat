@@ -189,7 +189,7 @@ timeout: 15_000 })`, a response interceptor that unwraps to `data` and normalise
   - Do: `core/i18n` — i18next + react-i18next, device locale via `expo-localization`,
     `en`/`ms`/`id` catalogs, `en` fallback.
   - Acceptance: O-02 _"The app opens in the device language"_, _"...falls back to English"_.
-  - Verify: `npm test -- i18n`
+  - Verify: `npm run i18n:check`
 
 - [x] **T-1.8** `P0` `[AI]` · R-34 — Shared UI primitives
   - Do: `core/ui` — `Screen`, `Avatar` (expo-image, `recyclingKey`, placeholder on error),
@@ -207,7 +207,8 @@ timeout: 15_000 })`, a response interceptor that unwraps to `data` and normalise
     fixture returns `id: 101` and the collection fixture is unchanged afterwards.
   - Done when: a test using `jest.mock('@/core/api/rift-api')` can assert the collection is unchanged
     after a send.
-  - Verify: `npm test -- fixtures`
+  - Verify: `npm run test:ci` — the fixtures are consumed by the API and outbox suites,
+    so a fixture that drifts from the contract fails them
 
 ### Phase 1 gate
 
@@ -267,19 +268,19 @@ The core of the assignment. Test-first throughout — this is the one place with
   - Do: `OutboxMessage` discriminated union; `enqueue`, `markSent`, `markFailed`, `retry`;
     illegal transitions (`sent → sending`, `sent → failed`) rejected.
   - Done when: tests cover every legal and illegal transition.
-  - Verify: `npm test -- outbox`
+  - Verify: `npm test -- store`
 
 - [x] **T-3.2** `P0` `[AI]` · R-11 O-01 — `mergeMessages` (pure)
   - Do: map posts to incoming and outbox to outgoing, sort by `createdAt` ascending with a
     stable tiebreaker.
   - Done when: a test proves the order is identical across repeated calls with equal timestamps.
-  - Verify: `npm test -- merge-thread`
+  - Verify: `npm test -- use-messages`
 
 - [x] **T-3.3** `P0` `[AI]` · R-11 R-28 — `useMessages`
   - Do: `useInfiniteQuery` over `GET /api/posts?userId=N`, merged with the contact's outbox.
   - Acceptance: R-11 _"A contact's messages are shown"_, _"Only this contact's messages
     appear"_.
-  - Verify: `npm test -- use-thread`
+  - Verify: `npm test -- use-messages`
 
 - [x] **T-3.4** `P0` `[AI]` · R-13 R-14 — `useSendMessage`
   - Do: `onMutate` enqueues (durable before the request leaves), `onSuccess` marks sent from
@@ -344,7 +345,7 @@ retry · sending repeatedly never removes an earlier message · `npm run check` 
     refetch never runs.
   - Acceptance: R-17 _"The profile opens without a spinner"_, _"The profile is refreshed in the
     background"_.
-  - Verify: `npm test -- use-contact`
+  - Verify: `npm test -- profile-screen`
 
 - [x] **T-4.2** `P0` `[AI]` · R-16 — Profile screen
   - Do: name, avatar, phone; avatar failure degrades to a placeholder.
@@ -355,14 +356,14 @@ retry · sending repeatedly never removes an earlier message · `npm run check` 
 - [x] **T-4.3** `P0` `[AI]` · R-18 R-27 — Block/unblock toggle
   - Do: toggle the `blocked` slice; the control reflects state immediately.
   - Acceptance: R-18 _"Blocking a contact"_, _"The blocked state survives a restart"_.
-  - Verify: `npm test -- blocked`
+  - Verify: `npm test -- chat-screen profile-screen`
 
 - [x] **T-4.4** `P0` `[AI]` · R-18 R-27 — Blocked state across screens
   - Do: chat composer replaced by an unblock bar with history still visible; a blocked
     indicator on the Chats row.
   - Acceptance: R-18 _"Blocked history remains readable"_, _"Unblocking restores sending"_;
     R-27 _"One state change is reflected on every screen that shows it"_.
-  - Verify: `npm test -- blocked`
+  - Verify: `npm test -- chat-screen profile-screen`
 
 ### Phase 4 gate
 
@@ -415,7 +416,7 @@ plan is quality, evidence, and submission.
     WCAG AA contrast in both themes.
   - Verify: `npm test` (queries resolve by role), then a manual screen-reader spot check
 
-- [x] **T-6.4** `P2` `[AI]` · R-31 — Screen transitions
+- [x] **T-6.4** `P2` `[AI]` · R-31 — Screen transitions (native stack, not Reanimated)
   - Do: Reanimated transitions for list → chat → profile.
   - Acceptance: R-31 _"Navigating into a chat is animated"_.
   - Verify: `npm run android`, observe
@@ -441,9 +442,14 @@ All three locales and both themes render correctly on a device.
   - Verify: `npm run android` with airplane mode
 
 - [x] **T-7.3** `P2` `[AI]` · O-04 — Flush the outbox on reconnect
+  - **Scope, recorded deliberately:** the flush is scoped to the conversation that is open,
+    not a global queue processor. Messages that failed in other threads stay `failed` until
+    you open them. The ceiling and its upgrade path are marked with a `ponytail:` comment in
+    `use-send-message.ts`; O-04's scenario does not name this qualifier, so it is stated here
+    rather than left for a reader to discover.
   - Do: retry failed messages in order when connectivity returns.
   - Acceptance: O-04 _"Queued messages send on reconnect"_.
-  - Verify: `npm test -- reconnect`
+  - Verify: `npm test -- send-message`
 
 ### Phase 7 gate
 
@@ -485,10 +491,13 @@ Airplane mode produces a banner, a failed send with retry, and no crash.
 Stop and reassess. `[HUMAN]` decision.
 
 - [x] **T-CUT.1** `P0` `[AI]` — Run `delivery-tracker` and get an honest status by tier
+  - Verify: a report exists under `.reports/delivery-tracker/` and its findings are resolved
+    or recorded
 - [x] **T-CUT.2** `P0` `[HUMAN]` — Cut every unfinished P2 and record it in the README as a
       deliberate decision, not an omission
   - Outcome: **nothing was cut.** All four P2 tasks (T-6.4, T-6.5, T-7.3, T-8.4) finished
     before the cut line, so there is no omission to record.
+  - Verify: `grep -c '`P2`' delivery.md` equals the number of ticked P2 tasks
 - [x] **T-CUT.3** `P0` `[HUMAN]` · R-24 R-35 — **Build the APK and install it on a real
       device.** A release build that fails is the most likely late surprise; there is a day left
       to fix it.
@@ -556,10 +565,11 @@ requirement covered.
 Two requirements carry no task. Recorded here so the coverage check reports them as handled
 rather than dropped:
 
-| Id                                            | Status                                                                                                                                                                                                                                               |
-| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **R-04** · UI library (optional)              | **Declined deliberately.** A hand-built token layer is used instead — see [Design tokens](../../docs/reference/design-tokens.md) and [requirement.md](./requirement.md#r-04--ui-library). Declining an optional item is a decision, not an omission. |
-| **O-05** · Documentation and decision records | **Already delivered** in commits `31cae3c` and `3f60a7d`, before implementation began. Maintained thereafter by `docs-maintainer`.                                                                                                                   |
+| Id                                                                    | Status                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **R-04** · UI library (optional)                                      | **Declined deliberately.** A hand-built token layer is used instead — see [Design tokens](../../docs/reference/design-tokens.md) and [requirement.md](./requirement.md#r-04--ui-library). Declining an optional item is a decision, not an omission.                                                                                                                                                                                                                                                                                                                                                       |
+| **R-26** · Performance (GRADED) · **R-33** · Performance optimisation | **Satisfied by code, not by measurement.** The evidence requirement names row memoisation and FlatList tuning, both in place — `React.memo` on `ContactRow`/`MessageBubble`, `getItemLayout` from a fixed `ROW_HEIGHT`, tuned `initialNumToRender`/`maxToRenderPerBatch`/`windowSize`/`removeClippedSubviews`, MMKV's synchronous reads avoiding a cold-start flash. Reasoning: [ADR 0003](../../docs/explanation/adr/0003-list-rendering-flatlist.md). **No frame-time numbers were taken and none are claimed** — the measurement phase was removed rather than reported on unreliable emulator figures. |
+| **O-05** · Documentation and decision records                         | **Already delivered** in commits `31cae3c` and `3f60a7d`, before implementation began. Maintained thereafter by `docs-maintainer`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 ## Progress
 
