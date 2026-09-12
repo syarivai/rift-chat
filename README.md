@@ -5,7 +5,7 @@ A React Native chat client built with Expo, TanStack Query and Zustand, over the
 `api/posts` are messages.
 
 > **Status.** Phases 0–8 of the [delivery plan](./plans/rift-chat-mvp/delivery.md) are complete
-> (61 of 70 tasks), verified on an Android emulator, and the release APK is built and committed.
+> (62 of 70 tasks), verified on an Android emulator, and the release APK is built and committed.
 > The demo recording and the final submission steps remain — see [What's left](#whats-left).
 > Nothing in this README claims work that has not been done.
 
@@ -186,11 +186,10 @@ Organised with [Diátaxis](https://diataxis.fr/) — index at [`docs/`](./docs/R
 
 Named so their absence reads as a plan rather than an omission:
 
-| Item                                          | Status                                     |
-| --------------------------------------------- | ------------------------------------------ |
-| Demo GIF of the send → persist → restart flow | Phase 10                                   |
-| CI workflow (`npm run check` on push)         | T-0.12, `P1` — the gate runs locally today |
-| Final quality pass and submission             | Phase 10                                   |
+| Item                                          | Status   |
+| --------------------------------------------- | -------- |
+| Demo GIF of the send → persist → restart flow | Phase 10 |
+| Final quality pass and submission             | Phase 10 |
 
 ## Tech stack
 

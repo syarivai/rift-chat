@@ -124,7 +124,7 @@ prettier eslint-config-prettier husky lint-staged @types/jest @types/node`.
     resolved version differs, the doc is what gets corrected.
   - Verify: `npx expo install --check` reports no drift
 
-- [ ] **T-0.12** `P1` `[AI]` · R-25 — CI workflow
+- [x] **T-0.12** `P1` `[AI]` · R-25 — CI workflow
   - Do: `.github/workflows/ci.yml` — Node 24, `npm ci`, then `npm run check`.
   - Verify: `gh run list --limit 1` shows a green run
 
@@ -563,7 +563,7 @@ rather than dropped:
 
 | Phase             | P0     | P1     | P2    | Done      |
 | ----------------- | ------ | ------ | ----- | --------- |
-| 0 · Environment   | 10     | 2      | 0     | 11/12     |
+| 0 · Environment   | 10     | 2      | 0     | 12/12     |
 | 1 · Core          | 9      | 1      | 0     | 10/10     |
 | 2 · Chats         | 6      | 0      | 0     | 6/6       |
 | 3 · Chat & outbox | 11     | 0      | 0     | 11/11     |
@@ -574,7 +574,7 @@ rather than dropped:
 | 8 · Testing       | 0      | 3      | 1     | 4/4       |
 | Cut line          | 3      | 0      | 0     | 0/3       |
 | 10 · Release      | 9      | 0      | 0     | 4/9       |
-| **Total**         | **53** | **13** | **4** | **61/70** |
+| **Total**         | **53** | **13** | **4** | **62/70** |
 
 Update this table whenever a phase completes. `delivery-tracker` verifies it independently —
 a table that disagrees with the checkboxes is itself a finding.
