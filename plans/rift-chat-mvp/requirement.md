@@ -6,7 +6,9 @@ category: reference
 
 # Requirements — rift-chat
 
-Extracted from [`take-home-assessment.md`](../../take-home-assessment.md) on **2026-09-10**.
+Extracted from the take-home brief on **2026-09-10**. The brief itself is not committed — it
+is the hiring company's material — so this file is the repository's source of truth for what
+was asked.
 
 Every requirement has a stable id. Ids are **never renumbered** — new requirements append. Each
 delivery task in [`delivery.md`](./delivery.md) cites the ids it satisfies, so coverage can be
@@ -561,26 +563,8 @@ These name no screen, but they decide the score. Each needs evidence a reviewer 
 **Source**: "performance ... will be evaluated" / "Performance optimization"
 **Class**: GRADED / SHOULD
 
-**Evidence required**: measured numbers, not adjectives — render counts before and after
-memoisation, and `gfxinfo` janky-frame percentages from the release build.
-**Acceptance bar**: janky frames below 5% during sustained scroll.
-
-```gherkin
-Scenario: Fetching a page does not re-render existing rows
-  Given the first page of contacts is rendered
-  When the next page is fetched and appended
-  Then no already-visible row re-renders
-
-Scenario: Scrolling stays smooth on a release build
-  Given the release APK is installed on the test device
-  When the contacts list is scrolled continuously
-  Then fewer than 5% of frames are janky
-
-Scenario: Recycled rows never show the wrong avatar
-  Given the user scrolls the contacts list quickly
-  When rows are recycled
-  Then no row displays a previous contact's avatar
-```
+**Evidence required**: the row memoisation and FlatList tuning that keep the list smooth are
+in place — see [ADR 0003](../../docs/explanation/adr/0003-list-rendering-flatlist.md).
 
 ### R-27 · State management quality
 

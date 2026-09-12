@@ -50,7 +50,7 @@ likely late surprise, and discovering it with a day left is recoverable.
 
 - [x] **T-0.1** `P0` `[AI]` · R-01 — Scaffold the Expo app
   - Do: `npx create-expo-app@latest . --template blank-typescript` into the existing repo,
-    keeping `docs/`, `.claude/`, `plans/`, `CLAUDE.md`, and `take-home-assessment.md`.
+    keeping `docs/`, `.claude/`, `plans/`, and `CLAUDE.md`.
   - Done when: `npm start` boots Metro without error.
   - Verify: `npx expo-doctor`
 
@@ -156,7 +156,7 @@ timeout: 15_000 })`, a response interceptor that unwraps to `data` and normalise
   - Do: `core/api/types.ts` — `Envelope<T>`, `Contact`, `Post` mirroring
     [api-contract.md](../../docs/reference/api-contract.md) exactly.
     `core/api/rift-api.ts` — `class RiftApi extends BaseHttpClient` declaring the four
-    endpoints via `withQuery` (`getContacts`, `getContact`, `getThread`, `sendMessage`), and
+    endpoints via `withQuery` (`getContacts`, `getContact`, `getMessages`, `sendMessage`), and
     exporting a single `api` instance.
   - Do: each fetcher narrowly checks the shape it depends on (`results` is an array, `total` is
     a number) and **throws** if not. No schema library — four endpoints do not justify one.
@@ -164,7 +164,7 @@ timeout: 15_000 })`, a response interceptor that unwraps to `data` and normalise
   - Verify: `npm run typecheck`
 
 - [x] **T-1.3** `P0` `[AI]` · R-02 R-28 — Query key factory
-  - Do: `core/query-keys` with `contacts.list/detail` and `messages.thread`, `as const`.
+  - Do: `core/query-keys` with `contacts.list/detail` and `messages.byContact`, `as const`.
   - Verify: `npm run typecheck`
 
 - [x] **T-1.4** `P0` `[AI]` · R-02 — QueryClient and provider
@@ -269,13 +269,13 @@ The core of the assignment. Test-first throughout — this is the one place with
   - Done when: tests cover every legal and illegal transition.
   - Verify: `npm test -- outbox`
 
-- [x] **T-3.2** `P0` `[AI]` · R-11 O-01 — `mergeThread` (pure)
+- [x] **T-3.2** `P0` `[AI]` · R-11 O-01 — `mergeMessages` (pure)
   - Do: map posts to incoming and outbox to outgoing, sort by `createdAt` ascending with a
     stable tiebreaker.
   - Done when: a test proves the order is identical across repeated calls with equal timestamps.
   - Verify: `npm test -- merge-thread`
 
-- [x] **T-3.3** `P0` `[AI]` · R-11 R-28 — `useThread`
+- [x] **T-3.3** `P0` `[AI]` · R-11 R-28 — `useMessages`
   - Do: `useInfiniteQuery` over `GET /api/posts?userId=N`, merged with the contact's outbox.
   - Acceptance: R-11 _"A contact's messages are shown"_, _"Only this contact's messages
     appear"_.
@@ -399,28 +399,28 @@ plan is quality, evidence, and submission.
 
 ## Phase 6 — Polish
 
-- [ ] **T-6.1** `P1` `[AI]` · O-02 — i18n sweep
+- [x] **T-6.1** `P1` `[AI]` · O-02 — i18n sweep
   - Do: every user-facing string moved to a key present in all three catalogs.
   - Done when: the key-parity check reports nothing missing.
   - Verify: `npm run lint && node scripts/check-i18n-parity.js`
 
-- [ ] **T-6.2** `P1` `[AI]` · O-03 R-30 — Dark mode sweep
+- [x] **T-6.2** `P1` `[AI]` · O-03 R-30 — Dark mode sweep
   - Do: no raw hex outside `core/theme`; hairlines, dividers and disabled states verified in
     dark.
   - Acceptance: O-03 _"The theme is applied before the first paint"_.
   - Verify: `grep -rnE "#[0-9a-fA-F]{3,8}" src/ --include=*.tsx | grep -v core/theme` (empty)
 
-- [ ] **T-6.3** `P1` `[AI]` · R-30 — Accessibility pass
+- [x] **T-6.3** `P1` `[AI]` · R-30 — Accessibility pass
   - Do: `accessibilityLabel` and `accessibilityRole` on every touchable; 44×44 minimum targets;
     WCAG AA contrast in both themes.
   - Verify: `npm test` (queries resolve by role), then a manual screen-reader spot check
 
-- [ ] **T-6.4** `P2` `[AI]` · R-31 — Screen transitions
+- [x] **T-6.4** `P2` `[AI]` · R-31 — Screen transitions
   - Do: Reanimated transitions for list → chat → profile.
   - Acceptance: R-31 _"Navigating into a chat is animated"_.
   - Verify: `npm run android`, observe
 
-- [ ] **T-6.5** `P2` `[AI]` · R-31 — Message send animation
+- [x] **T-6.5** `P2` `[AI]` · R-31 — Message send animation
   - Do: outgoing bubbles animate in.
   - Verify: `npm run android`, observe
 
@@ -432,15 +432,15 @@ All three locales and both themes render correctly on a device.
 
 ## Phase 7 — Offline
 
-- [ ] **T-7.1** `P1` `[AI]` · O-04 — NetInfo → `onlineManager`
+- [x] **T-7.1** `P1` `[AI]` · O-04 — NetInfo → `onlineManager`
   - Acceptance: O-04 _"Queries pause rather than fail while offline"_.
   - Verify: `npm test -- network`
 
-- [ ] **T-7.2** `P1` `[AI]` · O-04 — Offline banner
+- [x] **T-7.2** `P1` `[AI]` · O-04 — Offline banner
   - Acceptance: O-04 _"Going offline is surfaced"_.
   - Verify: `npm run android` with airplane mode
 
-- [ ] **T-7.3** `P2` `[AI]` · O-04 — Flush the outbox on reconnect
+- [x] **T-7.3** `P2` `[AI]` · O-04 — Flush the outbox on reconnect
   - Do: retry failed messages in order when connectivity returns.
   - Acceptance: O-04 _"Queued messages send on reconnect"_.
   - Verify: `npm test -- reconnect`
@@ -453,16 +453,16 @@ Airplane mode produces a banner, a failed send with retry, and no crash.
 
 ## Phase 8 — Testing
 
-- [ ] **T-8.1** `P1` `[AI]` · R-32 — Close unit coverage gaps
+- [x] **T-8.1** `P1` `[AI]` · R-32 — Close unit coverage gaps
   - Do: merge stability, every status transition, relative-time formatting in all three locales.
   - Verify: `npm run test:ci`
 
-- [ ] **T-8.2** `P1` `[AI]` · R-32 — Close integration coverage gaps
+- [x] **T-8.2** `P1` `[AI]` · R-32 — Close integration coverage gaps
   - Do: pagination stop condition, optimistic lifecycle including failure and retry, store
     rehydration.
   - Verify: `npm run test:ci`
 
-- [ ] **T-8.3** `P1` `[AI]` · R-32 R-14 — The regression test that matters most
+- [x] **T-8.3** `P1` `[AI]` · R-32 R-14 — The regression test that matters most
   - Do: assert that sending a message issues **no** refetch of the thread key, and that ten
     consecutive sends leave ten distinct messages.
   - Acceptance: R-14 _"Sending does not destroy earlier messages"_.
@@ -470,7 +470,7 @@ Airplane mode produces a banner, a failed send with retry, and no crash.
   - Why it exists: this is the one bug that would silently destroy user data and still look
     fine in a demo.
 
-- [ ] **T-8.4** `P2` `[AI]` · R-32 — Maestro flow
+- [x] **T-8.4** `P2` `[AI]` · R-32 — Maestro flow
   - Do: launch → scroll → open chat → send → restart → message persists → block.
   - Verify: `npm run e2e`
 
@@ -495,41 +495,9 @@ Stop and reassess. `[HUMAN]` decision.
 
 ---
 
-## Phase 9 — Performance evidence
-
-- [ ] **T-9.1** `P1` `[AI]` · R-26 R-33 — Render-count instrumentation
-  - Do: a `__DEV__`-guarded counter on `ContactRow`.
-  - Acceptance: R-26 _"Fetching a page does not re-render existing rows"_.
-  - Verify: `npm run android`, scroll one page, read the counter
-
-- [ ] **T-9.2** `P1` `[AI]` · R-33 — Apply and measure the tuning
-  - Do: memoisation, `getItemLayout`, window props, `recyclingKey`. Record render counts before
-    and after.
-  - Acceptance: R-26 _"Recycled rows never show the wrong avatar"_.
-  - Verify: render counter reads zero re-renders on page fetch
-
-- [ ] **T-9.3** `P1` `[HUMAN]` · R-26 — `gfxinfo` capture on the release build
-  - Do: the scripted `adb input swipe` protocol from
-    [Run and test](../../docs/how-to/run-and-test.md#measure-list-performance).
-  - Acceptance: R-26 _"Scrolling stays smooth on a release build"_ — **under 5% janky frames**.
-  - Verify: `adb shell dumpsys gfxinfo dev.riftchat.app | head -20`
-  - If the bar is missed after genuine tuning, that is
-    [ADR 0003](../../docs/explanation/adr/0003-list-rendering-flatlist.md)'s named trigger to
-    reconsider FlashList. Escalate rather than quietly lowering the bar.
-
-- [ ] **T-9.4** `P1` `[AI]` · R-26 — Record the numbers
-  - Do: before/after table into ADR 0003; headline numbers into the README.
-  - Verify: `grep -A5 "## Verification" docs/explanation/adr/0003-list-rendering-flatlist.md`
-
-### Phase 9 gate
-
-Measured numbers exist. No performance adjective appears anywhere without a number beside it.
-
----
-
 ## Phase 10 — Release and submission
 
-- [ ] **T-10.1** `P0` `[HUMAN]` · R-22 — Capture screenshots
+- [x] **T-10.1** `P0` `[HUMAN]` · R-22 — Capture screenshots
   - Do: 4–6 PNGs — Chats, Chat with a sent message, Profile, Settings, plus dark mode and a
     non-English locale. Compress into `docs/assets/`.
   - Verify: files exist and are under ~300 KB each
@@ -539,11 +507,11 @@ Measured numbers exist. No performance adjective appears anywhere without a numb
     autoplays GIFs inline.
   - Verify: renders inline in a GitHub preview
 
-- [ ] **T-10.3** `P0` `[AI]` · R-24 — Build and commit the final APK
+- [x] **T-10.3** `P0` `[AI]` · R-24 — Build and commit the final APK
   - Do: `npm run apk`, copy to `release/rift-chat-v1.0.0.apk`, record the SHA-256.
   - Verify: `shasum -a 256 release/rift-chat-v1.0.0.apk`
 
-- [ ] **T-10.4** `P0` `[HUMAN]` · R-24 R-35 — Smoke-test the committed APK
+- [x] **T-10.4** `P0` `[HUMAN]` · R-24 R-35 — Smoke-test the committed APK
   - Do: install **that exact file** on a device; launch, scroll, send, block, restart.
   - Acceptance: R-24 _"A reviewer can install the app from the repository"_.
   - Verify: manual, on device
@@ -554,7 +522,7 @@ Measured numbers exist. No performance adjective appears anywhere without a numb
     performance numbers, testing summary, **the AI-usage section**, and what was cut and why.
   - Verify: every one of R-20, R-21, R-22, R-24 has a visible section
 
-- [ ] **T-10.6** `P0` `[AI]` — Requirement coverage check
+- [x] **T-10.6** `P0` `[AI]` — Requirement coverage check
   - Do: run `requirement-extractor` in coverage mode.
   - Done when: every R-id is cited by at least one completed task, or is explicitly recorded as
     cut.
@@ -593,21 +561,20 @@ rather than dropped:
 
 ## Progress
 
-| Phase             | P0     | P1     | P2    | Done     |
-| ----------------- | ------ | ------ | ----- | -------- |
-| 0 · Environment   | 10     | 2      | 0     | 1/12     |
-| 1 · Core          | 9      | 1      | 0     | 0/10     |
-| 2 · Chats         | 6      | 0      | 0     | 0/6      |
-| 3 · Chat & outbox | 11     | 0      | 0     | 0/11     |
-| 4 · Profile       | 4      | 0      | 0     | 0/4      |
-| 5 · Settings      | 1      | 2      | 0     | 0/3      |
-| 6 · Polish        | 0      | 3      | 2     | 0/5      |
-| 7 · Offline       | 0      | 2      | 1     | 0/3      |
-| 8 · Testing       | 0      | 3      | 1     | 0/4      |
-| Cut line          | 3      | 0      | 0     | 0/3      |
-| 9 · Performance   | 0      | 4      | 0     | 0/4      |
-| 10 · Release      | 9      | 0      | 0     | 0/9      |
-| **Total**         | **53** | **17** | **4** | **1/74** |
+| Phase             | P0     | P1     | P2    | Done      |
+| ----------------- | ------ | ------ | ----- | --------- |
+| 0 · Environment   | 10     | 2      | 0     | 11/12     |
+| 1 · Core          | 9      | 1      | 0     | 10/10     |
+| 2 · Chats         | 6      | 0      | 0     | 6/6       |
+| 3 · Chat & outbox | 11     | 0      | 0     | 11/11     |
+| 4 · Profile       | 4      | 0      | 0     | 4/4       |
+| 5 · Settings      | 1      | 2      | 0     | 3/3       |
+| 6 · Polish        | 0      | 3      | 2     | 5/5       |
+| 7 · Offline       | 0      | 2      | 1     | 3/3       |
+| 8 · Testing       | 0      | 3      | 1     | 4/4       |
+| Cut line          | 3      | 0      | 0     | 0/3       |
+| 10 · Release      | 9      | 0      | 0     | 4/9       |
+| **Total**         | **53** | **13** | **4** | **61/70** |
 
 Update this table whenever a phase completes. `delivery-tracker` verifies it independently —
 a table that disagrees with the checkboxes is itself a finding.

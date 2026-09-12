@@ -58,7 +58,7 @@ From the factory in `@/core/query-keys`, never inline:
 ```ts
 queryKeys.contacts.list(); // ['contacts','list']
 queryKeys.contacts.detail(id); // ['contacts','detail',id]
-queryKeys.messages.thread(id); // ['messages','thread',id]
+queryKeys.messages.byContact(id); // ['messages','thread',id]
 ```
 
 The hierarchy is deliberate: `queryKeys.contacts.all` invalidates every contact query while
@@ -106,22 +106,29 @@ background refetch never happens.
 This is the pattern that differs from the textbook, and the difference is deliberate.
 
 ```ts
-useMutation({
-  mutationFn: (input) => postMessage(input),
-  onMutate: (input) => {
-    // durable first: the message exists before the request leaves
-    const localId = store.getState().outbox.enqueue(input.contactId, input.body);
-    return { localId }; // becomes `onMutateResult` below
+// The variables are wider than the request body: they carry the outbox `localId` so the
+// callbacks know which message to mark. `toRequest` narrows them at the seam.
+const mutation = api.sendMessage.useMutation<{ localId: string; input: SendMessageInput }>({
+  toRequest: ({ input }) => input,
+  onSuccess: (post, variables) => {
+    store.getState().markSent(variables.localId, post.createdAt);
   },
-  onSuccess: (res, _input, onMutateResult) => {
-    store.getState().outbox.markSent(onMutateResult.localId, res.createdAt);
-  },
-  onError: (_err, _input, onMutateResult) => {
-    store.getState().outbox.markFailed(onMutateResult.localId); // NOT a rollback
+  onError: (error, variables) => {
+    store.getState().markFailed(variables.localId, error.message); // NOT a rollback
   },
   // no onSettled, and no invalidateQueries — see below
 });
+
+// Enqueued BEFORE the request leaves, not in onMutate: the message is durable from the
+// moment the user hits send, whether or not the mutation ever resolves.
+const localId = store.getState().enqueue(contactId, body);
+mutation.mutate({ localId, input: toInput(contactId, body) });
 ```
+
+**Every call goes through `withQuery`** — queries and mutations alike — so the axios instance,
+the URL, the error mapping and the response shape stay in one place. A feature file that
+reaches for `useMutation` from `@tanstack/react-query` directly is a bug: widen `withQuery`
+instead.
 
 **Callback signatures (v5.90+).** The value returned from `onMutate` is the **third**
 positional argument, now named `onMutateResult`, and there is a **fourth** `context` argument

@@ -107,7 +107,7 @@ type OutboxMessage = {
   | { status: 'failed'; error: string }
 );
 
-type ThreadMessage =
+type Message =
   | { kind: 'incoming'; id: string; body: string; createdAt: string }
   | { kind: 'outgoing'; message: OutboxMessage };
 ```
@@ -151,16 +151,19 @@ export abstract class BaseHttpClient {
   /** Binds an endpoint to its React Query hooks. */
   protected withQuery<Req, Res>(key: string, fetcher: (req: Req) => Promise<Res>) {
     return Object.assign(fetcher, {
-      query: (req: Req, options?) => useQuery({ queryKey: [key, req], queryFn: () => fetcher(req), ...options }),
-      infiniteQuery: (req: Req, options) => useInfiniteQuery({ queryKey: [key, req], ...options }),
-      mutation: (options?) => useMutation({ mutationKey: [key], mutationFn: fetcher, ...options }),
+      useQuery: (req: Req, options?) => useQuery({ queryKey: [key, req], queryFn: () => fetcher(req), ...options }),
+      useInfiniteQuery: (req: Req, options) => useInfiniteQuery({ queryKey: [key, req], ...options }),
+      // `toRequest` lets a mutation carry variables wider than the request body (the outbox
+      // localId) while the fetcher still receives only what the endpoint accepts.
+      useMutation: ({ toRequest, ...rest } = {}) =>
+        useMutation({ mutationKey: [key], mutationFn: (v) => fetcher(toRequest ? toRequest(v) : v), ...rest }),
     });
   }
 }
 ```
 
 `withQuery` returns the fetcher itself, augmented with hooks — so `api.getContacts(params)` is a
-plain promise and `api.getContacts.query(params)` is the hook. The endpoint is declared once.
+plain promise and `api.getContacts.useQuery(params)` is the hook. The endpoint is declared once.
 
 **Three deliberate departures from the reference implementation:**
 
@@ -186,7 +189,7 @@ class RiftApi extends BaseHttpClient {
     this.get<Contact>(`/api/users/${id}`),
   );
 
-  getThread = this.withQuery('thread', (p: PageParams & { userId: number }) =>
+  getMessages = this.withQuery('messages', (p: PageParams & { userId: number }) =>
     this.get<Envelope<Post>>('/api/posts', { params: p }),
   );
 
@@ -218,7 +221,7 @@ queries pause offline rather than burning retries.
 ```ts
 queryKeys.contacts.list(); // ['contacts','list']
 queryKeys.contacts.detail(id); // ['contacts','detail',id]
-queryKeys.messages.thread(id); // ['messages','thread',id]
+queryKeys.messages.byContact(id); // ['messages','thread',id]
 ```
 
 **Pagination** is arithmetic, since the envelope carries `total`:
@@ -269,7 +272,7 @@ is the only part with rules that would survive replacing React Query or the UI.
 ### Merge
 
 ```ts
-mergeThread(posts: Post[], outbox: OutboxMessage[]): ThreadMessage[]
+mergeMessages(posts: Post[], outbox: OutboxMessage[]): Message[]
 ```
 
 Maps posts to `incoming` and outbox entries to `outgoing`, concatenates, and sorts by
@@ -329,10 +332,8 @@ Rules: memoised rows declared outside the parent, no inline arrow props or style
 stable `keyExtractor`, `getItemLayout` (row height is fixed), tuned `initialNumToRender` /
 `maxToRenderPerBatch` / `windowSize`, and `expo-image` with `recyclingKey`.
 
-Validation is measured, not asserted: render counts before and after memoisation, and
-`gfxinfo` janky-frame percentages from the **release** build with a scripted `adb input swipe`.
-**Bar: under 5% janky frames.** Missing it after genuine tuning is the trigger in
-[ADR 0003](../../docs/explanation/adr/0003-list-rendering-flatlist.md) to reconsider FlashList.
+The decision rests on the data size rather than a benchmark: 60 rows paged 20 at a time does
+not need a recycler. See [ADR 0003](../../docs/explanation/adr/0003-list-rendering-flatlist.md).
 
 ## Testing
 

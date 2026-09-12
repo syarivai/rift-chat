@@ -83,7 +83,6 @@ Select narrowly — `useStore((s) => s.thing)`, not the whole store — or every
 - Interactive elements get `accessibilityLabel` and `accessibilityRole` — the tests and the
   Maestro flow both rely on them.
 - List rows are memoised components defined outside the parent, with no inline arrow props.
-  See the `rn-performance` skill.
 
 ## 8. Route it
 

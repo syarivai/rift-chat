@@ -1,6 +1,6 @@
 ---
 name: requirement-extractor
-description: Turns take-home-assessment.md into plans/rift-chat-mvp/requirement.md with traceable numbered requirements, so no part of the brief is silently dropped. Use once when creating the plan, and again to verify coverage before submission.
+description: Turns the take-home brief into plans/rift-chat-mvp/requirement.md with traceable numbered requirements, so no part of the brief is silently dropped. Use once when creating the plan, and again to verify coverage before submission.
 tools: Read, Write, Edit, Grep, Glob
 model: opus
 color: blue
@@ -22,7 +22,7 @@ hoping for it.
 
 ## Process
 
-1. Read [`take-home-assessment.md`](../../take-home-assessment.md) line by line. Assume nothing
+1. Read the take-home brief line by line — ask the user for it, as it is not committed. Assume nothing
    is decorative — "an APK file will be required" is a requirement, and so is "explain how AI
    aided your development".
 2. Classify every statement:
@@ -72,5 +72,5 @@ See ADR 0004.
 
 ## Reference documentation
 
-- [take-home-assessment.md](../../take-home-assessment.md) — the source of truth
+- The take-home brief (not committed — ask the user for it) — the source of truth
 - [gherkin-criteria skill](../skills/gherkin-criteria/SKILL.md) — turning "done when" into criteria

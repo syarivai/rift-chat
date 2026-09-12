@@ -65,9 +65,8 @@ An agent that restates the conventions will drift from them the first time the d
 then two sources disagree with no way to tell which is stale.
 
 - **Wrong**: pasting the FlatList tuning props into the agent body.
-- **Right**: "Verify the row against the `rn-performance` skill and ADR 0003" — written as
-  links relative to the agent file, i.e. `../skills/rn-performance/SKILL.md` and
-  `../../docs/explanation/adr/0003-list-rendering-flatlist.md`.
+- **Right**: "Verify the row against ADR 0003" — written as a link relative to the agent
+  file, i.e. `../../docs/explanation/adr/0003-list-rendering-flatlist.md`.
 
 The docs are the source of truth. Agents are procedures over them.
 

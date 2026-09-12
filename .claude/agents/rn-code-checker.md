@@ -40,7 +40,7 @@ its own work.
 
 ### CRITICAL
 
-- `invalidateQueries`, `refetch`, or `resetQueries` against a `messages.thread` key. This
+- `invalidateQueries`, `refetch`, or `resetQueries` against a `messages.byContact` key. This
   deletes every message the user has sent. Grep for it explicitly:
   ```bash
   grep -rn "invalidateQueries\|resetQueries" src/ | grep -i "thread\|message"

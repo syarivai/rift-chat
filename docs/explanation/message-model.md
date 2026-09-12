@@ -39,7 +39,7 @@ The merge happens at read time in a pure function. Neither source knows about th
 
 The reflex after a successful mutation is `invalidateQueries`. Here that call is destructive.
 
-Invalidating `messages.thread(5)` refetches `GET /api/posts?userId=5`, which returns the
+Invalidating `messages.byContact(5)` refetches `GET /api/posts?userId=5`, which returns the
 original three posts — because the write was never persisted. If the thread were the source of
 truth for outgoing messages, **every message the user had ever sent would vanish**, instantly,
 as the direct result of a successful send.

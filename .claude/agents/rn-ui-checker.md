@@ -7,7 +7,6 @@ color: green
 skills:
   - criticality-confidence
   - project-conventions
-  - rn-performance
 ---
 
 # RN UI Checker Agent
@@ -79,8 +78,7 @@ disappear.
 ### List rendering — MEDIUM
 
 Rows memoised and declared outside the parent; no inline arrow props or style objects;
-`expo-image` carries `recyclingKey`. See
-[rn-performance](../skills/rn-performance/SKILL.md).
+`expo-image` carries `recyclingKey`.
 
 ## Output format
 

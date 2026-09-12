@@ -82,8 +82,7 @@ Zustand slices are consumed through narrow selectors. Components read tokens thr
 and all three languages without conditionals.
 
 No manual `useMemo`/`useCallback` scattered on principle — but list rows _are_ memoised
-deliberately, with the render-count evidence in
-[ADR 0003](./adr/0003-list-rendering-flatlist.md) rather than an assumption.
+deliberately; see [ADR 0003](./adr/0003-list-rendering-flatlist.md).
 
 ## The through-line
 

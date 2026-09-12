@@ -8,7 +8,6 @@ skills:
   - project-conventions
   - state-boundaries
   - react-query-patterns
-  - rn-performance
   - rn-testing
   - typescript-standards
 ---

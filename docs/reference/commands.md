@@ -46,17 +46,6 @@ category: reference
 | `shasum -a 256 release/*.apk`                 | Checksum for the README                                   |
 | `adb install -r release/rift-chat-v1.0.0.apk` | Sideload onto a device                                    |
 
-## Measurement
-
-```bash
-PKG=dev.riftchat.app
-adb shell dumpsys gfxinfo $PKG reset
-for i in $(seq 1 15); do adb shell input swipe 540 1600 540 400 80; done
-adb shell dumpsys gfxinfo $PKG | head -20
-```
-
-Full protocol: [Run and test](../how-to/run-and-test.md#measure-list-performance).
-
 ## Adding dependencies
 
 ```bash

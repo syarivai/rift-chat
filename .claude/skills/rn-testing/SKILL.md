@@ -35,7 +35,7 @@ network, no renderer.
 
 ```ts
 jest.useFakeTimers().setSystemTime(new Date('2026-09-10T10:00:00Z'));
-const merged = mergeThread({ posts, outbox });
+const merged = mergeMessages({ posts, outbox });
 expect(merged.map((m) => m.id)).toEqual([...]);
 ```
 
@@ -94,14 +94,11 @@ change and catch almost nothing unintentional.
 
 **Which seam depends on how the code calls the API.**
 
-`api.getContacts` is not a plain function — `withQuery` attaches `.useQuery`,
-`.useInfiniteQuery` and `.useMutation` to it. Replacing it with a bare `jest.fn()` strips those
-and the hook fails with `api.getContacts.useInfiniteQuery is not a function`.
-
-| Code under test                                          | Mock this                                                         |
-| -------------------------------------------------------- | ----------------------------------------------------------------- |
-| Calls `api.x.useQuery(...)` / `.useInfiniteQuery(...)`   | **axios** — keeps withQuery, the fetcher and React Query all real |
-| Calls `api.x(...)` directly (e.g. inside a `mutationFn`) | the **`@/core/api/rift-api` module**                              |
+**Mock axios, not the API module.** `api.getContacts` is not a plain function — `withQuery`
+attaches `.useQuery`, `.useInfiniteQuery` and `.useMutation` to it. Replacing it with a bare
+`jest.fn()` strips those, and the hook fails with `api.getContacts.useInfiniteQuery is not a
+function`. Since every call in the app goes through `withQuery`, axios is the only seam worth
+mocking: it keeps the wrapper, the fetcher and React Query all real.
 
 Mocking axios:
 
@@ -121,21 +118,6 @@ jest.mock('axios', () => ({
     }),
   },
 }));
-```
-
-Mocking the module — declare the endpoints explicitly, because jest's automock does not
-reproduce a class instance's `Object.assign`ed properties:
-
-```ts
-jest.mock('@/core/api');
-const mockedApi = jest.mocked(api);
-
-mockedApi.getContacts.mockResolvedValue({
-  total: 60,
-  limit: 20,
-  offset: 0,
-  results: [contactFixture()],
-});
 ```
 
 Fixtures live in `src/test/fixtures.ts` and **mirror the real shapes exactly**, including the

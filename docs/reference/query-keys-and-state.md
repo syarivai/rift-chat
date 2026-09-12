@@ -69,12 +69,12 @@ wrong produces either an infinite loop of empty fetches or a list that stops ear
 
 ## Invalidation rules
 
-| Action                   | Invalidate                          | Never invalidate                               |
-| ------------------------ | ----------------------------------- | ---------------------------------------------- |
-| Pull-to-refresh on Chats | `contacts.list()`                   | —                                              |
-| Opening a profile        | — (background refetch is automatic) | —                                              |
-| **Sending a message**    | **nothing**                         | `messages.thread(id)` — this deletes user data |
-| Blocking a contact       | nothing — it is client state        | any server query                               |
+| Action                   | Invalidate                          | Never invalidate                                  |
+| ------------------------ | ----------------------------------- | ------------------------------------------------- |
+| Pull-to-refresh on Chats | `contacts.list()`                   | —                                                 |
+| Opening a profile        | — (background refetch is automatic) | —                                                 |
+| **Sending a message**    | **nothing**                         | `messages.byContact(id)` — this deletes user data |
+| Blocking a contact       | nothing — it is client state        | any server query                                  |
 
 The send mutation touches no query at all. It appends to the outbox, and the thread selector
 merges the outbox with whatever the thread query holds. See

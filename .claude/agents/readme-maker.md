@@ -34,12 +34,10 @@ Each of these is scored. A README missing any is incomplete regardless of prose 
 1. Read the brief, [`docs/explanation/architecture.md`](../../docs/explanation/architecture.md),
    [`message-model.md`](../../docs/explanation/message-model.md), and the four ADRs. The README
    summarises and links; it does not restate.
-2. Confirm the measured performance numbers exist. **Never write a performance claim without
-   them** — ask `perf-auditor` to run first.
-3. Verify the demo assets exist in `docs/assets/` and the APK in `release/`, and compute the
+2. Verify the demo assets exist in `docs/assets/` and the APK in `release/`, and compute the
    APK's SHA-256.
-4. Write to the structure in [writing-readmes](../skills/writing-readmes/SKILL.md).
-5. Verify every command in the Quick start by running it.
+3. Write to the structure in [writing-readmes](../skills/writing-readmes/SKILL.md).
+4. Verify every command in the Quick start by running it.
 
 ## The section that decides it
 
@@ -64,8 +62,7 @@ A reviewer can check all of this against the commit history, which is exactly wh
 
 ## Rules
 
-- **Show, don't claim.** "Janky frames 11.4% → 2.3%" beats "highly performant". If there is no
-  number, cut the claim.
+- **Show, don't claim.** If there is no number behind an adjective, cut the adjective.
 - **Be honest about what was cut**, and say it was a decision. A reviewer trusts named
   trade-offs far more than an implied claim of completeness.
 - No throat-clearing. First sentence says what it is and what it is built with.
@@ -74,4 +71,4 @@ A reviewer can check all of this against the commit history, which is exactly wh
 ## Reference documentation
 
 - [writing-readmes skill](../skills/writing-readmes/SKILL.md) — the structure and standards
-- [take-home-assessment.md](../../take-home-assessment.md) — the graded requirements
+- [requirement.md](../../plans/rift-chat-mvp/requirement.md) — the graded requirements, with ids

@@ -4,10 +4,17 @@ A React Native chat client built with Expo, TanStack Query and Zustand, over the
 [responserift.dev](https://responserift.dev) API — where `api/users` are contacts and
 `api/posts` are messages.
 
-> **Status: in progress.** Phases 0–5 of the [delivery plan](./plans/rift-chat-mvp/delivery.md)
-> are complete and verified on a device (45 of 74 tasks). Offline handling, the Maestro flow,
-> measured performance numbers and the release APK are still outstanding — see
-> [What's left](#whats-left). Nothing in this README claims work that has not been done.
+> **Status.** Phases 0–8 of the [delivery plan](./plans/rift-chat-mvp/delivery.md) are complete
+> (61 of 70 tasks), verified on an Android emulator, and the release APK is built and committed.
+> The demo recording and the final submission steps remain — see [What's left](#whats-left).
+> Nothing in this README claims work that has not been done.
+
+**[Download the APK](./release/rift-chat-v1.0.0.apk)** · 67 MB · SHA-256
+`5a32d7d3e44fedf2a7bf9d870ca81ad2b18c912bd6061db54bca084f55015869`
+
+Signed with a debug keystore — a review artifact, not a distributable build. Packaged for
+`arm64-v8a` and `x86_64`, which covers physical devices and the emulators reviewers use; a
+four-ABI build comes out at 106 MB and GitHub rejects files over 100 MB.
 
 ## Demo
 
@@ -37,113 +44,65 @@ Full walkthrough: [Tutorial: Getting started](./docs/tutorials/getting-started.m
 always `101`. `GET /api/posts?userId=5` returns three posts, all authored _by_ the contact —
 there is no sender field, so nothing in the API can represent a message the user wrote.
 
-I found this by probing the API before writing any code, and it decided the architecture.
-
-A conversation cannot be a projection of server state, because the outgoing half has nowhere on
-the server to live. So a thread is the union of two sources, merged at read time:
+I found this by probing the API before writing any code, and it decided the architecture. A
+conversation cannot be a projection of server state, because the outgoing half has nowhere on the
+server to live. So a thread is the union of two sources, merged at read time:
 
 ```text
-thread(contactId) = server posts (incoming)  ∪  outbox messages (outgoing)
-                    ordered by createdAt
+messages(contactId) = server posts (incoming)  ∪  outbox messages (outgoing)
+                      ordered by createdAt
 ```
 
-The consequence that matters: **a successful send must never invalidate the thread query.**
-Invalidating refetches the contact's original posts and would delete every message the user had
-ever sent — as the direct result of a _successful_ send. So the send mutation touches no query
-at all. It appends to a persisted outbox, and the merged selector picks it up on the next
-render.
+The consequence that matters: **a successful send must never invalidate the thread query** —
+invalidating would refetch the contact's original posts and delete every message the user had
+ever sent, as the direct result of a _successful_ send. Two things follow: a failed send is
+**not** rolled back (that would delete what the user typed — it stays visible, marked failed, with
+tap-to-retry), and the response `id` is discarded (always `101`, so neither unique nor stable).
 
-Two more things follow:
-
-- **A failed send is not rolled back.** The textbook optimistic pattern restores the previous
-  cache on error; here that would delete something the user typed. The message stays visible,
-  marked failed, with tap-to-retry. What is optimistic is the _delivery claim_, not the
-  message's existence.
-- **The response `id` is discarded.** It is always `101`, so it is neither unique nor stable and
-  cannot be a React key.
-
-This is not a workaround for a limited test API — it is what real messaging clients do: compose
-locally, persist immediately, reconcile when the network allows. Full reasoning in
-[Message model](./docs/explanation/message-model.md) and
+This is what real messaging clients do: compose locally, persist immediately, reconcile when the
+network allows. Full reasoning in [Message model](./docs/explanation/message-model.md) and
 [ADR 0004](./docs/explanation/adr/0004-message-model-and-outbox.md).
 
-## Architecture
+## Project structure
 
-Feature slices over a shared core, with a one-way dependency direction:
-
-```text
-app  →  features  →  core
-```
+Feature slices over a shared core, with a one-way dependency direction — `app → features → core`.
+Slices never import each other; shared code moves down into `core/`.
 
 ```text
 src/
-├── app/                      # expo-router routes — thin; no data fetching, no logic
-│   ├── (tabs)/               #   Chats · Settings
+├── app/                  # expo-router routes — thin; no data fetching, no logic
+│   ├── (tabs)/           #   Chats · Settings
 │   ├── chat/[id].tsx
 │   └── profile/[id].tsx
-├── core/                     # cross-cutting only; imports nothing from features/
-│   ├── api/                  #   BaseHttpClient (axios) · RiftApi · wire types
-│   ├── store/                #   Zustand store + MMKV persistence
-│   ├── query-keys/           #   the single query-key factory
-│   ├── theme/                #   design tokens, light/dark palettes
-│   ├── i18n/                 #   i18next + en/ms/id catalogs
-│   ├── format/               #   relative time, id generation
-│   └── ui/                   #   Avatar, Skeleton, EmptyState, ErrorState
+├── core/                 # cross-cutting only; imports nothing from features/
+│   ├── api/              #   BaseHttpClient (axios) · RiftApi · wire types
+│   ├── store/            #   Zustand store + MMKV persistence
+│   ├── query-keys/       #   the single query-key factory
+│   ├── network/          #   NetInfo → React Query's onlineManager
+│   ├── theme/            #   design tokens, light/dark palettes
+│   ├── i18n/             #   i18next + en/ms/id catalogs
+│   ├── format/           #   relative time
+│   └── ui/               #   Avatar · Button · Screen · Skeleton/Empty/Error · OfflineBanner
 └── features/
     ├── chats/    { api, model, ui }
-    ├── chat/     { api, model, ui }   ← the only slice with real domain logic
-    ├── profile/  { api, model, ui }
+    ├── chat/     { api, ui }
+    ├── profile/  { api, ui }
     └── settings/ { ui }
 ```
 
-Slices never import each other; shared code moves down into `core/`.
+Within a slice, `api/` holds query and mutation hooks, `model/` holds pure business logic, and
+`ui/` holds screens and components. Details:
+[Project structure](./docs/reference/project-structure.md).
 
-### The state boundary
+## Architecture highlights
 
-One rule decides where everything lives:
-
-> **React Query owns what the server knows. Zustand owns what only this device knows.**
-
-| State                             | Owner          | Persisted |
-| --------------------------------- | -------------- | --------- |
-| Contacts, profiles, threads       | React Query    | no        |
-| Outbox (messages the user sent)   | Zustand + MMKV | **yes**   |
-| Blocked contacts, language, theme | Zustand + MMKV | **yes**   |
-
-Because the API does not persist writes, everything the user authors falls in the second
-category. That is the whole design in one line.
-
-### Architecture proportional to complexity
-
-Strip this app down and it is **three queries and one mutation** over a read-only API. A
-uniform four-layer treatment across every slice would have looked more rigorous and taught a
-reader less about where the difficulty actually is.
-
-So exactly one slice gets a domain layer: `chat/model` holds the outbox merge, the ordering
-rule, and the `sending → sent | failed` lifecycle as pure functions, tested without React, a
-network, or a renderer. Those are rules that would still be true if React Query were replaced
-tomorrow. Everything else stays thin on purpose.
-
-Three abstractions were considered and **cut**: a `Result<T, Failure>` type (React Query already
-models read failure, and the outbox's `status` union already models write failure — it described
-the same states twice), ports for storage/clock/connectivity (Jest already provides
-`setSystemTime` and `jest.mock`), and barrel files. An interface with one implementation is not
-an abstraction, it is a redirect.
-
-### The API layer
-
-Endpoints are declared once, on a `RiftApi` class extending an axios `BaseHttpClient`. A
-`withQuery` helper attaches `.useQuery` / `.useInfiniteQuery` / `.useMutation` to each endpoint,
-so `api.getContacts(params)` is a promise and `api.getContacts.useQuery(params)` is a hook. No
-feature file imports axios or builds a URL.
-
-Both collections are offset-paginated and report `total`, so the infinite-scroll stop condition
-is arithmetic rather than a guess:
-
-```ts
-getNextPageParam: (last) =>
-  last.offset + last.limit >= last.total ? undefined : last.offset + last.limit;
-```
+| Element                                     | In one line                                                                                                                                                                                                     |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **The state boundary**                      | React Query owns what the server knows; Zustand + MMKV own what only this device knows — which, because the API persists nothing, is everything the user authors. [→](./docs/reference/query-keys-and-state.md) |
+| **One API surface**                         | Every call — query, infinite query and mutation — goes through `RiftApi extends BaseHttpClient`. No feature file imports axios or builds a URL. [→](./docs/explanation/architecture.md)                         |
+| **Architecture proportional to complexity** | Exactly one slice has a domain layer, because exactly one has real rules. `Result<T, E>`, ports and barrel files were considered and cut. [→](./docs/explanation/architecture.md)                               |
+| **Arithmetic pagination**                   | Both collections report `total`, so the infinite-scroll stop condition is `offset + limit >= total`, not a guess. [→](./docs/reference/api-contract.md)                                                         |
+| **Tokens, not values**                      | No hardcoded colour, spacing or string anywhere — dark mode and three locales work by construction. [→](./docs/reference/design-tokens.md)                                                                      |
 
 ## Technical decisions
 
@@ -158,44 +117,38 @@ names the condition that would change the answer.
 | [0004](./docs/explanation/adr/0004-message-model-and-outbox.md) | Conversation model | **Persisted outbox merged at read time** over two fabricated-data alternatives                |
 
 ADR 0003 is the one I would most expect to be challenged. Reaching for FlashList would have
-signalled "performance work" without evidence; the defensible position is _"I measured, the
-built-in was sufficient, here is the data"_ — which is why that ADR carries a measurement
-protocol and a 5% janky-frame acceptance bar rather than a claim.
+signalled "performance work" without evidence; at 60 rows paged 20 at a time, a tuned FlatList is
+sufficient and adds no dependency.
 
 ## Testing
 
-80 tests, 75% statements / 74% branches over the logic (`src/core`, `src/features/*/model`).
+**121 tests, 81% statements / 79% branches** over the logic, with the coverage threshold set just
+under what the suite reaches so a regression trips it. Unit tests cover the outbox merge and
+status lifecycle, integration tests cover the send lifecycle and pagination, and one Maestro flow
+covers navigation, the real keyboard and persistence across a process restart.
 
-| Layer       | Covers                                                                                                                    |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Unit        | Outbox merge and stability, status lifecycle including illegal transitions, relative-time formatting, envelope validation |
-| Integration | Pagination stop condition, the optimistic send lifecycle, failure, retry, store persistence                               |
-| Component   | Composer behaviour, empty/error states, row rendering                                                                     |
-
-Tests mock the **transport** (axios) or the **API class**, never the hooks — so the real React
-Query cache, retry and mutation lifecycle are exercised. Fixtures reproduce the API's quirks:
-the `POST` fixture returns `id: 101` and the collection is unchanged afterwards. A fixture that
-pretended the write persisted would hide the bug the app is designed around.
+Tests mock the **transport** (axios), never the hooks — so the real API class, React Query cache,
+retry and mutation lifecycle are all exercised. Fixtures reproduce the API's quirks: the `POST`
+fixture returns `id: 101` and the collection is unchanged afterwards. A fixture that pretended the
+write persisted would hide the bug the app is designed around.
 
 The test that matters most asserts a **negative**: sending triggers no thread refetch, and ten
 consecutive sends leave ten distinct messages. That is the one bug that would silently destroy
-user data while demoing perfectly.
-
-Deliberately not tested: broad screen snapshots (high maintenance, low defect yield) and thin
-platform adapters. Reasoning in [Testing strategy](./docs/explanation/testing-strategy.md).
+user data while demoing perfectly. Reasoning and what was deliberately left untested:
+[Testing strategy](./docs/explanation/testing-strategy.md).
 
 ## How AI aided development
 
 This project was built with Claude Code, and the evidence is committed rather than described:
-[`.claude/`](./.claude) holds 10 agents and 14 skills, and
+[`.claude/`](./.claude) holds 9 agents and 13 skills, and
 [`plans/rift-chat-mvp/`](./plans/rift-chat-mvp) holds the requirements, technical design and a
-74-task delivery checklist. The commit history shows the sequence.
+70-task delivery checklist. The commit history shows the sequence.
 
 **What the AI did that mattered.** It probed the live API before any code was written and found
-that `POST` does not persist and always returns `id: 101` — the fact the entire architecture
-turns on, and one I would not have discovered until much later by reading the brief alone. It
-then ran a structured design interrogation (~20 decisions, each with alternatives and
-trade-offs) _before_ implementation, and wrote the Diátaxis docs and ADRs.
+that `POST` does not persist and always returns `id: 101` — the fact the entire architecture turns
+on, and one I would not have discovered until much later from the brief alone. It then ran a
+structured design interrogation (~20 decisions, each with alternatives and trade-offs) _before_
+implementation, and wrote the Diátaxis docs and ADRs.
 
 **What I decided.** Every architectural fork, including several where I overruled it:
 
@@ -207,30 +160,14 @@ trade-offs) _before_ implementation, and wrote the Diátaxis docs and ADRs.
   nobody asked for.
 
 **Where it was wrong, and how that was caught.** Twice it documented things confidently that
-turned out to be false, and both were caught by _running_ rather than reading:
+turned out to be false, and both were caught by _running_ rather than reading: it claimed
+`react-native-mmkv` ships a Jest mock (v4 is a Nitro module and cannot load under Jest at all),
+and it claimed Hermes ships full `Intl` (`Intl.RelativeTimeFormat` is **undefined** on device —
+Node implements it, so every unit test passed while the app crashed with a red box).
 
-- It claimed `react-native-mmkv` ships a Jest mock. v4 is a Nitro module and cannot load under
-  Jest at all; a hand-written mock was required.
-- It claimed Hermes ships full `Intl`. `Intl.RelativeTimeFormat` is **undefined** on device —
-  Node implements it, so every unit test passed while the app crashed with a red box.
-
-That second one is the clearest lesson from this build: a green test suite is not evidence that
-an app runs. Four bugs reached a working device despite full test coverage, and each was found
-by driving the real app and reading a screenshot.
-
-## Performance
-
-The approach is measured, not asserted: a dev-only render counter on the contact row, plus
-`adb shell dumpsys gfxinfo` against a **release** build with a scripted `adb input swipe` so
-runs are comparable. Protocol in
-[Run and test](./docs/how-to/run-and-test.md#measure-list-performance).
-
-The tuning is in place — memoised rows declared outside the parent, no inline arrow props,
-stable `keyExtractor`, `getItemLayout` (row height is fixed), tuned window props, and
-`expo-image` with `recyclingKey` so a recycled row never flashes the previous avatar.
-
-**The numbers are not captured yet** (Phase 9). This section will carry a before/after table, or
-the FlashList decision gets revisited per ADR 0003's stated trigger.
+That second one is the clearest lesson from this build: a green test suite is not evidence that an
+app runs. Four bugs reached a working device despite full test coverage, and each was found by
+driving the real app and reading a screenshot.
 
 ## Documentation
 
@@ -249,23 +186,21 @@ Organised with [Diátaxis](https://diataxis.fr/) — index at [`docs/`](./docs/R
 
 Named so their absence reads as a plan rather than an omission:
 
-| Item                                                     | Status                                          |
-| -------------------------------------------------------- | ----------------------------------------------- |
-| Offline banner, query pausing, outbox flush on reconnect | Phase 7                                         |
-| Maestro end-to-end flow                                  | Phase 8                                         |
-| Measured performance numbers                             | Phase 9                                         |
-| Screen transitions, message send animation               | Phase 6 (stretch)                               |
-| **Release APK**                                          | Phase 10 — required by the brief, not yet built |
+| Item                                          | Status                                     |
+| --------------------------------------------- | ------------------------------------------ |
+| Demo GIF of the send → persist → restart flow | Phase 10                                   |
+| CI workflow (`npm run check` on push)         | T-0.12, `P1` — the gate runs locally today |
+| Final quality pass and submission             | Phase 10                                   |
 
 ## Tech stack
 
 Expo SDK 57 · React Native 0.86.3 · React 19.2.3 · TypeScript 6 (strict) · expo-router ·
 TanStack Query 5 · Zustand 5 · MMKV 4 · axios · i18next (en/ms/id) · Jest + React Native
-Testing Library.
+Testing Library · Maestro.
 
-Versions are pinned to Expo's SDK manifest, not npm's `latest` — for a managed Expo project
-those differ, and `react-native-gesture-handler` is a whole major version apart. Details and the
-version traps that cost real time: [Tech stack](./docs/reference/tech-stack.md).
+Versions are pinned to Expo's SDK manifest, not npm's `latest` — for a managed Expo project those
+differ, and `react-native-gesture-handler` is a whole major version apart. Details and the version
+traps that cost real time: [Tech stack](./docs/reference/tech-stack.md).
 
 ## Licence
 

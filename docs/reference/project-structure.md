@@ -42,8 +42,7 @@ rift-chat/
         │   ├── model/        #   row view-model, last-message selector
         │   └── ui/           #   ChatsScreen, ContactRow
         ├── chat/             # the message thread — the feature with real logic
-        │   ├── api/          #   useThread, useSendMessage
-        │   ├── model/        #   outbox slice, merge + ordering (pure), status lifecycle
+        │   ├── api/          #   useMessages, useSendMessage
         │   └── ui/           #   ChatScreen, MessageBubble, Composer, BlockedBar
         ├── profile/
         │   ├── api/          #   useContact

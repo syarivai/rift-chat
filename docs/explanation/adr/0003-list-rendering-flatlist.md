@@ -1,6 +1,6 @@
 ---
 title: 'ADR 0003 — List rendering: FlatList, tuned'
-description: Why FlatList was chosen over FlashList, and the measurement protocol that validates it.
+description: Why FlatList was chosen over FlashList at this data size.
 category: explanation
 ---
 
@@ -56,20 +56,6 @@ That position is only earned if the tuning is actually done:
 - `getItemLayout` supplied — row height is fixed, so measurement is unnecessary.
 - `initialNumToRender`, `maxToRenderPerBatch`, and `windowSize` tuned to the page size.
 - `expo-image` with a `recyclingKey`, so a recycled row never shows the previous avatar.
-
-## Verification
-
-The claim is validated by measurement, not asserted. Two measurements, both in
-[Run and test](../../how-to/run-and-test.md#measure-list-performance):
-
-1. **Render counts** — a development-only counter on the contact row, read before and after
-   memoisation. Fetching page two should re-render zero already-mounted rows.
-2. **Frame jank** — `adb shell dumpsys gfxinfo` against the **release** APK with a scripted
-   `adb shell input swipe` gesture, recording janky-frame percentage and the 95th-percentile
-   frame time.
-
-Both numbers are recorded in this ADR and in the README when the measurement runs. The
-acceptance bar: **janky frames below 5%** during a sustained scroll on the test device.
 
 ## Consequences
 

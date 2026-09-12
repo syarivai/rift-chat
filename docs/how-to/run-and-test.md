@@ -84,47 +84,16 @@ Or in one step: `npm run apk`.
 Put the SHA-256 in the README so a reviewer can verify the committed binary matches a build
 they run themselves.
 
+**ABI trimming is not optional.** A default release build packages native libraries for four
+architectures and comes out around **106 MB** — over GitHub's hard 100 MB per-file limit, so
+the commit is rejected. `-PreactNativeArchitectures=arm64-v8a,x86_64` keeps the two that
+matter (every real device since ~2017, plus the x86_64 emulators reviewers use) and drops
+about 38 MB. `npm run apk` passes it for you.
+
 **Notes.** The release variant is signed with the debug keystore by default, which is fine for
 a reviewer sideloading it and wrong for anything else — do not treat this APK as
 distributable. Install it with `adb install -r release/rift-chat-v1.0.0.apk`. If Gradle fails
 with a heap error, raise `org.gradle.jvmargs` in `android/gradle.properties`.
-
-## Measure list performance
-
-Performance claims in this repo are measured, not asserted. Two complementary measurements,
-both described in [ADR 0003](../explanation/adr/0003-list-rendering-flatlist.md).
-
-### Render counts (attribution)
-
-The contact row logs a render count in development. Open the Chats tab, scroll one full page,
-and read the counter. Before memoisation, fetching page two re-renders every already-mounted
-row; after, it re-renders none. This tells you _what_ changed.
-
-### Frame jank (the outcome)
-
-`gfxinfo` reads Android's own frame timings. Run it against the **release** APK — debug builds
-are slow for unrelated reasons and any number you quote from one is meaningless.
-
-```bash
-PKG=dev.riftchat.app
-
-adb shell dumpsys gfxinfo $PKG reset          # zero the counters
-# scripted gesture — a human thumb is not reproducible between runs
-for i in $(seq 1 15); do adb shell input swipe 540 1600 540 400 80; done
-adb shell dumpsys gfxinfo $PKG | head -20     # read the summary
-```
-
-You are looking for these lines:
-
-```text
-Total frames rendered: 1187
-Janky frames: 43 (3.62%)
-50th percentile: 6ms   90th: 11ms   95th: 16ms   99th: 31ms
-```
-
-Record the janky-frame percentage and the 95th percentile before and after an optimisation,
-on the same device with the same scripted gesture. `gfxinfo` is Android-only; on iOS use
-Reanimated's `useFrameCallback` to read UI-thread frame deltas in-app.
 
 ## Troubleshooting
 

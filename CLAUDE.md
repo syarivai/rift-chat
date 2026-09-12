@@ -6,8 +6,9 @@ points at the rest.
 
 ## What this is
 
-A React Native chat client built as a take-home assessment (see
-[`take-home-assessment.md`](./take-home-assessment.md)). Four screens — Chats, Chat, Profile,
+A React Native chat client built as a take-home assessment. The brief itself is not
+committed — it is the hiring company's material; its requirements live in
+[`plans/rift-chat-mvp/requirement.md`](./plans/rift-chat-mvp/requirement.md). Four screens — Chats, Chat, Profile,
 Settings — over the public [responserift.dev](https://responserift.dev) API, where
 `api/users` are contacts and `api/posts` are messages.
 
@@ -82,7 +83,7 @@ checklist, and it is what the checker agents cite.
 
 ## Agents
 
-Ten agents in [`.claude/agents/`](./.claude/agents/), following the **maker · checker · fixer**
+Nine agents in [`.claude/agents/`](./.claude/agents/), following the **maker · checker · fixer**
 pattern: makers build, checkers report findings rated by criticality × confidence, and only
 **HIGH-confidence** findings are applied.
 
@@ -93,7 +94,6 @@ pattern: makers build, checkers report findings rated by criticality × confiden
 | `rn-ui-checker`         | checker — tokens, a11y, i18n coverage, dark mode                    |
 | `docs-maintainer`       | maker/checker — Diátaxis placement, accuracy, links                 |
 | `delivery-tracker`      | checker — is delivery.md honest about what is done                  |
-| `perf-auditor`          | maker — runs the measurement protocol, writes the numbers           |
 | `qa-tester`             | checker — pre-submission sweep across locales, themes, error states |
 | `api-contract-verifier` | checker — re-probes the API, detects contract drift                 |
 | `requirement-extractor` | maker — brief → requirement.md with traceable IDs                   |
@@ -101,10 +101,10 @@ pattern: makers build, checkers report findings rated by criticality × confiden
 
 ## Skills
 
-Fourteen skills in [`.claude/skills/`](./.claude/skills/). Load the relevant one **before**
+Thirteen skills in [`.claude/skills/`](./.claude/skills/). Load the relevant one **before**
 acting, not after.
 
-`grillme` · `react-query-patterns` · `state-boundaries` · `rn-performance` · `rn-testing` ·
+`grillme` · `react-query-patterns` · `state-boundaries` · `rn-testing` ·
 `project-conventions` · `app-security` · `criticality-confidence` · `maker-checker-fixer` ·
 `docs-diataxis` · `writing-readmes` · `gherkin-criteria` · `typescript-standards` ·
 `agent-developing-agents`
