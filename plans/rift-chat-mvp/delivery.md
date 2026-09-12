@@ -502,7 +502,7 @@ Stop and reassess. `[HUMAN]` decision.
     non-English locale. Compress into `docs/assets/`.
   - Verify: files exist and are under ~300 KB each
 
-- [ ] **T-10.2** `P0` `[HUMAN]` · R-22 — Record the demo GIF
+- [x] **T-10.2** `P0` `[HUMAN]` · R-22 — Record the demo GIF
   - Do: send → optimistic → persist → back to list → row updated. GIF, not MP4 — GitHub
     autoplays GIFs inline.
   - Verify: renders inline in a GitHub preview
@@ -573,8 +573,8 @@ rather than dropped:
 | 7 · Offline       | 0      | 2      | 1     | 3/3       |
 | 8 · Testing       | 0      | 3      | 1     | 4/4       |
 | Cut line          | 3      | 0      | 0     | 0/3       |
-| 10 · Release      | 9      | 0      | 0     | 4/9       |
-| **Total**         | **53** | **13** | **4** | **62/70** |
+| 10 · Release      | 9      | 0      | 0     | 5/9       |
+| **Total**         | **53** | **13** | **4** | **63/70** |
 
 Update this table whenever a phase completes. `delivery-tracker` verifies it independently —
 a table that disagrees with the checkboxes is itself a finding.

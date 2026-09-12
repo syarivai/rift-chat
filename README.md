@@ -5,7 +5,7 @@ A React Native chat client built with Expo, TanStack Query and Zustand, over the
 `api/posts` are messages.
 
 > **Status.** Phases 0–8 of the [delivery plan](./plans/rift-chat-mvp/delivery.md) are complete
-> (62 of 70 tasks), verified on an Android emulator, and the release APK is built and committed.
+> (63 of 70 tasks), verified on an Android emulator, and the release APK is built and committed.
 > The demo recording and the final submission steps remain — see [What's left](#whats-left).
 > Nothing in this README claims work that has not been done.
 
@@ -18,7 +18,15 @@ four-ABI build comes out at 106 MB and GitHub rejects files over 100 MB.
 
 ## Demo
 
-All screenshots are from the app running against the live API on an Android emulator.
+<p align="center">
+  <img src="./docs/assets/demo.gif" width="240"
+       alt="Screen recording: opening a contact from the Chats list, typing a message and watching the bubble appear immediately, then going back to the list where that contact's row now previews the message with a &quot;now&quot; timestamp" />
+</p>
+
+Sending a message, then going back to the list — the row previews what was just sent, marked
+**now**. The server stored none of it; the outbox did.
+
+The screenshots below are the same build running against the live API on an Android emulator.
 
 |                                                                                        Chats                                                                                        |                                                                          Chat                                                                           |                                                   Profile                                                   |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------: |
@@ -186,10 +194,9 @@ Organised with [Diátaxis](https://diataxis.fr/) — index at [`docs/`](./docs/R
 
 Named so their absence reads as a plan rather than an omission:
 
-| Item                                          | Status   |
-| --------------------------------------------- | -------- |
-| Demo GIF of the send → persist → restart flow | Phase 10 |
-| Final quality pass and submission             | Phase 10 |
+| Item                              | Status   |
+| --------------------------------- | -------- |
+| Final quality pass and submission | Phase 10 |
 
 ## Tech stack
 
